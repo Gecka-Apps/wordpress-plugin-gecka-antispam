@@ -1,0 +1,345 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+/*
+ * The band, the tabs and the controls (switches, choices, rows of buttons,
+ * help links) come from gecka/wp-admin-menu; this sheet styles what the
+ * screens of the plugin hold. No colour is written here: the accent is the
+ * primary colour of the admin colour scheme, the neutral tones are mixed
+ * from the colour of the text, and white surfaces come from the classes of
+ * WordPress itself (card, widefat).
+ */
+.gecka-antispam,
+#gecka_antispam {
+    --gecka-antispam-caught: var(--wp-admin-theme-color);
+    --gecka-antispam-passed: rgba(var(--wp-admin-theme-color--rgb), 0.35);
+    --gecka-antispam-grid: color-mix(in srgb, currentColor 15%, transparent);
+    --gecka-antispam-muted: color-mix(in srgb, currentColor 75%, transparent);
+    --gecka-antispam-stripe: color-mix(in srgb, currentColor 4%, Canvas);
+}
+
+.gecka-antispam-periods {
+    margin: 16px 0;
+}
+
+.gecka-antispam-tiles {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    max-width: 100%;
+}
+
+.gecka-antispam-tile.card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    max-width: none;
+    min-width: 0;
+    padding: 12px 16px;
+}
+
+.gecka-antispam-tile-value {
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.gecka-antispam-tile-label {
+    color: var(--gecka-antispam-muted);
+}
+
+.gecka-antispam-legend {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.gecka-antispam-swatch {
+    border-radius: 2px;
+    display: inline-block;
+    height: 12px;
+    margin-inline-end: 6px;
+    vertical-align: -1px;
+    width: 12px;
+}
+
+.gecka-antispam-swatch.is-passed {
+    background: var(--gecka-antispam-passed);
+}
+
+.gecka-antispam-swatch.is-caught {
+    background: var(--gecka-antispam-caught);
+}
+
+.gecka-antispam-chart-frame.card {
+    margin: 0;
+    max-width: none;
+    min-width: 0;
+    padding: 12px 12px 4px 4px;
+}
+
+.gecka-antispam-chart {
+    display: block;
+    height: auto;
+    max-width: 100%;
+    width: 100%;
+}
+
+.gecka-antispam-chart .grid {
+    stroke: var(--gecka-antispam-grid);
+    stroke-width: 1;
+}
+
+.gecka-antispam-chart .axis {
+    fill: var(--gecka-antispam-muted);
+    font-size: 11px;
+}
+
+.gecka-antispam-chart .passed {
+    fill: var(--gecka-antispam-passed);
+}
+
+.gecka-antispam-chart .caught {
+    fill: var(--gecka-antispam-caught);
+}
+
+.gecka-antispam-chart .hit {
+    fill: transparent;
+}
+
+.gecka-antispam-chart .bar:hover .hit {
+    fill: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+/* Share of each check: label, bar, figures on a row; the bar alone below 600px. */
+.gecka-antispam-shares {
+    margin: 0;
+    max-width: 760px;
+}
+
+.gecka-antispam-shares li {
+    align-items: center;
+    display: grid;
+    gap: 4px 12px;
+    grid-template-columns: minmax(10em, 16em) 1fr minmax(7em, auto);
+    margin: 0 0 8px;
+}
+
+.gecka-antispam-share-bar {
+    background: var(--gecka-antispam-grid);
+    border-radius: 2px;
+    display: block;
+    height: 12px;
+    overflow: hidden;
+}
+
+.gecka-antispam-share-bar span {
+    background: var(--wp-admin-theme-color);
+    display: block;
+    height: 100%;
+}
+
+.gecka-antispam-share-value {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+}
+
+@media screen and (max-width: 600px) {
+    .gecka-antispam-shares li {
+        grid-template-columns: 1fr auto;
+    }
+
+    .gecka-antispam-share-bar {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+}
+
+.gecka-antispam-scroll {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.gecka-antispam-table thead th {
+    vertical-align: bottom;
+}
+
+.gecka-antispam-table tbody th,
+.gecka-antispam-table td {
+    white-space: nowrap;
+}
+
+.gecka-antispam-table .num {
+    font-variant-numeric: tabular-nums;
+    text-align: end;
+}
+
+.gecka-antispam-filter {
+    max-width: 420px;
+}
+
+/* The learning box sits in a row of buttons as a form of the row does. */
+.gecka-admin-buttons > .gecka-antispam-learn {
+    display: inline-block;
+    margin: 0 4px 8px 0;
+    vertical-align: top;
+}
+
+.gecka-antispam-learn progress {
+    display: block;
+    height: 12px;
+    margin-top: 8px;
+    width: 100%;
+}
+
+/* As wide as the button above it, never wider. */
+.gecka-antispam-learn-status {
+    margin: 8px 0 0;
+    min-width: 100%;
+    width: 0;
+}
+
+.gecka-antispam-learn-status:empty {
+    margin: 0;
+}
+
+.gecka-antispam-learn progress[hidden] {
+    display: none;
+}
+
+.gecka-antispam-widget-total {
+    font-size: 14px;
+}
+
+.gecka-antispam-figures {
+    margin: 12px 0 0;
+}
+
+.gecka-antispam-figures summary {
+    cursor: pointer;
+    margin-bottom: 8px;
+}
+
+.gecka-antispam-figures .gecka-antispam-table {
+    max-width: 480px;
+}
+
+.gecka-antispam-refused .column-date,
+.gecka-antispam-refused .column-form,
+.gecka-antispam-refused .column-reason {
+    width: 13em;
+}
+
+.gecka-antispam-refused .column-learnt,
+.gecka-antispam-refused .column-score {
+    width: 8em;
+}
+
+.gecka-antispam-refused-text {
+    overflow-wrap: anywhere;
+}
+
+.gecka-antispam-refused details summary {
+    cursor: pointer;
+}
+
+.gecka-antispam-refused-clear {
+    margin-top: 24px;
+}
+
+@media screen and (max-width: 782px) {
+    /* The chart keeps a width its labels stay readable at, and scrolls sideways. */
+    .gecka-antispam-chart-frame {
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .gecka-antispam-chart {
+        min-width: 720px;
+    }
+
+    .gecka-antispam-chart .axis {
+        font-size: 16px;
+    }
+
+    /* The name of the form stays in view while the figures scroll. */
+    .gecka-antispam-table tbody th,
+    .gecka-antispam-table thead th:first-child {
+        background: Canvas;
+        box-shadow: inset -1px 0 var(--gecka-antispam-grid);
+        inset-inline-start: 0;
+        min-width: 9em;
+        position: sticky;
+        white-space: normal;
+        z-index: 1;
+    }
+
+    .rtl .gecka-antispam-table tbody th,
+    .rtl .gecka-antispam-table thead th:first-child {
+        box-shadow: inset 1px 0 var(--gecka-antispam-grid);
+    }
+
+    .gecka-antispam-table.striped > tbody > :nth-child(odd) > th {
+        background: var(--gecka-antispam-stripe);
+    }
+
+    .gecka-antispam-filter tbody th,
+    .rtl .gecka-antispam-filter tbody th {
+        box-shadow: none;
+        position: static;
+    }
+}
+
+/* Background tables: quality of each table, by the sentences it was drawn from. */
+.gecka-antispam-backgrounds {
+    margin-bottom: 8px;
+}
+
+.gecka-antispam-backgrounds .gecka-antispam-sources {
+    color: var(--gecka-antispam-muted);
+    display: block;
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.gecka-antispam-quality {
+    border-radius: 2px;
+    display: inline-block;
+    font-size: 11px;
+    line-height: 1.6;
+    padding: 0 6px;
+    white-space: nowrap;
+}
+
+.gecka-antispam-quality.is-solid {
+    background: rgba(var(--wp-admin-theme-color--rgb), 0.15);
+}
+
+.gecka-antispam-quality.is-average {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.gecka-antispam-quality.is-weak,
+.gecka-antispam-quality.is-poor {
+    border: 1px solid currentColor;
+}
+
+.gecka-antispam-quality.is-poor {
+    font-weight: 600;
+}
+
+/* A language and its sources wrap; the figures beside them do not. */
+.gecka-antispam-backgrounds tbody th {
+    white-space: normal;
+}
+
+.gecka-antispam-languages-field .components-form-token-field {
+    max-width: 32em;
+}
+
+.gecka-antispam-languages-detail {
+    color: var(--gecka-antispam-muted);
+}

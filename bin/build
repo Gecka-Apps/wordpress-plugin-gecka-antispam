@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# Builds an installable zip of the plugin into ~/Dev/Wordpress/builds/ (or
+# the directory given as first argument): the package bin/package makes, the
+# dependencies installed from Packagist at the versions composer.lock pins.
+# The zip is named after the version of the plugin, the commit, and the
+# version of gecka/spamfilter, or its commit for a dev- branch.
+#
+# Composer runs through the devenv wrappers: the work directory has to be
+# under ~/Dev.
+
+set -euo pipefail
+
+source=$(cd "$(dirname "$0")/.." && pwd)
+out=${1:-$HOME/Dev/Wordpress/builds}
+version=$("$source/bin/check-version")
+commit=$(git -C "$source" rev-parse --short HEAD 2>/dev/null || echo dev)
+library=$(php8.5 -r '
+    foreach (json_decode(file_get_contents($argv[1]), true)["packages"] as $package) {
+        if ($package["name"] === "gecka/spamfilter") {
+            echo str_starts_with($package["version"], "dev-")
+                ? substr($package["dist"]["reference"] ?? $package["source"]["reference"], 0, 7)
+                : $package["version"];
+        }
+    }' "$source/composer.lock")
+[ -n "$library" ] || { echo "gecka/spamfilter not in composer.lock" >&2; exit 1; }
+
+mkdir -p "$HOME/Dev/.local/tmp" "$out"
+work=$(mktemp -d "$HOME/Dev/.local/tmp/gecka-antispam-build.XXXXXX")
+trap 'rm -rf "$work"' EXIT
+
+copy="$work/gecka-antispam"
+mkdir -p "$copy"
+
+# Files git would commit, untracked ones included, minus the ignored ones.
+git -C "$source" ls-files -z --cached --others --exclude-standard \
+    | rsync -a --from0 --files-from=- "$source/" "$copy/"
+
+(
+    cd "$copy"
+    composer85 install --no-dev --no-interaction --no-progress --optimize-autoloader --quiet
+)
+
+"$copy/bin/package" "$work/dist/gecka-antispam"
+
+zip="$out/gecka-antispam-$version-$commit-spamfilter-$library.zip"
+php8.5 "$copy/bin/zip" "$work/dist/gecka-antispam" "$zip"
+
+echo "$zip"

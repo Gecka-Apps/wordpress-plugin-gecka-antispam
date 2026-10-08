@@ -1,0 +1,37 @@
+# What the plugin keeps out of the package it ships: bin/package, the CI jobs
+# and the WordPress.org deploy read this list. Paths are anchored at the root
+# of the plugin; a pattern without a slash matches at any depth.
+
+# Repository and tooling
+/.git
+/.github
+/.gitlab-ci.yml
+/.gitignore
+/.distignore
+/.wordpress-org
+/.tests
+/bin
+/build
+/builds
+/node_modules
+/reports
+/tests
+/composer.lock
+/phpcs.xml.dist
+/phpstan.neon.dist
+/phpunit.xml.dist
+/pint.json
+/README.md
+
+# What the dependencies carry beside their code
+/vendor/bin
+/vendor/gecka/spamfilter/bin
+/vendor/gecka/spamfilter/tests
+/vendor/gecka/spamfilter/compose.yaml
+/vendor/gecka/spamfilter/phpstan.neon
+/vendor/gecka/spamfilter/phpunit.xml
+/vendor/gecka/spamfilter/pint.json
+/vendor/gecka/wp-admin-menu/assets/scss
+.git*
+.editorconfig
+.DS_Store

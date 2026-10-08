@@ -1,0 +1,14 @@
+includes:
+    - vendor/szepeviktor/phpstan-wordpress/extension.neon
+
+parameters:
+    level: 8
+    phpVersion:
+        min: 80200
+        max: 80500
+    paths:
+        - bootstrap.php
+        - uninstall.php
+        - inc
+    scanFiles:
+        - tests/phpstan/third-party.php
