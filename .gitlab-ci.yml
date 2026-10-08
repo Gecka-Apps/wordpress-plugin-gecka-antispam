@@ -44,26 +44,6 @@ test:
     - composer install --no-interaction --no-progress
     - composer test
 
-# The job name is what composer.gaiac.io asks the artifact of.
-composer:
-  stage: build
-  image: stayallive/php:8.5
-  tags:
-    - docker
-  script:
-    - composer install --no-dev --no-interaction --no-progress --optimize-autoloader
-    - rm -rf tests bin vendor/bin .tests
-    - rm -rf .git* .editorconfig pint.json phpcs* phpstan* phpunit* reports*
-    - >
-      php -r '
-      $var = json_decode( file_get_contents( "composer.json" ) );
-      $var->version = getenv("CI_COMMIT_REF_NAME");
-      file_put_contents( "composer.json", json_encode($var, JSON_PRETTY_PRINT ^ JSON_UNESCAPED_SLASHES) );'
-  artifacts:
-    name: "wp-plugin-gecka-antispam_${CI_COMMIT_REF_NAME}"
-    paths:
-      - "*"
-
 # The plugin as it ships on WordPress.org: what .distignore leaves, the
 # dependencies without the dev ones.
 package:
@@ -79,6 +59,30 @@ package:
     name: "gecka-antispam_${CI_COMMIT_REF_NAME}"
     paths:
       - build/gecka-antispam
+
+# The package of the package job, at the root of the artifact, with the tag
+# as version in composer.json, which a satis artifact repository requires.
+# The job name is what composer.gaiac.io asks the artifact of.
+composer:
+  stage: check
+  image: stayallive/php:8.5
+  tags:
+    - docker
+  needs:
+    - package
+  script:
+    - find . -mindepth 1 -maxdepth 1 ! -name build -exec rm -rf {} +
+    - cp -a build/gecka-antispam/. .
+    - rm -rf build
+    - >
+      php -r '
+      $var = json_decode( file_get_contents( "composer.json" ) );
+      $var->version = getenv("CI_COMMIT_REF_NAME");
+      file_put_contents( "composer.json", json_encode($var, JSON_PRETTY_PRINT ^ JSON_UNESCAPED_SLASHES) );'
+  artifacts:
+    name: "wp-plugin-gecka-antispam_${CI_COMMIT_REF_NAME}"
+    paths:
+      - "*"
 
 # The package, through the checks the plugin directory of WordPress.org runs
 # on a submission. Any error or warning fails the job. Plugin Check wants the
