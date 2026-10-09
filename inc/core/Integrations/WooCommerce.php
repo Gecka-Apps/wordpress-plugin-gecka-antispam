@@ -144,7 +144,8 @@ class WooCommerce extends Integration
 
     /**
      * Checks the login forms of My account and of the app authorization
-     * screen.
+     * screen. WooCommerce processes a login on these three fields, whatever
+     * nonce field carries the nonce.
      *
      * @param mixed $errors \WP_Error.
      *
@@ -152,12 +153,13 @@ class WooCommerce extends Integration
      */
     public function checkLogin(mixed $errors): mixed
     {
-        return $this->checkAccountForm('woocommerce_login', 'woocommerce-login-nonce', $errors);
+        return $this->checkAccountForm('woocommerce_login', ['login', 'username', 'password'], $errors);
     }
 
     /**
-     * Checks the registration of My account, which posts its own nonce: the
-     * filter also runs for the accounts created at checkout and by code.
+     * Checks the registration of My account, which WooCommerce processes on
+     * these two fields: the filter also runs for the accounts created at
+     * checkout and by code, which post neither.
      *
      * @param mixed $errors \WP_Error.
      *
@@ -165,12 +167,13 @@ class WooCommerce extends Integration
      */
     public function checkRegistration(mixed $errors): mixed
     {
-        return $this->checkAccountForm('woocommerce_registration', 'woocommerce-register-nonce', $errors, [Request::post('username')]);
+        return $this->checkAccountForm('woocommerce_registration', ['register', 'email'], $errors, [Request::post('username')]);
     }
 
     /**
-     * Checks the lost password form of My account; the one of wp-login.php
-     * runs the same hook.
+     * Checks the lost password form of My account, which WooCommerce
+     * processes on these two fields; the one of wp-login.php runs the same
+     * hook.
      *
      * @param mixed $errors \WP_Error, nothing when an older caller fires the hook bare.
      *
@@ -178,7 +181,7 @@ class WooCommerce extends Integration
      */
     public function checkLostPassword(mixed $errors = null): void
     {
-        $this->checkAccountForm('woocommerce_lost_password', 'woocommerce-lost-password-nonce', $errors);
+        $this->checkAccountForm('woocommerce_lost_password', ['wc_reset_password', 'user_login'], $errors);
     }
 
     /**
@@ -186,17 +189,17 @@ class WooCommerce extends Integration
      * posts to wp-login.php belongs to the Login integration.
      *
      * @param string   $surface
-     * @param string   $marker  Nonce field the form posts.
+     * @param string[] $fields  The fields WooCommerce requires to process the form.
      * @param mixed    $errors  \WP_Error.
      * @param string[] $names
      *
      * @return mixed
      */
-    private function checkAccountForm(string $surface, string $marker, mixed $errors, array $names = []): mixed
+    private function checkAccountForm(string $surface, array $fields, mixed $errors, array $names = []): mixed
     {
         if (! $errors instanceof \WP_Error
             || Request::isLoginScreenPost()
-            || ! Request::isFormPost($marker)
+            || ! Request::isFormPost($fields)
             || ! $this->plugin->settings()->enabled($surface)
         ) {
             return $errors;

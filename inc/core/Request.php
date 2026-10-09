@@ -32,16 +32,28 @@ class Request
     }
 
     /**
-     * A browser submission of the form whose own field is $marker.
+     * A browser submission of the form that posts every one of $fields: the
+     * fields the handler of the form itself requires, so that a submission
+     * the handler processes is never one this check skips.
      *
-     * @param string $marker Field only the form being checked posts.
+     * @param string|string[] $fields Field, or fields, only the form being checked posts.
      *
      * @return bool
      */
-    public static function isFormPost(string $marker): bool
+    public static function isFormPost(string|array $fields): bool
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only tells which form is posting, the form checks its own nonce.
-        return ! self::isNonInteractive() && isset($_POST[$marker]);
+        if (self::isNonInteractive()) {
+            return false;
+        }
+
+        foreach ((array) $fields as $field) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Only tells which form is posting, the form checks its own nonce.
+            if (! isset($_POST[$field])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
