@@ -411,6 +411,9 @@ shown or cached carry.
 
 Tools > Site Health tests what keeps the plugin from working as it should:
 
+- the tables of the plugin: critical when the database refused to create or
+  alter them, in which case the setup is tried again every hour, the
+  administrators see a notice, and the plugin protects nothing meanwhile
 - the daily task, which purges the statistics and the refused submissions and
   rotates the counters: not scheduled, which the plugin repairs on the next
   page load, or more than a day late because the scheduled tasks of

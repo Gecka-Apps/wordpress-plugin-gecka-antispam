@@ -54,6 +54,7 @@ class SiteHealth extends Base
             return $tests;
         }
 
+        $tests['direct']['gecka_antispam_tables'] = ['label' => __('The tables of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testTables']];
         $tests['direct']['gecka_antispam_schedule'] = ['label' => __('The daily task of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testSchedule']];
 
         if ($this->plugin->settings()->get('filter')) {
@@ -63,6 +64,42 @@ class SiteHealth extends Base
         }
 
         return $tests;
+    }
+
+    /**
+     * Whether the tables of the plugin were set up for the version running.
+     *
+     * @return array<string, mixed>
+     */
+    public function testTables(): array
+    {
+        $failure = Setup::failure();
+
+        if ($failure !== '') {
+            return $this->result(
+                'gecka_antispam_tables',
+                'critical',
+                __('The tables of Gecka Antispam could not be set up', 'gecka-antispam'),
+                __('The plugin protects nothing until they are. The setup is tried again every hour; if this persists, the database user of the site cannot create or alter tables. The database said:', 'gecka-antispam'),
+                [$failure],
+            );
+        }
+
+        if (get_option(Setup::VERSION_OPTION) !== Setup::installed(Plugin::VERSION)) {
+            return $this->result(
+                'gecka_antispam_tables',
+                'recommended',
+                __('The tables of Gecka Antispam are not set up yet', 'gecka-antispam'),
+                __('The setup runs on the next page load.', 'gecka-antispam'),
+            );
+        }
+
+        return $this->result(
+            'gecka_antispam_tables',
+            'good',
+            __('The tables of Gecka Antispam are set up', 'gecka-antispam'),
+            __('They match the version of the plugin running.', 'gecka-antispam'),
+        );
     }
 
     /**
@@ -407,7 +444,7 @@ class SiteHealth extends Base
             'status' => $status,
             'badge' => ['label' => __('Antispam', 'gecka-antispam'), 'color' => 'blue'],
             'description' => '<p>' . esc_html($description) . '</p>' . $list,
-            'actions' => $status === 'good' || $test === 'gecka_antispam_schedule' ? '' : sprintf('<p><a href="%s">%s</a></p>', esc_url(SettingsPage::url('filter')), esc_html__('Statistical filter of Gecka Antispam', 'gecka-antispam')),
+            'actions' => $status === 'good' || in_array($test, ['gecka_antispam_schedule', 'gecka_antispam_tables'], true) ? '' : sprintf('<p><a href="%s">%s</a></p>', esc_url(SettingsPage::url('filter')), esc_html__('Statistical filter of Gecka Antispam', 'gecka-antispam')),
             'test' => $test,
         ];
     }

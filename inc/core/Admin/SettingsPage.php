@@ -11,6 +11,7 @@ use Gecka\WP\Plugin\Antispam\Base;
 use Gecka\WP\Plugin\Antispam\Journal;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Settings;
+use Gecka\WP\Plugin\Antispam\Setup;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
 
 /**
@@ -93,6 +94,7 @@ class SettingsPage extends Base
         // names it first.
         add_action('init', [$this, 'declare']);
         add_action('admin_init', [$this, 'registerSetting']);
+        add_action('admin_notices', [$this, 'installFailedNotice']);
         add_filter('option_page_capability_' . self::PAGE, static fn(): string => self::capability('settings'));
         add_action('admin_post_gecka_antispam_reset_filter', [$this, 'resetFilter']);
         add_action('admin_post_gecka_antispam_update_backgrounds', [$this, 'updateBackgrounds']);
@@ -286,6 +288,30 @@ class SettingsPage extends Base
 
         wp_safe_redirect(self::url('filter', ['backgrounds' => $done === null ? 'busy' : ($done ? 'updated' : 'failed')]));
         exit;
+    }
+
+    /**
+     * Tells the administrators that the tables of the plugin could not be
+     * set up, and why.
+     *
+     * @return void
+     */
+    public function installFailedNotice(): void
+    {
+        $failure = Setup::failure();
+
+        if ($failure === '' || ! current_user_can(self::capability('settings'))) {
+            return;
+        }
+
+        wp_admin_notice(
+            sprintf(
+                /* translators: %s: the error */
+                __('Gecka Antispam could not set its tables up, and protects nothing until it can. The setup is tried again every hour. The database said: %s', 'gecka-antispam'),
+                $failure,
+            ),
+            ['type' => 'error'],
+        );
     }
 
     /**

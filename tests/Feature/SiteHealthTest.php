@@ -24,11 +24,11 @@ afterEach(function () {
 });
 
 it('tests the filter only while it is switched on, and the daily task always', function () {
-    expect(array_keys($this->health->tests(['direct' => []])['direct']))->toBe(['gecka_antispam_schedule', 'gecka_antispam_filter', 'gecka_antispam_background', 'gecka_antispam_snapshot']);
+    expect(array_keys($this->health->tests(['direct' => []])['direct']))->toBe(['gecka_antispam_tables', 'gecka_antispam_schedule', 'gecka_antispam_filter', 'gecka_antispam_background', 'gecka_antispam_snapshot']);
 
     antispam_settings(['filter' => false]);
 
-    expect(array_keys($this->health->tests(['direct' => []])['direct']))->toBe(['gecka_antispam_schedule']);
+    expect(array_keys($this->health->tests(['direct' => []])['direct']))->toBe(['gecka_antispam_tables', 'gecka_antispam_schedule']);
 });
 
 it('recommends background tables when there is none', function () {

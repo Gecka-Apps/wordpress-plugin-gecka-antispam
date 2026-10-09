@@ -35,6 +35,13 @@ class Setup
     public const PURGE_EVENT = 'gecka_antispam_purge';
 
     /**
+     * Transient holding why the setup of the tables failed, for an hour:
+     * while it is there the setup is not tried again, the administrators
+     * see a notice and Site Health reports it.
+     */
+    public const FAILED_TRANSIENT = 'gecka_antispam_install_failed';
+
+    /**
      * Hooks the state changes of the plugin up.
      *
      * @param string $file Main file of the plugin
@@ -58,7 +65,7 @@ class Setup
     public static function activate(bool $networkWide = false): void
     {
         $install = static function () {
-            self::install(Plugin::VERSION);
+            self::tryInstall(Plugin::VERSION);
         };
 
         $networkWide ? self::onEachSite($install) : $install();
@@ -66,6 +73,8 @@ class Setup
 
     /**
      * Stops the events and has the setup run again on the next activation.
+     *
+     * @param bool $networkWide Whether the plugin is deactivated for the whole network.
      *
      * @return void
      */
@@ -92,10 +101,48 @@ class Setup
     public static function upgrade(string $version): void
     {
         if (get_option(self::VERSION_OPTION) !== self::installed($version)) {
-            self::install($version);
+            if (self::failure() === '') {
+                self::tryInstall($version);
+            }
         } elseif (! wp_next_scheduled(self::PURGE_EVENT)) {
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', self::PURGE_EVENT);
         }
+    }
+
+    /**
+     * Why the last setup of the tables failed, while the failure is kept
+     *
+     * @return string Empty when the setup did not fail.
+     */
+    public static function failure(): string
+    {
+        $failure = get_transient(self::FAILED_TRANSIENT);
+
+        return is_string($failure) ? $failure : '';
+    }
+
+    /**
+     * Runs the setup, and keeps its failure instead of letting it end the
+     * request: a database refusing the tables would otherwise end every
+     * request of the site, the version staying unrecorded.
+     *
+     * @param string $version Version of the plugin.
+     *
+     * @return bool Whether the setup ran to its end.
+     */
+    private static function tryInstall(string $version): bool
+    {
+        try {
+            self::install($version);
+        } catch (\Throwable $e) {
+            set_transient(self::FAILED_TRANSIENT, $e->getMessage() !== '' ? $e->getMessage() : get_class($e), HOUR_IN_SECONDS);
+
+            return false;
+        }
+
+        delete_transient(self::FAILED_TRANSIENT);
+
+        return true;
     }
 
     /**

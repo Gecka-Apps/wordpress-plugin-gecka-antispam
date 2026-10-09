@@ -113,6 +113,43 @@ it('keeps the reasons and the scores when the training is forgotten', function (
         ->and((float) get_comment_meta($comment, Plugin::META_SCORE, true))->toBe(0.97);
 });
 
+it('keeps a failed setup instead of ending every request, and tries again once the failure expires', function () {
+    global $wpdb;
+
+    // The filter tables answer another size than the one asked for: the
+    // setup refuses them, as it would any table the database did not create.
+    $meta = Schema::storage()->metaTable();
+    $wpdb->update($meta, ['value' => 1], ['name' => 'bits']);
+    update_option(Setup::VERSION_OPTION, '0.0.1');
+
+    Setup::upgrade(Plugin::VERSION);
+
+    expect(Setup::failure())->toContain('1 bits')
+        ->and(get_option(Setup::VERSION_OPTION))->toBe('0.0.1')
+        ->and((new \Gecka\WP\Plugin\Antispam\Admin\SiteHealth(gecka_antispam()))->testTables()['status'])->toBe('critical');
+
+    ob_start();
+    wp_set_current_user(static::factory()->user->create(['role' => 'administrator']));
+    (new \Gecka\WP\Plugin\Antispam\Admin\SettingsPage(gecka_antispam()))->installFailedNotice();
+    $notice = (string) ob_get_clean();
+    wp_set_current_user(0);
+
+    expect($notice)->toContain('notice-error')->and($notice)->toContain('1 bits');
+
+    // Repaired behind the scenes, nothing moves while the failure is kept.
+    $wpdb->update($meta, ['value' => \Gecka\WP\Plugin\Antispam\StatisticalFilter::BITS], ['name' => 'bits']);
+    Setup::upgrade(Plugin::VERSION);
+
+    expect(get_option(Setup::VERSION_OPTION))->toBe('0.0.1');
+
+    delete_transient(Setup::FAILED_TRANSIENT);
+    Setup::upgrade(Plugin::VERSION);
+
+    expect(get_option(Setup::VERSION_OPTION))->toBe(Setup::installed(Plugin::VERSION))
+        ->and(Setup::failure())->toBe('')
+        ->and((new \Gecka\WP\Plugin\Antispam\Admin\SiteHealth(gecka_antispam()))->testTables()['status'])->toBe('good');
+});
+
 it('runs the setup again when only the tables changed', function () {
     global $wpdb;
 
