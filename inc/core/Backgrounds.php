@@ -453,7 +453,7 @@ class Backgrounds
             $entry = $state['languages'][$code] ?? null;
 
             if ($entry === null || ! preg_match(StatisticalFilter::LANGUAGE_CODE, (string) $code)) {
-                throw new \RuntimeException(esc_html__('the release does not offer it.', 'gecka-antispam'));
+                throw Failure::because(__('the release does not offer it.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
             }
 
             $this->download($entry, $this->directory() . "/$code.bin");
@@ -583,7 +583,8 @@ class Backgrounds
         $lines = $state['error'] !== '' ? [$state['error']] : [];
 
         foreach ($state['errors'] as $code => $error) {
-            $lines[] = $code . ': ' . $error;
+            /* translators: 1: language code, 2: what went wrong */
+            $lines[] = sprintf(_x('%1$s: %2$s', 'language and its error', 'gecka-antispam'), $code, $error);
         }
 
         return implode(' ', $lines);
@@ -714,20 +715,20 @@ class Backgrounds
         $manifest = json_decode($this->fetch(self::manifestUrl(), self::MANIFEST_BYTES), true);
 
         if (! is_array($manifest) || ! is_int($manifest['hash_version'] ?? null) || ! is_array($manifest['languages'] ?? null)) {
-            throw new \RuntimeException(esc_html__('The manifest of the background tables is malformed.', 'gecka-antispam'));
+            throw Failure::because(__('The manifest of the background tables is malformed.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         if ($manifest['hash_version'] !== FeatureHasher::VERSION) {
-            throw new \RuntimeException(
-                esc_html(
-                    sprintf(
-                        /* translators: 1: version of the published tables, 2: version of the filter */
-                        __('The published background tables are built for feature hash version %1$d, the filter of this version of the plugin reads version %2$d. The tables in place are kept.', 'gecka-antispam'),
-                        $manifest['hash_version'],
-                        FeatureHasher::VERSION,
-                    ),
+            // phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
+            throw Failure::because(
+                sprintf(
+                    /* translators: 1: version of the published tables, 2: version of the filter */
+                    __('The published background tables are built for feature hash version %1$d, the filter of this version of the plugin reads version %2$d. The tables in place are kept.', 'gecka-antispam'),
+                    $manifest['hash_version'],
+                    FeatureHasher::VERSION,
                 ),
             );
+            // phpcs:enable
         }
 
         /** @var array{languages: array<mixed>, version?: mixed} $manifest */
@@ -745,7 +746,7 @@ class Backgrounds
 
         if (! wp_mkdir_p($directory) || ! wp_is_writable($directory)) {
             /* translators: %s: directory on the server */
-            throw new \RuntimeException(esc_html(sprintf(__('Cannot write in %s.', 'gecka-antispam'), $directory)));
+            throw Failure::because(sprintf(__('Cannot write in %s.', 'gecka-antispam'), $directory)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         if (str_starts_with($directory, StatisticalFilter::directory() . '/')) {
@@ -769,13 +770,13 @@ class Backgrounds
     private function download(array $entry, string $path): void
     {
         if (! self::besideManifest($entry['url']) || $entry['bytes'] <= 0 || $entry['bytes'] > StatisticalFilter::FILE_BYTES || ! preg_match('/^[0-9a-f]{64}$/', $entry['sha256'])) {
-            throw new \RuntimeException(esc_html__('its entry in the manifest is malformed.', 'gecka-antispam'));
+            throw Failure::because(__('its entry in the manifest is malformed.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         $binary = $this->fetch($entry['url'], $entry['bytes']);
 
         if (strlen($binary) !== $entry['bytes'] || ! hash_equals($entry['sha256'], hash('sha256', $binary))) {
-            throw new \RuntimeException(esc_html__('the download does not match its checksum.', 'gecka-antispam'));
+            throw Failure::because(__('the download does not match its checksum.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         StatisticalFilter::decode($binary);
@@ -787,7 +788,7 @@ class Backgrounds
             wp_delete_file($part);
 
             /* translators: %s: file on the server */
-            throw new \RuntimeException(esc_html(sprintf(__('cannot write %s.', 'gecka-antispam'), $path)));
+            throw Failure::because(sprintf(__('cannot write %s.', 'gecka-antispam'), $path)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
         // phpcs:enable
     }
@@ -849,7 +850,7 @@ class Backgrounds
 
             if (is_wp_error($response)) {
                 /* translators: 1: URL, 2: error */
-                throw new \RuntimeException(esc_html(sprintf(__('Cannot download %1$s: %2$s', 'gecka-antispam'), $url, $response->get_error_message())));
+                throw Failure::because(sprintf(__('Cannot download %1$s: %2$s', 'gecka-antispam'), $url, $response->get_error_message())); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
             }
 
             $status = (int) wp_remote_retrieve_response_code($response);
@@ -863,20 +864,20 @@ class Backgrounds
 
             if (strtolower((string) wp_parse_url($url, PHP_URL_SCHEME)) !== 'https') {
                 /* translators: %s: URL */
-                throw new \RuntimeException(esc_html(sprintf(__('Cannot download %s: redirected off HTTPS.', 'gecka-antispam'), $url)));
+                throw Failure::because(sprintf(__('Cannot download %s: redirected off HTTPS.', 'gecka-antispam'), $url)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
             }
         }
 
         if ($status !== 200) {
             /* translators: 1: URL, 2: HTTP status code */
-            throw new \RuntimeException(esc_html(sprintf(__('Cannot download %1$s: HTTP %2$d.', 'gecka-antispam'), $url, $status)));
+            throw Failure::because(sprintf(__('Cannot download %1$s: HTTP %2$d.', 'gecka-antispam'), $url, $status)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         $body = wp_remote_retrieve_body($response);
 
         if (strlen($body) > $maxBytes) {
             /* translators: %s: URL */
-            throw new \RuntimeException(esc_html(sprintf(__('%s is larger than announced.', 'gecka-antispam'), $url)));
+            throw Failure::because(sprintf(__('%s is larger than announced.', 'gecka-antispam'), $url)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         return $body;

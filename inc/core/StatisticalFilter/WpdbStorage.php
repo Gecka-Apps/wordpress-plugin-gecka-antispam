@@ -5,6 +5,7 @@
 
 namespace Gecka\WP\Plugin\Antispam\StatisticalFilter;
 
+use Gecka\WP\Plugin\Antispam\Failure;
 use Gecka\SpamFilter\Generation;
 use Gecka\SpamFilter\Label;
 use Gecka\SpamFilter\Model\ClassCounts;
@@ -98,7 +99,7 @@ class WpdbStorage implements Storage
      *
      * @return void
      *
-     * @throws \InvalidArgumentException
+     * @throws Failure When the tables hold another size than $bits.
      */
     public function install(int $bits): void
     {
@@ -147,7 +148,7 @@ class WpdbStorage implements Storage
 
         if ($installed !== $bits) {
             /* translators: 1: feature space size of the tables, 2: size asked for */
-            throw new \InvalidArgumentException(esc_html(sprintf(__('The spam filter tables were installed with %1$d bits, they cannot become %2$d: forget everything learnt and learn again.', 'gecka-antispam'), $installed, $bits)));
+            throw Failure::because(sprintf(__('The spam filter tables were installed with %1$d bits, they cannot become %2$d: forget everything learnt and learn again.', 'gecka-antispam'), $installed, $bits)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
     }
 
@@ -518,7 +519,8 @@ class WpdbStorage implements Storage
         global $wpdb;
 
         if ($result === false) {
-            throw new \RuntimeException(esc_html__('A query on the spam filter tables failed:', 'gecka-antispam') . ' ' . esc_html($wpdb->last_error));
+            /* translators: %s: the error of the database */
+            throw Failure::because(sprintf(__('A query on the spam filter tables failed: %s', 'gecka-antispam'), $wpdb->last_error)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
     }
 
@@ -546,11 +548,11 @@ class WpdbStorage implements Storage
         }
 
         if ($values['bits'] === 0) {
-            throw new \RuntimeException(esc_html__('The spam filter tables are not installed.', 'gecka-antispam'));
+            throw Failure::because(__('The spam filter tables are not installed.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         if ($values['hash'] !== FeatureHasher::VERSION) {
-            throw new \RuntimeException(esc_html__('The spam filter tables hold counts of another version of the filter: forget everything learnt and learn again.', 'gecka-antispam'));
+            throw Failure::because(__('The spam filter tables hold counts of another version of the filter: forget everything learnt and learn again.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         return $this->values = $values;

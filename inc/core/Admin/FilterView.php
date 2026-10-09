@@ -508,7 +508,8 @@ class FilterView
 
         foreach ($offered as $code => $entry) {
             $languages[$code] = [
-                'label' => $downloads->name($code) . ' (' . $code . ')',
+                /* translators: 1: name of the language, 2: its code */
+                'label' => sprintf(_x('%1$s (%2$s)', 'language and its code', 'gecka-antispam'), $downloads->name($code), $code),
                 'detail' => sprintf(
                     /* translators: 1: number of sentences, 2: quality of the table */
                     _n('%1$s sentence, %2$s', '%1$s sentences, %2$s', $entry['sentences'], 'gecka-antispam'),

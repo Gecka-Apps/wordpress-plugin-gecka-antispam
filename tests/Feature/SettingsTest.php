@@ -3,7 +3,9 @@
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Settings;
+use Gecka\WP\Plugin\Antispam\Setup;
 
 it('protects every form by default', function () {
     foreach (Settings::surfaces() as $surface) {
@@ -157,4 +159,17 @@ it('rotates the counters every six months by default, within one month and five 
         ->and($settings->sanitize(['form' => 'filter', 'filter_rotation' => 0])['filter_rotation'])->toBe(1)
         ->and($settings->sanitize(['form' => 'filter', 'filter_rotation' => 99])['filter_rotation'])->toBe(60)
         ->and(gecka_antispam()->rotationPeriod())->toBe(6 * MONTH_IN_SECONDS);
+});
+
+it('lists the forms once as identifiers and once with their labels, in the same order', function () {
+    expect(Settings::surfaces())->toBe(array_merge(...array_values(array_map(static fn(array $group): array => array_keys($group['surfaces']), Settings::groups()))));
+});
+
+it('draws the honeypot name when the plugin is set up', function () {
+    delete_option(Settings::OPTION);
+    gecka_antispam()->settings()->flush();
+
+    Setup::install(Plugin::VERSION);
+
+    expect(get_option(Settings::OPTION)['honeypot_name'] ?? '')->toMatch('/^[a-z_]+_[a-z0-9]{4}$/');
 });

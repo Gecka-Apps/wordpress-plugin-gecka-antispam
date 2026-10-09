@@ -170,6 +170,12 @@ class Setup
     {
         Schema::install();
 
+        $settings = (array) get_option(Settings::OPTION, []);
+
+        if (empty($settings['honeypot_name'])) {
+            update_option(Settings::OPTION, array_merge($settings, ['honeypot_name' => Settings::randomFieldName()]));
+        }
+
         if (! wp_next_scheduled(self::PURGE_EVENT)) {
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', self::PURGE_EVENT);
         }

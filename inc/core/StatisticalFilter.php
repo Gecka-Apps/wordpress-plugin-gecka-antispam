@@ -608,7 +608,8 @@ class StatisticalFilter
                 try {
                     $tables[$code] = self::table($file);
                 } catch (\RuntimeException|\InvalidArgumentException $e) {
-                    $problems[] = $name . ': ' . rtrim($e->getMessage(), '.') . '.';
+                    /* translators: 1: file name, 2: what is wrong with it */
+                    $problems[] = sprintf(_x('%1$s: %2$s.', 'file and its problem', 'gecka-antispam'), $name, rtrim($e->getMessage(), '.'));
                 }
             }
         }
@@ -667,13 +668,13 @@ class StatisticalFilter
      *
      * @return CountTable
      *
-     * @throws \InvalidArgumentException
-     * @throws \RuntimeException
+     * @throws Failure When the binary is no table, or too large a one.
+     * @throws \RuntimeException When the library cannot read it.
      */
     public static function decode(string $binary): CountTable
     {
         if ($binary === '' || strlen($binary) > self::FILE_BYTES || ! self::inflatesWithin($binary, self::TABLE_BYTES)) {
-            throw new \InvalidArgumentException(esc_html__('not a background table, or one larger than the filter accepts.', 'gecka-antispam'));
+            throw Failure::because(__('not a background table, or one larger than the filter accepts.', 'gecka-antispam')); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
         }
 
         return Background::fromBinary($binary);

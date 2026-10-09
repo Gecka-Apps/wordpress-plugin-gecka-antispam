@@ -108,7 +108,18 @@ class Settings
     private ?array $settings = null;
 
     /**
-     * The forms the plugin protects, by integration
+     * Every form the plugin knows of, in the order of groups(): the
+     * identifiers alone, which the defaults and the sanitizing read on every
+     * request, where the labels are not needed.
+     */
+    public const SURFACES = [
+        'comments', 'login', 'registration', 'lost_password',
+        'woocommerce_checkout', 'woocommerce_reviews', 'woocommerce_login', 'woocommerce_registration', 'woocommerce_lost_password',
+        'contact_form_7', 'gravity_forms', 'acf',
+    ];
+
+    /**
+     * The forms the plugin protects, by integration, with their labels
      *
      * @return array<string, array{label: string, surfaces: array<string, string>}>
      */
@@ -201,7 +212,7 @@ class Settings
      */
     public static function surfaces(): array
     {
-        return array_merge(...array_values(array_map(static fn($group) => array_keys($group['surfaces']), self::groups())));
+        return self::SURFACES;
     }
 
     /**
@@ -244,7 +255,8 @@ class Settings
         if ($this->settings === null) {
             $settings = $this->stored();
 
-            // The honeypot name is drawn once per site, the first time it is
+            // The honeypot name is drawn when the plugin is set up; a site
+            // whose settings lost it gets one here, the first time it is
             // needed. Saving it runs sanitize() and flushes the settings, so
             // they are kept once saved.
             if (! $settings['honeypot_name']) {
