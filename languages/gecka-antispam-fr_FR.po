@@ -1606,7 +1606,7 @@ msgstr "Systèmes"
 
 #: inc/core/Admin/StatsView.php:497
 msgid "With the Gecka Geolocation plugin, the countries and the networks the submissions come from are counted too."
-msgstr "Avec l'extension Gecka Geolocation, les pays et les réseaux d'où viennent les soumissions sont comptés aussi."
+msgstr "Avec l’extension Gecka Geolocation, les pays et les réseaux d’où viennent les soumissions sont comptés aussi."
 
 #: inc/core/Admin/StatsView.php:522
 msgid "No submission over this period."
