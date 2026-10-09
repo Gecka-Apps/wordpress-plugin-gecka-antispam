@@ -27,6 +27,7 @@ const NO_BACKGROUND = __DIR__ . '/../.tests/no-background';
 uses(TestCase::class)
     ->beforeEach(function () {
         gecka_antispam()->settings()->flush();
+        gecka_antispam()->statisticalFilter()->flushTally();
         add_filter('gecka_antispam_background_directory', static fn(): string => NO_BACKGROUND);
     })
     ->afterEach(fn() => remove_tree(NO_BACKGROUND))

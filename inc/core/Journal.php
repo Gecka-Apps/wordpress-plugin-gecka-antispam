@@ -122,8 +122,10 @@ class Journal
     {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin, read on the review screen.
-        $rows = $wpdb->get_results($wpdb->prepare('SELECT id, surface, outcome, text, hits, created, updated, learnt, generation FROM %i WHERE (learnt IS NULL) = %d ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d', self::table(), $learnt ? 0 : 1, $perPage, max(0, $page - 1) * $perPage));
+        $where = self::learntCondition($learnt);
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table of the plugin, read on the review screen; $where is one of two fixed conditions.
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT id, surface, outcome, text, hits, created, updated, learnt, generation FROM %i WHERE $where ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d", self::table(), $perPage, max(0, $page - 1) * $perPage));
 
         return array_values((array) $rows);
     }
@@ -139,8 +141,23 @@ class Journal
     {
         global $wpdb;
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin.
-        return (int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i WHERE (learnt IS NULL) = %d', self::table(), $learnt ? 0 : 1));
+        $where = self::learntCondition($learnt);
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table of the plugin; $where is one of two fixed conditions.
+        return (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM %i WHERE $where", self::table()));
+    }
+
+    /**
+     * The condition selecting the entries learnt, or those waiting, in a
+     * form the index on the column serves
+     *
+     * @param bool $learnt
+     *
+     * @return string
+     */
+    private static function learntCondition(bool $learnt): string
+    {
+        return $learnt ? 'learnt IS NOT NULL' : 'learnt IS NULL';
     }
 
     /**

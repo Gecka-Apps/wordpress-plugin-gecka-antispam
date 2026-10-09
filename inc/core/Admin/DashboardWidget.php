@@ -5,6 +5,7 @@
 
 namespace Gecka\WP\Plugin\Antispam\Admin;
 
+use Gecka\SpamFilter\Label;
 use Gecka\WP\Plugin\Antispam\Base;
 use Gecka\WP\Plugin\Antispam\Guard;
 
@@ -49,7 +50,7 @@ class DashboardWidget extends Base
     {
         $summary = StatsView::summary($this->plugin->stats()->totals(self::DAYS));
 
-        $counts = $this->plugin->statisticalFilter()->counts();
+        $tally = $this->plugin->statisticalFilter()->tally();
         $rows = [
             __('Submissions checked', 'gecka-antispam') => $summary['checked'],
             __('To review', 'gecka-antispam') => $summary['review'],
@@ -61,8 +62,8 @@ class DashboardWidget extends Base
             $rows['&nbsp;&nbsp;' . Guard::outcomeLabel($outcome)] = $hits;
         }
 
-        $rows[__('Spam texts learnt', 'gecka-antispam')] = $counts['spam'];
-        $rows[__('Legitimate texts learnt', 'gecka-antispam')] = $counts['ham'];
+        $rows[__('Spam texts learnt', 'gecka-antispam')] = $tally ? $tally->learned(Label::Spam) : 0;
+        $rows[__('Legitimate texts learnt', 'gecka-antispam')] = $tally ? $tally->learned(Label::Ham) : 0;
 
         /* translators: %d: number of days */
         printf('<p class="gecka-antispam-widget-total">%s</p>', esc_html(sprintf(_n('Last %d day', 'Last %d days', self::DAYS, 'gecka-antispam'), self::DAYS)));

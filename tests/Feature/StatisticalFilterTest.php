@@ -325,3 +325,19 @@ it('learns an older text into the archive, one generation back', function () {
         ->and($statisticalFilter->unlearn('hello world message', StatisticalFilter::SPAM, -1))->toBeTrue()
         ->and($statisticalFilter->counts()['spam'])->toBe(0);
 });
+
+it('reads the tally once per request, and again once the counters changed', function () {
+    global $wpdb;
+
+    $filter = gecka_antispam()->statisticalFilter();
+    $before = $filter->tally();
+    $queries = $wpdb->num_queries;
+
+    expect($filter->tally())->toBe($before)
+        ->and($wpdb->num_queries)->toBe($queries);
+
+    $filter->learn('Buy cheap watches now, limited offer, click here today', StatisticalFilter::SPAM);
+
+    expect($filter->tally())->not->toBe($before)
+        ->and($filter->tally()?->learned(Label::Spam))->toBe(1);
+});

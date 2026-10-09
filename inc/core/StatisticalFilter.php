@@ -94,6 +94,22 @@ class StatisticalFilter
     private string $prefix = '';
 
     /**
+     * The tally read in this request, kept until the counters change: the
+     * readiness, the generation and the counts are asked several times per
+     * request, for one answer.
+     *
+     * @var Tally|null
+     */
+    private ?Tally $tally = null;
+
+    /**
+     * Whether $tally was read, and on which table prefix.
+     *
+     * @var string|null
+     */
+    private ?string $tallyPrefix = null;
+
+    /**
      * Why the filter could not be set up, the last time it was tried.
      *
      * @var string|null
@@ -157,7 +173,10 @@ class StatisticalFilter
                 throw new \RuntimeException($this->error() ?? '');
             }
 
-            return $filter->learn($text, $label, $archive ? Generation::Archive : Generation::Recent);
+            $generation = $filter->learn($text, $label, $archive ? Generation::Archive : Generation::Recent);
+            $this->flushTally();
+
+            return $generation;
         } catch (\RuntimeException $e) {
             $this->failed($e);
             $this->learningFailed = true;
@@ -200,7 +219,10 @@ class StatisticalFilter
         }
 
         try {
-            return $filter->unlearn($text, $label, $generation);
+            $forgotten = $filter->unlearn($text, $label, $generation);
+            $this->flushTally();
+
+            return $forgotten;
         } catch (\InvalidArgumentException) {
             return false;
         } catch (\RuntimeException $e) {
@@ -255,6 +277,8 @@ class StatisticalFilter
             return false;
         }
 
+        $this->flushTally();
+
         return true;
     }
 
@@ -266,15 +290,38 @@ class StatisticalFilter
      */
     public function tally(): ?Tally
     {
+        global $wpdb;
+
         if (! self::supported()) {
             return null;
         }
 
-        try {
-            return Schema::storage()->tally();
-        } catch (\RuntimeException $e) {
-            return null;
+        if ($this->tallyPrefix === $wpdb->prefix) {
+            return $this->tally;
         }
+
+        try {
+            $this->tally = Schema::storage()->tally();
+        } catch (\RuntimeException $e) {
+            $this->tally = null;
+        }
+
+        $this->tallyPrefix = $wpdb->prefix;
+
+        return $this->tally;
+    }
+
+    /**
+     * Has the next tally() read the counters again: after they changed by
+     * another way than this instance, or in a test, between two requests
+     * of one process.
+     *
+     * @return void
+     */
+    public function flushTally(): void
+    {
+        $this->tally = null;
+        $this->tallyPrefix = null;
     }
 
     /**
@@ -334,6 +381,7 @@ class StatisticalFilter
 
         $this->filter = null;
         $this->error = null;
+        $this->flushTally();
     }
 
     /**
