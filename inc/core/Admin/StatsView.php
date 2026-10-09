@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -208,7 +210,7 @@ class StatsView
             ];
         }
 
-        $max = max(1, ...array_map(static fn($bucket) => $bucket['passed'] + $bucket['caught'], array_values($buckets)));
+        $max = max(1, ...array_map(static fn(array $bucket): int => $bucket['passed'] + $bucket['caught'], array_values($buckets)));
         $max = self::niceCeiling($max);
 
         $plotWidth = self::WIDTH - self::GUTTER_LEFT;

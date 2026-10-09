@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -298,7 +300,7 @@ class Acf extends Integration
      */
     private static function gather(string $key, array $field, mixed $value, array &$fields, array &$values): void
     {
-        $subFields = array_filter((array) ($field['sub_fields'] ?? []), static fn($sub): bool => is_array($sub) && (string) ($sub['key'] ?? '') !== '');
+        $subFields = array_filter((array) ($field['sub_fields'] ?? []), static fn(mixed $sub): bool => is_array($sub) && (string) ($sub['key'] ?? '') !== '');
 
         if (! in_array($field['type'], self::CONTAINER_TYPES, true) || ! $subFields) {
             $fields[$key] = ['name' => $field['name'], 'type' => $field['type']];

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -101,7 +103,7 @@ class SettingsPage extends Base
         add_action('admin_post_gecka_antispam_reset_stats', [$this, 'resetStats']);
         add_action('admin_post_gecka_antispam_learn_existing', [$this, 'learnExisting']);
         add_action('rest_api_init', [$this, 'registerRoutes']);
-        add_filter('set_screen_option_' . RefusedView::PER_PAGE_OPTION, static fn($keep, $option, $value) => min(999, max(1, (int) $value)), 10, 3);
+        add_filter('set_screen_option_' . RefusedView::PER_PAGE_OPTION, static fn(mixed $keep, mixed $option, mixed $value): int => min(999, max(1, (int) $value)), 10, 3);
         add_action('admin_post_gecka_antispam_clear_refused', [$this, 'clearRefused']);
         add_action('admin_post_gecka_antispam_reset_settings', [$this, 'resetSettings']);
         add_filter('plugin_action_links_' . plugin_basename($this->plugin->file()), [$this, 'actionLinks']);
@@ -516,7 +518,7 @@ class SettingsPage extends Base
 
         add_action(
             'admin_enqueue_scripts',
-            function () {
+            function (): void {
                 $defer = ['in_footer' => true, 'strategy' => 'defer'];
 
                 wp_enqueue_script('gecka-antispam-learn', $this->plugin->url('assets/learn.js'), [], Plugin::VERSION, $defer);

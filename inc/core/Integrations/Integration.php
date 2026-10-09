@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -290,7 +292,7 @@ abstract class Integration extends Base
     protected static function flatten(mixed $value): string
     {
         if (is_array($value)) {
-            $value = implode(' ', array_filter(array_map(static fn($item) => is_scalar($item) ? trim((string) $item) : '', $value)));
+            $value = implode(' ', array_filter(array_map(static fn(mixed $item): string => is_scalar($item) ? trim((string) $item) : '', $value)));
         }
 
         return is_scalar($value) ? trim((string) $value) : '';

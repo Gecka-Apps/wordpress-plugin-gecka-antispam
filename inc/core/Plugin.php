@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -166,10 +168,12 @@ class Plugin
         (new DashboardWidget($this))->setup();
         (new SiteHealth($this))->setup();
 
-        add_action('init', fn() => Setup::upgrade(self::VERSION));
+        add_action('init', static function (): void {
+            Setup::upgrade(self::VERSION);
+        });
         add_action(
             Setup::PURGE_EVENT,
-            function () {
+            function (): void {
                 $this->stats->purge((int) $this->settings->get('stats_days'));
                 $this->origins->purge((int) $this->settings->get('stats_days'));
                 $this->journal->purge();
@@ -235,7 +239,7 @@ class Plugin
      */
     public function learners(): array
     {
-        return array_values(array_filter($this->active, static fn($integration) => $integration instanceof Learner));
+        return array_values(array_filter($this->active, static fn(Integration $integration): bool => $integration instanceof Learner));
     }
 
     /**

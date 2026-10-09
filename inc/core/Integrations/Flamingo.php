@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -309,7 +311,7 @@ class Flamingo extends Integration implements Learner
         add_meta_box(
             'gecka-antispam',
             __('Antispam', 'gecka-antispam'),
-            function () use ($postId) {
+            function () use ($postId): void {
                 echo '<p>' . wp_kses_post(implode('<br>', $this->summary($postId, true))) . '</p>';
 
                 $link = $this->confirmLink($postId, true);

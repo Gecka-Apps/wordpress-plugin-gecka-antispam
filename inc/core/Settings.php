@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -480,7 +482,7 @@ class Settings
     public static function languageCodes(mixed $value): array
     {
         $codes = is_array($value) ? $value : preg_split('/[\s,;]+/', (string) $value);
-        $codes = array_map(static fn($code): string => strtolower(trim((string) $code)), $codes ?: []);
+        $codes = array_map(static fn(mixed $code): string => strtolower(trim((string) $code)), $codes ?: []);
         $codes = array_filter($codes, static fn(string $code): bool => (bool) preg_match(StatisticalFilter::LANGUAGE_CODE, $code));
 
         return array_slice(array_values(array_unique($codes)), 0, StatisticalFilter::MAX_LANGUAGES);

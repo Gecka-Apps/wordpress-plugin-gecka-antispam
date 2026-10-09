@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -90,7 +92,7 @@ add_action(
 
 add_action(
     'init',
-    static function () {
+    static function (): void {
         load_plugin_textdomain('gecka-antispam', false, dirname(plugin_basename(__FILE__)) . '/languages'); // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- The translations ship in the languages folder of the plugin.
     },
 );

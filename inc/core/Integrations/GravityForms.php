@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -299,7 +301,7 @@ class GravityForms extends Integration implements Learner
 
             add_filter(
                 'gform_validation_message_' . $this->checked,
-                static fn() => sprintf("<h2 class='gform_submission_error'>%s</h2>", esc_html($message)),
+                static fn(): string => sprintf("<h2 class='gform_submission_error'>%s</h2>", esc_html($message)),
             );
 
             $result['is_valid'] = false;
@@ -349,6 +351,7 @@ class GravityForms extends Integration implements Learner
 
         return true;
     }
+
     /**
      * Records on the entry saved why the statistical filter marked it as
      * spam, or that it finds it doubtful.
@@ -683,14 +686,15 @@ class GravityForms extends Integration implements Learner
             if (is_string($value) && in_array($type, ['multiselect', 'list'], true)) {
                 // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- A list Gravity Forms serialised itself; no object is expected in it.
                 $items = $type === 'list' ? (is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value) : json_decode($value, true);
-                $value = is_array($items) ? array_merge(...array_map(static fn($item): array => array_values((array) $item), array_values($items))) : $value;
+                $value = is_array($items) ? array_merge(...array_map(static fn(mixed $item): array => array_values((array) $item), array_values($items))) : $value;
             }
 
             return self::flatten($value);
         }
 
-        return self::flatten(array_map(static fn($input): mixed => $entry[(string) (is_array($input) ? ($input['id'] ?? '') : '')] ?? '', $inputs));
+        return self::flatten(array_map(static fn(mixed $input): mixed => $entry[(string) (is_array($input) ? ($input['id'] ?? '') : '')] ?? '', $inputs));
     }
+
     /**
      * Whether the request posts to the public submissions route of the REST
      * API of Gravity Forms, /gf/v2/forms/{id}/submissions

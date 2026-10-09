@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -64,7 +66,7 @@ class Setup
      */
     public static function activate(bool $networkWide = false): void
     {
-        $install = static function () {
+        $install = static function (): void {
             self::tryInstall(Plugin::VERSION);
         };
 
@@ -80,7 +82,7 @@ class Setup
      */
     public static function deactivate(bool $networkWide = false): void
     {
-        $stop = static function () {
+        $stop = static function (): void {
             wp_clear_scheduled_hook(self::PURGE_EVENT);
             wp_clear_scheduled_hook(Backgrounds::EVENT);
             delete_option(self::VERSION_OPTION);
@@ -196,7 +198,7 @@ class Setup
     public static function uninstall(): void
     {
         self::onEachSite(
-            static function () {
+            static function (): void {
                 wp_clear_scheduled_hook(self::PURGE_EVENT);
                 wp_clear_scheduled_hook(Backgrounds::EVENT);
                 Schema::drop();

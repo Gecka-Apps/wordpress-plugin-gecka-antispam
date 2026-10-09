@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // SPDX-FileCopyrightText: 2026 Gecka <contact@gecka.nc>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -35,6 +37,7 @@ class RefusedView
      * posts.
      */
     public const MODE_SETTING = 'gecka_antispam_refused_mode';
+
     /**
      * @var Plugin
      */
@@ -63,6 +66,7 @@ class RefusedView
     {
         return get_user_setting(self::MODE_SETTING, 'list') === 'excerpt' ? 'excerpt' : 'list';
     }
+
     /**
      * Whether the Learnt view is shown, rather than the entries to review
      *
@@ -73,6 +77,7 @@ class RefusedView
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks a view.
         return sanitize_key($_GET['view'] ?? '') === 'learnt';
     }
+
     /**
      * Sets the screen up before anything is printed: the screen options,
      * the display mode the screen options sent, and the bulk action
