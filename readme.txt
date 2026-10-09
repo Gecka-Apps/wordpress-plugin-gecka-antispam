@@ -44,7 +44,7 @@ The submissions refused, by a check of the form or by the filter, land in the An
 
 = Statistics =
 
-The Antispam tab of Security > Statistics shows the submissions checked, accepted, to review and caught over 7, 30, 90 or 365 days, by form and by check; the statistical filter tab of Settings > Antispam shows what the filter learnt. A dashboard widget sums up the last seven days. Only daily counts are kept: no address, no content. Site Health tests the daily task, the statistical filter, its background tables and the snapshot of its counters, and its Info tab sums up the plugin for support.
+The Antispam tab of Security > Statistics shows the submissions checked, accepted, to review and caught over 7, 30, 90 or 365 days, by form and by check; the statistical filter tab of Settings > Antispam shows what the filter learnt. A dashboard widget sums up the last seven days. The submissions caught or accepted are also counted by operating system and, with the Gecka Geolocation plugin, by country and by network, with their flags and logos: the address itself is never read nor kept. Only daily counts are kept: no address, no content. Site Health tests the daily task, the statistical filter, its background tables and the snapshot of its counters, and its Info tab sums up the plugin for support.
 
 = Privacy =
 

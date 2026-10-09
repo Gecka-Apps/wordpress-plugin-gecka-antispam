@@ -106,6 +106,11 @@ class Plugin
     private Stats $stats;
 
     /**
+     * @var Origins
+     */
+    private Origins $origins;
+
+    /**
      * @var StatisticalFilter
      */
     private StatisticalFilter $statisticalFilter;
@@ -138,6 +143,7 @@ class Plugin
         add_action('add_option_' . Settings::OPTION, [$this->settings, 'flush']);
         add_action('update_option_' . Settings::OPTION, [$this->settings, 'flush']);
         $this->stats = new Stats();
+        $this->origins = new Origins();
         $this->statisticalFilter = new StatisticalFilter();
         $this->journal = new Journal($this->statisticalFilter);
         $this->backgrounds = new Backgrounds($this->statisticalFilter, $this->settings);
@@ -165,6 +171,7 @@ class Plugin
             Setup::PURGE_EVENT,
             function () {
                 $this->stats->purge((int) $this->settings->get('stats_days'));
+                $this->origins->purge((int) $this->settings->get('stats_days'));
                 $this->journal->purge();
                 $this->rotateFilter();
                 $this->backgrounds->refresh();
@@ -323,6 +330,14 @@ class Plugin
     public function stats(): Stats
     {
         return $this->stats;
+    }
+
+    /**
+     * @return Origins
+     */
+    public function origins(): Origins
+    {
+        return $this->origins;
     }
 
     /**

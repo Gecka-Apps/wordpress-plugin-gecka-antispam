@@ -318,6 +318,7 @@ The background routes answer 403 while the statistical filter is off or the
 | Where | What |
 |---|---|
 | `{prefix}gecka_antispam_stats` | Daily counters, by form and outcome |
+| `{prefix}gecka_antispam_origins` | Daily counters, by country, network and operating system of the senders and by outcome: the code of the country, the number of the network with the name of its organisation, never the address |
 | `{prefix}gecka_antispam_journal` | Refused submissions |
 | `{prefix}gecka_antispam_counts`, `{prefix}gecka_antispam_meta` | Counters of the statistical filter |
 | `wp-content/uploads/gecka-antispam/` | Background tables and snapshot of the counters |

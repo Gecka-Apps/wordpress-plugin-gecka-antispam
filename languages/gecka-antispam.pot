@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-08T21:16:00+11:00\n"
+"POT-Creation-Date: 2026-10-09T17:15:31+11:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: gecka-antispam\n"
@@ -56,21 +56,22 @@ msgid "Antispam"
 msgstr ""
 
 #: inc/core/Admin/DashboardWidget.php:54
-#: inc/core/Admin/StatsView.php:159
+#: inc/core/Admin/StatsView.php:166
 msgid "Submissions checked"
 msgstr ""
 
 #: inc/core/Admin/DashboardWidget.php:55
-#: inc/core/Admin/StatsView.php:161
+#: inc/core/Admin/StatsView.php:168
 #: inc/core/Guard.php:112
 #: inc/core/Integrations/Flamingo.php:472
 msgid "To review"
 msgstr ""
 
 #: inc/core/Admin/DashboardWidget.php:56
-#: inc/core/Admin/StatsView.php:162
-#: inc/core/Admin/StatsView.php:217
-#: inc/core/Admin/StatsView.php:276
+#: inc/core/Admin/StatsView.php:169
+#: inc/core/Admin/StatsView.php:224
+#: inc/core/Admin/StatsView.php:283
+#: inc/core/Admin/StatsView.php:466
 msgid "Caught"
 msgstr ""
 
@@ -687,7 +688,7 @@ msgid "Text"
 msgstr ""
 
 #: inc/core/Admin/RefusedTable.php:99
-#: inc/core/Admin/StatsView.php:410
+#: inc/core/Admin/StatsView.php:417
 msgid "Form"
 msgstr ""
 
@@ -809,7 +810,7 @@ msgid "Delete everything"
 msgstr ""
 
 #: inc/core/Admin/RefusedView.php:209
-#: inc/core/Admin/SettingsPage.php:682
+#: inc/core/Admin/SettingsPage.php:683
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
@@ -868,7 +869,7 @@ msgid "Security"
 msgstr ""
 
 #: inc/core/Admin/SettingsPage.php:147
-#: inc/core/Admin/SettingsPage.php:599
+#: inc/core/Admin/SettingsPage.php:600
 msgid "Statistics"
 msgstr ""
 
@@ -881,124 +882,124 @@ msgstr ""
 msgid "Statistical filter"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:532
+#: inc/core/Admin/SettingsPage.php:533
 msgid "Every setting is back to its default."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:539
+#: inc/core/Admin/SettingsPage.php:540
 #: inc/core/Admin/SiteHealth.php:268
 msgid "Protected forms"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:570
+#: inc/core/Admin/SettingsPage.php:571
 msgid "The plugin providing these forms is not active."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:574
+#: inc/core/Admin/SettingsPage.php:575
 msgid "Only the classic checkout, the [woocommerce_checkout] shortcode, is protected: the checkout block posts to the Store API."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:582
+#: inc/core/Admin/SettingsPage.php:583
 msgid "Honeypot and timing"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:583
+#: inc/core/Admin/SettingsPage.php:584
 msgid "A submission these checks catch is refused with an error, which lets a person send it again, and kept in the Antispam tab of Security > Journal."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:588
+#: inc/core/Admin/SettingsPage.php:589
 msgid "Honeypot field name"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:590
+#: inc/core/Admin/SettingsPage.php:591
 msgid "A field people never see, which bots fill in. Drawn at random on each site; a name a bot would fill in, and that no browser autofills."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:592
+#: inc/core/Admin/SettingsPage.php:593
 msgid "Minimum delay"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:592
 #: inc/core/Admin/SettingsPage.php:593
+#: inc/core/Admin/SettingsPage.php:594
 msgid "seconds"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:592
+#: inc/core/Admin/SettingsPage.php:593
 msgid "Time a form must stay on screen before it is sent: comments, contact forms, registration, checkout."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:593
+#: inc/core/Admin/SettingsPage.php:594
 msgid "Minimum delay to sign in"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:593
+#: inc/core/Admin/SettingsPage.php:594
 msgid "Same for the login and lost password forms, which password managers fill and send in a blink."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:594
+#: inc/core/Admin/SettingsPage.php:595
 msgid "Maximum age of a form"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:594
+#: inc/core/Admin/SettingsPage.php:595
 msgid "hours"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:594
+#: inc/core/Admin/SettingsPage.php:595
 msgid "8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:595
+#: inc/core/Admin/SettingsPage.php:596
 msgid "Random names"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:595
+#: inc/core/Admin/SettingsPage.php:596
 msgid "Catch names made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:601
+#: inc/core/Admin/SettingsPage.php:602
 msgid "Keep the statistics"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:601
+#: inc/core/Admin/SettingsPage.php:602
 msgid "days"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:601
-msgid "Only daily counts are kept, by form and by outcome: no address, no content."
-msgstr ""
-
-#: inc/core/Admin/SettingsPage.php:611
-msgid "Put every setting back to its default? The name of the honeypot field is kept."
+#: inc/core/Admin/SettingsPage.php:602
+msgid "Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content."
 msgstr ""
 
 #: inc/core/Admin/SettingsPage.php:612
+msgid "Put every setting back to its default? The name of the honeypot field is kept."
+msgstr ""
+
+#: inc/core/Admin/SettingsPage.php:613
 msgid "Restore the default settings"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:636
+#: inc/core/Admin/SettingsPage.php:637
 msgid "Off"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:638
 msgid "Every form"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:638
+#: inc/core/Admin/SettingsPage.php:639
 msgid "Only the forms holding the marker"
 msgstr ""
 
 #. translators: %s: the form tag
-#: inc/core/Admin/SettingsPage.php:662
+#: inc/core/Admin/SettingsPage.php:663
 #, php-format
 msgid "Marker: the %s form tag, placed in the form where the fields go."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:663
+#: inc/core/Admin/SettingsPage.php:664
 msgid "Marker: the Antispam field, among the advanced fields of the form editor."
 msgstr ""
 
 #. translators: 1: the argument, 2: function, 3: function
-#: inc/core/Admin/SettingsPage.php:665
+#: inc/core/Admin/SettingsPage.php:666
 #, php-format
 msgid "Marker: %1$s in the arguments of %2$s or %3$s."
 msgstr ""
@@ -1234,104 +1235,145 @@ msgid "Statistical filter of Gecka Antispam"
 msgstr ""
 
 #. translators: %d: number of days
-#: inc/core/Admin/StatsView.php:80
+#: inc/core/Admin/StatsView.php:86
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Admin/StatsView.php:96
+#: inc/core/Admin/StatsView.php:103
 msgid "Reset the statistics"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:96
+#: inc/core/Admin/StatsView.php:103
 msgid "Drop every counter?"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:142
+#: inc/core/Admin/StatsView.php:149
 msgid "The statistics were reset."
 msgstr ""
 
 #. translators: %s: share of the submissions caught, in percent
-#: inc/core/Admin/StatsView.php:157
+#: inc/core/Admin/StatsView.php:164
 #, php-format
 msgid "%s %%"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:160
-#: inc/core/Admin/StatsView.php:216
-#: inc/core/Admin/StatsView.php:276
+#: inc/core/Admin/StatsView.php:167
+#: inc/core/Admin/StatsView.php:223
+#: inc/core/Admin/StatsView.php:283
+#: inc/core/Admin/StatsView.php:466
 #: inc/core/Guard.php:111
 msgid "Accepted"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:163
+#: inc/core/Admin/StatsView.php:170
 msgid "Catch rate"
 msgstr ""
 
 #. translators: %s: first day of the week
-#: inc/core/Admin/StatsView.php:198
+#: inc/core/Admin/StatsView.php:205
 #, php-format
 msgid "Week of %s"
 msgstr ""
 
 #. translators: short date on the axis of the chart, see https://www.php.net/manual/datetime.format.php
-#: inc/core/Admin/StatsView.php:200
+#: inc/core/Admin/StatsView.php:207
 msgctxt "chart axis"
 msgid "j M"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:213
+#: inc/core/Admin/StatsView.php:220
 msgid "Accepted and caught"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:225
+#: inc/core/Admin/StatsView.php:232
 msgid "Submissions accepted and caught over the period. The same figures follow in a table."
 msgstr ""
 
 #. translators: 1: day or week, 2: submissions accepted, 3: submissions caught
-#: inc/core/Admin/StatsView.php:247
+#: inc/core/Admin/StatsView.php:254
 #, php-format
 msgid "%1$s. Accepted: %2$s, caught: %3$s"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:273
+#: inc/core/Admin/StatsView.php:280
 msgid "Figures week by week"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:273
+#: inc/core/Admin/StatsView.php:280
 msgid "Figures day by day"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:275
+#: inc/core/Admin/StatsView.php:282
 msgid "Week"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:275
+#: inc/core/Admin/StatsView.php:282
 msgid "Day"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:359
+#: inc/core/Admin/StatsView.php:366
 msgid "Caught by check"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:362
+#: inc/core/Admin/StatsView.php:369
 msgid "Nothing caught over this period."
 msgstr ""
 
 #. translators: 1: submissions caught, 2: share in percent
-#: inc/core/Admin/StatsView.php:379
+#: inc/core/Admin/StatsView.php:386
 #, php-format
 msgid "%1$s (%2$s %%)"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:399
+#: inc/core/Admin/StatsView.php:406
 msgid "By form"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:402
+#: inc/core/Admin/StatsView.php:409
 msgid "No submission checked over this period."
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:462
+msgid "Origins"
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:480
+msgid "Countries"
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:480
+msgid "Networks"
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:480
+msgid "Systems"
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:495
+msgid "With the Gecka Geolocation plugin, the countries and the networks the submissions come from are counted too."
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:520
+msgid "No submission over this period."
+msgstr ""
+
+#. translators: %s: share of the submissions, a number
+#: inc/core/Admin/StatsView.php:537
+msgid "<1%"
+msgstr ""
+
+#. translators: %s: share of the submissions, a number
+#: inc/core/Admin/StatsView.php:537
+#, php-format
+msgctxt "share"
+msgid "%s%%"
+msgstr ""
+
+#: inc/core/Admin/StatsView.php:589
+msgid "Unknown or private address"
 msgstr ""
 
 #: inc/core/Backgrounds.php:427
@@ -1478,13 +1520,21 @@ msgid "Honeypot and timestamp, invisible to visitors."
 msgstr ""
 
 #. translators: %s: rating of the statistical filter, in percent
-#: inc/core/Integrations/Integration.php:201
+#: inc/core/Integrations/Integration.php:202
 #, php-format
 msgid "Statistical filter: %s %% spam"
 msgstr ""
 
-#: inc/core/Integrations/Integration.php:214
+#: inc/core/Integrations/Integration.php:215
 msgid "Your submission could not be verified. Please reload the page and try again."
+msgstr ""
+
+#: inc/core/Origins.php:193
+msgid "Other, or a script"
+msgstr ""
+
+#: inc/core/Origins.php:194
+msgid "No user agent"
 msgstr ""
 
 #: inc/core/Settings.php:111

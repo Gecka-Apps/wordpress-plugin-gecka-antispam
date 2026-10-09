@@ -45,7 +45,7 @@ class Stats
         $table = Schema::stats();
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin, read on the statistics screen only.
-        $rows = $wpdb->get_results($wpdb->prepare('SELECT surface, outcome, SUM(hits) AS hits FROM %i WHERE day >= %s GROUP BY surface, outcome', $table, $this->since($days)));
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT surface, outcome, SUM(hits) AS hits FROM %i WHERE day >= %s GROUP BY surface, outcome', $table, self::since($days)));
 
         $totals = [];
 
@@ -71,10 +71,10 @@ class Stats
         $table = Schema::stats();
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin, read on the statistics screen only.
-        $rows = $wpdb->get_results($wpdb->prepare('SELECT day, outcome IN (%s, %s) AS passed, SUM(hits) AS hits FROM %i WHERE day >= %s GROUP BY day, outcome IN (%s, %s)', Guard::PASSED, Guard::REVIEW, $table, $this->since($days), Guard::PASSED, Guard::REVIEW));
+        $rows = $wpdb->get_results($wpdb->prepare('SELECT day, outcome IN (%s, %s) AS passed, SUM(hits) AS hits FROM %i WHERE day >= %s GROUP BY day, outcome IN (%s, %s)', Guard::PASSED, Guard::REVIEW, $table, self::since($days), Guard::PASSED, Guard::REVIEW));
 
         $daily = [];
-        $day = new \DateTimeImmutable($this->since($days), wp_timezone());
+        $day = new \DateTimeImmutable(self::since($days), wp_timezone());
 
         for ($i = 0; $i < $days; $i++) {
             $daily[$day->modify("+$i days")->format('Y-m-d')] = ['passed' => 0, 'caught' => 0];
@@ -103,7 +103,7 @@ class Stats
         $table = Schema::stats();
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin.
-        $wpdb->query($wpdb->prepare('DELETE FROM %i WHERE day < %s', $table, $this->since($keep)));
+        $wpdb->query($wpdb->prepare('DELETE FROM %i WHERE day < %s', $table, self::since($keep)));
     }
 
     /**
@@ -128,7 +128,7 @@ class Stats
      *
      * @return string
      */
-    private function since(int $days): string
+    public static function since(int $days): string
     {
         return (new \DateTimeImmutable('today', wp_timezone()))->modify('-' . max(0, $days - 1) . ' days')->format('Y-m-d');
     }

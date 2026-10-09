@@ -12,3 +12,4 @@ parameters:
         - inc
     scanFiles:
         - tests/phpstan/third-party.php
+        - tests/phpstan/gecka-geolocation.php

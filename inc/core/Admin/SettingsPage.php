@@ -297,6 +297,7 @@ class SettingsPage extends Base
     {
         $this->authorize('gecka_antispam_reset_stats', 'settings');
         $this->plugin->stats()->reset();
+        $this->plugin->origins()->reset();
 
         wp_safe_redirect(self::url('stats', ['reset' => 'stats']));
         exit;
@@ -598,7 +599,7 @@ class SettingsPage extends Base
 
         printf('<h2>%s</h2>', esc_html__('Statistics', 'gecka-antispam'));
         echo '<table class="form-table" role="presentation">';
-        $this->numberRow('stats_days', __('Keep the statistics', 'gecka-antispam'), (int) $settings['stats_days'], __('days', 'gecka-antispam'), __('Only daily counts are kept, by form and by outcome: no address, no content.', 'gecka-antispam'));
+        $this->numberRow('stats_days', __('Keep the statistics', 'gecka-antispam'), (int) $settings['stats_days'], __('days', 'gecka-antispam'), __('Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content.', 'gecka-antispam'));
         echo '</table>';
 
         // The reset button belongs to the form printed after this one, through

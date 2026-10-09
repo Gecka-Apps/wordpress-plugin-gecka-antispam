@@ -6,13 +6,14 @@
 namespace Gecka\WP\Plugin\Antispam\Admin;
 
 use Gecka\WP\Plugin\Antispam\Guard;
+use Gecka\WP\Plugin\Antispam\Origins;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Settings;
 
 /**
  * The statistics tab: totals of the period, submissions accepted and caught
- * over time, the share of each check in what was caught, and the counts by
- * form and outcome.
+ * over time, where the submissions caught or accepted came from, the share
+ * of each check in what was caught, and the counts by form and outcome.
  *
  * @author Laurent Dinclaux - Gecka <laurent@gecka.nc>
  */
@@ -41,6 +42,11 @@ class StatsView
      * Widest a bar gets, when the period has few of them.
      */
     private const MAX_BAR = 40;
+
+    /**
+     * Rows a list of origins shows at most.
+     */
+    private const ORIGINS_LIMIT = 100;
 
     /**
      * @var Plugin
@@ -88,6 +94,7 @@ class StatsView
 
         $this->tiles($summary);
         $this->chart($this->plugin->stats()->daily($days));
+        $this->origins($days);
         $this->shares($summary);
         $this->table($totals);
 
@@ -433,5 +440,165 @@ class StatsView
         }
 
         echo '</tbody></table></div>';
+    }
+
+    /**
+     * Prints where the submissions came from: the countries and the
+     * networks, as Gecka Geolocation tells them, and the systems the user
+     * agents name, for the submissions caught or for those accepted.
+     *
+     * @param int $days
+     *
+     * @return void
+     */
+    private function origins(int $days): void
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks what is shown.
+        $accepted = sanitize_key($_GET['origins'] ?? '') === 'accepted';
+        $outcomes = $accepted ? Origins::ACCEPTED : Origins::caught();
+        $origins = $this->plugin->origins();
+        $located = function_exists('gecka_geolocation');
+
+        printf('<h2>%s</h2>', esc_html__('Origins', 'gecka-antispam'));
+
+        echo '<div class="gecka-antispam-periods">';
+
+        foreach (['caught' => __('Caught', 'gecka-antispam'), 'accepted' => __('Accepted', 'gecka-antispam')] as $key => $label) {
+            $current = ($key === 'accepted') === $accepted;
+
+            printf(
+                '<a href="%s" class="button%s"%s>%s</a> ',
+                esc_url(SettingsPage::url('stats', ['days' => $days, 'origins' => $key])),
+                $current ? ' button-primary' : '',
+                $current ? ' aria-current="true"' : '',
+                esc_html($label),
+            );
+        }
+
+        echo '</div><div class="gecka-antispam-origins">';
+
+        $facets = [Origins::COUNTRY => __('Countries', 'gecka-antispam'), Origins::NETWORK => __('Networks', 'gecka-antispam'), Origins::SYSTEM => __('Systems', 'gecka-antispam')];
+
+        foreach ($facets as $facet => $title) {
+            $rows = $origins->top($facet, $days, $outcomes, self::ORIGINS_LIMIT);
+
+            if ($facet !== Origins::SYSTEM && ! $located && $rows === []) {
+                continue;
+            }
+
+            $this->originPanel($facet, $title, $rows, $origins->total($facet, $days, $outcomes));
+        }
+
+        echo '</div>';
+
+        if (! $located) {
+            printf('<p class="description">%s</p>', esc_html__('With the Gecka Geolocation plugin, the countries and the networks the submissions come from are counted too.', 'gecka-antispam'));
+        } elseif (function_exists('gecka_geolocation_credit') && is_array($credit = gecka_geolocation_credit())) {
+            printf(
+                '<p class="description gecka-antispam-credit">%s</p>',
+                $credit['url'] ? sprintf('<a href="%s">%s</a>', esc_url($credit['url']), esc_html($credit['text'])) : esc_html($credit['text']),
+            );
+        }
+    }
+
+    /**
+     * Prints a list of origins, each with its share drawn behind it.
+     *
+     * @param string                                                    $facet One of the facet constants of Origins.
+     * @param string                                                    $title
+     * @param array<int, array{value: string, name: string, hits: int}> $rows
+     * @param int                                                       $total
+     *
+     * @return void
+     */
+    private function originPanel(string $facet, string $title, array $rows, int $total): void
+    {
+        echo '<div class="gecka-antispam-origin-panel card">';
+        printf('<h3>%s</h3>', esc_html($title));
+
+        if ($rows === []) {
+            printf('<p class="description">%s</p></div>', esc_html__('No submission over this period.', 'gecka-antispam'));
+
+            return;
+        }
+
+        echo '<ol class="gecka-antispam-origin-list">';
+
+        foreach ($rows as $row) {
+            $share = $total > 0 ? $row['hits'] / $total * 100 : 0;
+
+            printf(
+                '<li style="--gecka-antispam-share:%s%%">%s<span class="gecka-antispam-origin-label">%s</span><span class="num">%s</span><span class="num gecka-antispam-origin-share">%s</span></li>',
+                esc_attr(number_format(max(1.0, $share), 1, '.', '')),
+                self::originIcon($facet, $row['value']), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when built.
+                self::originLabel($facet, $row), // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped when built.
+                esc_html(number_format_i18n($row['hits'])),
+                /* translators: %s: share of the submissions, a number */
+                esc_html($share > 0 && $share < 1 ? __('<1%', 'gecka-antispam') : sprintf(_x('%s%%', 'share', 'gecka-antispam'), number_format_i18n($share))),
+            );
+        }
+
+        echo '</ol></div>';
+    }
+
+    /**
+     * The image of an origin: the flag of a country, the logo of a network,
+     * a globe when there is none
+     *
+     * @param string $facet
+     * @param string $value
+     *
+     * @return string Markup, escaped.
+     */
+    private static function originIcon(string $facet, string $value): string
+    {
+        $url = null;
+
+        if ($facet === Origins::COUNTRY && $value !== '' && function_exists('gecka_geolocation_flag_url')) {
+            $url = gecka_geolocation_flag_url($value, '1x1');
+        } elseif ($facet === Origins::NETWORK && $value !== '' && function_exists('gecka_geolocation_network_logo_url')) {
+            $url = gecka_geolocation_network_logo_url((int) $value);
+        } elseif ($facet === Origins::SYSTEM) {
+            return '';
+        }
+
+        if ($url === null) {
+            return '<span class="gecka-antispam-origin-icon dashicons dashicons-admin-site-alt3" aria-hidden="true"></span>';
+        }
+
+        return sprintf('<img class="gecka-antispam-origin-icon is-%s" src="%s" alt="" width="18" height="18" loading="lazy">', esc_attr($facet), esc_url($url));
+    }
+
+    /**
+     * The name of an origin
+     *
+     * @param string                                         $facet
+     * @param array{value: string, name: string, hits: int} $row
+     *
+     * @return string Markup, escaped.
+     */
+    private static function originLabel(string $facet, array $row): string
+    {
+        $value = $row['value'];
+
+        if ($facet === Origins::SYSTEM) {
+            return esc_html(Origins::systems()[$value] ?? $value);
+        }
+
+        if ($value === '') {
+            return sprintf('<span class="description">%s</span>', esc_html__('Unknown or private address', 'gecka-antispam'));
+        }
+
+        if ($facet === Origins::COUNTRY) {
+            $name = function_exists('gecka_geolocation_country_name') ? (string) gecka_geolocation_country_name($value) : '';
+
+            return esc_html($name !== '' ? $name : $value);
+        }
+
+        $asn = 'AS' . $value;
+
+        return $row['name'] !== ''
+            ? sprintf('%s <span class="gecka-antispam-origin-asn">%s</span>', esc_html($row['name']), esc_html($asn))
+            : esc_html($asn);
     }
 }

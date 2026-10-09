@@ -376,8 +376,17 @@ days, the submissions checked, accepted, to review and caught, day by day,
 or week by week over 365 days, the share of each check in what was caught,
 and the counts by form and by check. A dashboard widget sums up the last seven days.
 
-Only daily counts are kept, by form and by outcome: no address, no content.
-They are kept 365 days (setting).
+Below the chart, the submissions caught, or those accepted, are counted by
+operating system, from the user agent, and, when the
+[Gecka Geolocation](https://github.com/Gecka-Apps/wordpress-plugin-gecka-geolocation)
+plugin is active, by country and by network, with their flags, the logos
+of the networks when its setting is on, and the credit its data asks for.
+The plugin never reads the address: the geolocation locates the visitor
+and gives back the code of the country and the number of the network with
+the name of its organisation, which are all the counters hold.
+
+Only daily counts are kept, by form and by outcome, and by country, network
+and system: no address, no content. They are kept 365 days (setting).
 
 ## ⚙️ Settings
 

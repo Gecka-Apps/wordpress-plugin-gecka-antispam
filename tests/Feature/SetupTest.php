@@ -27,6 +27,7 @@ function table_exists(string $table): bool
 
 it('creates its tables and schedules the purge', function () {
     expect(table_exists(Schema::stats()))->toBeTrue()
+        ->and(table_exists(Schema::origins()))->toBeTrue()
         ->and(table_exists(Schema::storage()->countsTable()))->toBeTrue()
         ->and(table_exists(Schema::storage()->metaTable()))->toBeTrue()
         ->and(wp_next_scheduled(Setup::PURGE_EVENT))->not->toBeFalse()
@@ -76,6 +77,7 @@ it('leaves nothing behind when uninstalled', function () {
     Setup::uninstall();
 
     expect(table_exists(Schema::stats()))->toBeFalse()
+        ->and(table_exists(Schema::origins()))->toBeFalse()
         ->and(table_exists(Schema::storage()->countsTable()))->toBeFalse()
         ->and(table_exists(Schema::storage()->metaTable()))->toBeFalse()
         ->and(get_option(Settings::OPTION))->toBeFalse()

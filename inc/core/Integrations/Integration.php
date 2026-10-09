@@ -101,6 +101,7 @@ abstract class Integration extends Base
 
         if (! $countLater || Guard::refuses($outcome)) {
             $this->plugin->stats()->record($surface, $this->counted($outcome));
+            $this->plugin->origins()->count($this->counted($outcome));
         }
 
         /**

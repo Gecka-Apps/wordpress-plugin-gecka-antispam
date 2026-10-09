@@ -224,6 +224,7 @@ class Comments extends Integration implements Learner
         $pending = $this->pending;
         $this->pending = null;
         $this->plugin->stats()->record($pending['surface'], $pending['counted']);
+        $this->plugin->origins()->count($pending['counted']);
 
         if ($pending['score'] !== null) {
             update_comment_meta($commentId, Plugin::META_SCORE, round($pending['score'], 4));
