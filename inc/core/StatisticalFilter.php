@@ -79,7 +79,7 @@ class StatisticalFilter
     /**
      * Name of a background table, without .bin: a language code.
      */
-    public const LANGUAGE_CODE = '/^[a-z]{2,3}(?:[-_][a-z0-9]{2,8})?$/';
+    public const LANGUAGE_CODE = '/^[a-z]{2,3}(?:[-_][a-z0-9]{2,8})?\z/';
 
     /**
      * @var SpamFilter|null
@@ -216,7 +216,7 @@ class StatisticalFilter
      *
      * @param string      $text
      * @param string|null $previous   What the text was learnt as, null when it never was.
-     * @param int|null    $generation The generation it was learnt in; 0 for a text learnt before generations were recorded.
+     * @param int|null    $generation The generation it was learnt in; 0 when none is recorded with it.
      * @param string      $category   What it is to be learnt as.
      *
      * @return int|null The generation the text is now learnt in as $category, null when it is not.

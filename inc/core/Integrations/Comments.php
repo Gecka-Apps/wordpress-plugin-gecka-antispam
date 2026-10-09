@@ -209,7 +209,7 @@ class Comments extends Integration implements Learner
      * filter rated it, and why it went to the spam queue or to moderation.
      *
      * @param mixed $commentId
-     * @param mixed $approved
+     * @param mixed $approved  Passed by the hook, not read: the approval was decided in approval().
      *
      * @return void
      */

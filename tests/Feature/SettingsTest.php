@@ -45,6 +45,8 @@ it('refuses a honeypot name a form already uses', function (string $name, bool $
 })->with([
     ['homepage_x7k2', true],
     ['url', false],
+    ['action', false],
+    ['redirect_to', false],
     ['email', false],
     ['wp_secret', false],
     ['1abc', false],

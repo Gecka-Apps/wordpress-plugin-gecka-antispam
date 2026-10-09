@@ -9,7 +9,7 @@ use Gecka\WP\Plugin\Antispam\Admin\RefusedView;
 use Gecka\WP\Plugin\Antispam\Integrations\GravityForms;
 
 /**
- * What the plugin leaves on a site: three tables, four options, a daily event,
+ * What the plugin leaves on a site: five tables, four options, a daily event,
  * a directory under uploads holding the background tables and the snapshot
  * of the filter, and meta on the comments, the Flamingo messages and the
  * Gravity Forms entries the statistical filter learnt from; for a while, the

@@ -286,7 +286,7 @@ it('follows the redirections of a download itself, within one time budget', func
                 default => $response,
             };
         },
-        5,
+        20,
         3,
     );
 
@@ -324,4 +324,57 @@ it('downloads nothing while the filter is off', function () {
         ->and(gecka_antispam()->backgrounds()->due())->toBeFalse();
 
     wp_set_current_user(0);
+});
+
+it('refuses a download redirected off HTTPS', function () {
+    $binary = Background::toBinary(french_table());
+    serve_release(['fr' => $binary]);
+    antispam_settings(['background_languages' => ['fr']]);
+    $base = dirname(BackgroundDownloader::DEFAULT_MANIFEST) . '/';
+
+    add_filter(
+        'pre_http_request',
+        fn($response, $args, $url) => $url === $base . 'fr.bin'
+            ? ['headers' => ['location' => 'http://mirror.example/fr.bin'], 'body' => '', 'response' => ['code' => 302, 'message' => 'Found'], 'cookies' => [], 'filename' => null]
+            : $response,
+        20,
+        3,
+    );
+
+    expect(gecka_antispam()->backgrounds()->update())->toBeFalse()
+        ->and(gecka_antispam()->backgrounds()->errors())->toContain('off HTTPS')
+        ->and(is_file($this->directory . '/fr.bin'))->toBeFalse()
+        ->and(array_filter($GLOBALS['gecka_antispam_requests'], fn(string $url): bool => str_starts_with($url, 'http://')))->toBe([]);
+});
+
+it('releases the lock only for the request holding it', function () {
+    global $wpdb;
+
+    $backgrounds = gecka_antispam()->backgrounds();
+    $other = new Backgrounds(gecka_antispam()->statisticalFilter(), gecka_antispam()->settings());
+
+    expect($backgrounds->lock())->toBeTrue();
+
+    $other->unlock();
+
+    expect($wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM %i WHERE option_name = %s', $wpdb->options, Backgrounds::LOCK)))->toBe('1')
+        ->and($other->lock())->toBeFalse();
+
+    $backgrounds->unlock();
+
+    expect($other->lock())->toBeTrue();
+    $other->unlock();
+});
+
+it('keeps a bounded account of a release: codes anchored, texts cut', function () {
+    serve_release(['fr' => Background::toBinary(french_table())], ['languages' => ['fr' => ['name' => str_repeat('x', 300), 'sources' => array_fill(0, 20, str_repeat('s', 200)), 'url' => dirname(BackgroundDownloader::DEFAULT_MANIFEST) . '/fr.bin'], "de\n" => ['name' => 'Deutsch']]]);
+    antispam_settings(['background_languages' => ['fr']]);
+
+    gecka_antispam()->backgrounds()->check();
+    $languages = gecka_antispam()->backgrounds()->state()['languages'];
+
+    expect(array_keys($languages))->toBe(['fr'])
+        ->and(strlen($languages['fr']['name']))->toBe(100)
+        ->and($languages['fr']['sources'])->toHaveCount(10)
+        ->and(strlen($languages['fr']['sources'][0]))->toBe(100);
 });

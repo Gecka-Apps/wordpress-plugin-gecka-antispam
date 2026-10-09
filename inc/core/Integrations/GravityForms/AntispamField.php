@@ -14,7 +14,8 @@ use Gecka\WP\Plugin\Antispam\Request;
  *
  * Gravity Forms builds its fields from the form saved, with no way to hand
  * them a dependency: the field reaches the plugin through gecka_antispam().
- * The method names and their missing types are those of GF_Field.
+ * The method names and the untyped parameters are those of GF_Field, which
+ * declares none; a parameter type would narrow the parent's.
  *
  * @author Laurent Dinclaux - Gecka <laurent@gecka.nc>
  */
@@ -40,7 +41,7 @@ class AntispamField extends \GF_Field
     /**
      * @return string
      */
-    public function get_form_editor_field_title()
+    public function get_form_editor_field_title(): string
     {
         return esc_attr__('Antispam', 'gecka-antispam');
     }
@@ -48,7 +49,7 @@ class AntispamField extends \GF_Field
     /**
      * @return string
      */
-    public function get_form_editor_field_description()
+    public function get_form_editor_field_description(): string
     {
         return esc_attr__('Protects the form with the honeypot and the timestamp of Gecka Antispam. Visitors see nothing.', 'gecka-antispam');
     }
@@ -56,7 +57,7 @@ class AntispamField extends \GF_Field
     /**
      * @return array{group: string, text: string}
      */
-    public function get_form_editor_button()
+    public function get_form_editor_button(): array
     {
         return [
             'group' => 'advanced_fields',
@@ -67,7 +68,7 @@ class AntispamField extends \GF_Field
     /**
      * @return string[]
      */
-    public function get_form_editor_field_settings()
+    public function get_form_editor_field_settings(): array
     {
         return ['admin_label_setting', 'css_class_setting'];
     }
@@ -75,7 +76,7 @@ class AntispamField extends \GF_Field
     /**
      * @return bool
      */
-    public function is_conditional_logic_supported()
+    public function is_conditional_logic_supported(): bool
     {
         return false;
     }
@@ -89,7 +90,7 @@ class AntispamField extends \GF_Field
      *
      * @return string
      */
-    public function get_field_label($force_frontend_label = true, $value = '')
+    public function get_field_label($force_frontend_label = true, $value = ''): string
     {
         return $this->is_form_editor() ? (string) parent::get_field_label($force_frontend_label, $value) : '';
     }
@@ -104,7 +105,7 @@ class AntispamField extends \GF_Field
      *
      * @return string
      */
-    public function get_field_input($form, $value = '', $entry = null)
+    public function get_field_input($form, $value = '', $entry = null): string
     {
         if ($this->is_form_editor()) {
             return '<p>' . esc_html__('Honeypot and timestamp, invisible to visitors.', 'gecka-antispam') . '</p>';

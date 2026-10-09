@@ -72,12 +72,13 @@ class Schema
         require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 
         $collate = $wpdb->get_charset_collate();
+        $surfaceLength = Settings::SURFACE_LENGTH;
         $stats = self::stats();
 
         dbDelta(
             "CREATE TABLE $stats (
             day date NOT NULL,
-            surface varchar(40) NOT NULL,
+            surface varchar($surfaceLength) NOT NULL,
             outcome varchar(20) NOT NULL,
             hits int(10) unsigned NOT NULL DEFAULT 0,
             PRIMARY KEY  (day,surface,outcome)
@@ -105,7 +106,7 @@ class Schema
             "CREATE TABLE $journal (
             id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
             hash char(32) NOT NULL,
-            surface varchar(40) NOT NULL,
+            surface varchar($surfaceLength) NOT NULL,
             outcome varchar(20) NOT NULL,
             text mediumtext NOT NULL,
             hits int(10) unsigned NOT NULL DEFAULT 1,

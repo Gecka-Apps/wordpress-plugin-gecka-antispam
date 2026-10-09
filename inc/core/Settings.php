@@ -36,6 +36,12 @@ class Settings
     public const CUSTOM_PREFIX = 'custom:';
 
     /**
+     * Characters the name of a form may take: the width of its column in
+     * the tables.
+     */
+    public const SURFACE_LENGTH = 40;
+
+    /**
      * Every form of the plugin is protected.
      */
     public const MODE_ALL = 'all';
@@ -83,7 +89,9 @@ class Settings
      */
     private const TAKEN_NAMES = [
         'author', 'comment', 'email', 'url', 'name', 'log', 'pwd', 'user_login', 'user_email', 'username',
-        'password', 'website', 'phone', 'company', 'address', 'subject', 'message',
+        'password', 'website', 'phone', 'company', 'address', 'subject', 'message', 'first_name', 'last_name',
+        'action', 'page', 'post', 'redirect_to', 'rememberme', 'testcookie', 's', 'p', 'cat', 'tag', 'm', 'paged',
+        'register', 'login', 'submit',
     ];
 
     /**
@@ -183,7 +191,7 @@ class Settings
      */
     public static function customSurface(string $form): string
     {
-        return self::CUSTOM_PREFIX . (substr(sanitize_key($form), 0, 40 - strlen(self::CUSTOM_PREFIX)) ?: 'form');
+        return self::CUSTOM_PREFIX . (substr(sanitize_key($form), 0, self::SURFACE_LENGTH - strlen(self::CUSTOM_PREFIX)) ?: 'form');
     }
 
     /**

@@ -681,7 +681,8 @@ class GravityForms extends Integration implements Learner
             $type = self::type($field);
 
             if (is_string($value) && in_array($type, ['multiselect', 'list'], true)) {
-                $items = $type === 'list' ? maybe_unserialize($value) : json_decode($value, true);
+                // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_unserialize -- A list Gravity Forms serialised itself; no object is expected in it.
+                $items = $type === 'list' ? (is_serialized($value) ? unserialize($value, ['allowed_classes' => false]) : $value) : json_decode($value, true);
                 $value = is_array($items) ? array_merge(...array_map(static fn($item): array => array_values((array) $item), array_values($items))) : $value;
             }
 

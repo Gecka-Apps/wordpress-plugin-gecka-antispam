@@ -190,11 +190,11 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
-     * @param object $item
+     * @param mixed $item An entry of the journal; untyped in WP_List_Table.
      *
      * @return string
      */
-    protected function column_cb($item): string
+    protected function column_cb(mixed $item): string
     {
         $id = (int) ($item->id ?? 0);
 
@@ -273,13 +273,13 @@ class RefusedTable extends \WP_List_Table
      * learning it while the statistical filter is on, the other way when it
      * was learnt, unlearning it, deleting it.
      *
-     * @param object $item
-     * @param string $column_name
-     * @param string $primary
+     * @param mixed $item        An entry of the journal; untyped in WP_List_Table.
+     * @param mixed $column_name
+     * @param mixed $primary
      *
      * @return string
      */
-    protected function handle_row_actions($item, $column_name, $primary): string
+    protected function handle_row_actions(mixed $item, mixed $column_name, mixed $primary): string
     {
         if ($column_name !== $primary) {
             return '';

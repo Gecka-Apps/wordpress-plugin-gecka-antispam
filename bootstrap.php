@@ -18,7 +18,6 @@
  * Domain Path: /languages/
  */
 
-// Basic security, prevents file from being loaded directly.
 defined('ABSPATH') || exit;
 
 use Gecka\WP\Plugin\Antispam\Plugin;

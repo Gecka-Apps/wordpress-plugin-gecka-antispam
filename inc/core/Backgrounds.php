@@ -89,6 +89,22 @@ class Backgrounds
     public const LOCK = 'gecka_antispam_backgrounds_lock';
 
     /**
+     * Languages a release may offer at most, and characters of a name or a
+     * source kept: what the plugin stores and the tab shows of a release
+     * stays bounded whatever the release says.
+     */
+    private const MAX_LANGUAGES = 200;
+
+    private const MAX_TEXT = 100;
+
+    /**
+     * Value of the lock while this request holds it.
+     *
+     * @var string|null
+     */
+    private ?string $lockToken = null;
+
+    /**
      * Redirections followed at most to download a file: GitHub serves a
      * release file through two.
      */
@@ -162,14 +178,14 @@ class Backgrounds
     }
 
     /**
-     * Whether the tables are to be downloaded now: the filter is on, and
-     * the plugin keeps the tables
+     * Whether the tables are to be downloaded now: the filter is on and can
+     * read them, and the plugin keeps the tables
      *
      * @return bool
      */
     public function active(): bool
     {
-        return (bool) $this->settings->get('filter') && self::enabled();
+        return (bool) $this->settings->get('filter') && StatisticalFilter::supported() && self::enabled();
     }
 
     /**
@@ -183,8 +199,12 @@ class Backgrounds
     {
         global $wpdb;
 
+        $token = time() . ':' . wp_generate_password(12, false);
+
         // phpcs:disable WordPress.DB.DirectDatabaseQuery -- An atomic insert, as WP_Upgrader::create_lock() does; the option cache never holds it.
-        if ($wpdb->query($wpdb->prepare('INSERT IGNORE INTO %i (option_name, option_value, autoload) VALUES (%s, %s, %s)', $wpdb->options, self::LOCK, (string) time(), 'off'))) {
+        if ($wpdb->query($wpdb->prepare('INSERT IGNORE INTO %i (option_name, option_value, autoload) VALUES (%s, %s, %s)', $wpdb->options, self::LOCK, $token, 'off'))) {
+            $this->lockToken = $token;
+
             return true;
         }
 
@@ -194,12 +214,20 @@ class Backgrounds
             return false;
         }
 
-        return (bool) $wpdb->query($wpdb->prepare('UPDATE %i SET option_value = %s WHERE option_name = %s AND option_value = %s', $wpdb->options, (string) time(), self::LOCK, $since));
+        if ($wpdb->query($wpdb->prepare('UPDATE %i SET option_value = %s WHERE option_name = %s AND option_value = %s', $wpdb->options, $token, self::LOCK, $since))) {
+            $this->lockToken = $token;
+
+            return true;
+        }
+
+        return false;
         // phpcs:enable
     }
 
     /**
-     * Releases the lock of the downloads.
+     * Releases the lock of the downloads, when this request holds it: a
+     * request outliving the takeover delay must not release the lock of the
+     * request that took it over.
      *
      * @return void
      */
@@ -207,8 +235,13 @@ class Backgrounds
     {
         global $wpdb;
 
+        if ($this->lockToken === null) {
+            return;
+        }
+
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- See lock().
-        $wpdb->delete($wpdb->options, ['option_name' => self::LOCK]);
+        $wpdb->delete($wpdb->options, ['option_name' => self::LOCK, 'option_value' => $this->lockToken]);
+        $this->lockToken = null;
     }
 
     /**
@@ -368,16 +401,12 @@ class Backgrounds
             $state['languages'] = [];
 
             foreach ($manifest['languages'] as $code => $entry) {
+                if (count($state['languages']) >= self::MAX_LANGUAGES) {
+                    break;
+                }
+
                 if (is_string($code) && preg_match(StatisticalFilter::LANGUAGE_CODE, $code) && is_array($entry)) {
-                    $state['languages'][$code] = [
-                        'name' => (string) ($entry['name'] ?? $code),
-                        'sentences' => (int) ($entry['sentences'] ?? 0),
-                        'words' => (int) ($entry['words'] ?? 0),
-                        'sources' => array_values(array_map('strval', (array) ($entry['sources'] ?? []))),
-                        'sha256' => (string) ($entry['sha256'] ?? ''),
-                        'url' => (string) ($entry['url'] ?? ''),
-                        'bytes' => (int) ($entry['bytes'] ?? 0),
-                    ];
+                    $state['languages'][$code] = self::entry($code, $entry);
                 }
             }
 
@@ -423,7 +452,7 @@ class Backgrounds
         try {
             $entry = $state['languages'][$code] ?? null;
 
-            if ($entry === null || ! preg_match(StatisticalFilter::LANGUAGE_CODE, $code)) {
+            if ($entry === null || ! preg_match(StatisticalFilter::LANGUAGE_CODE, (string) $code)) {
                 throw new \RuntimeException(esc_html__('the release does not offer it.', 'gecka-antispam'));
             }
 
@@ -454,6 +483,8 @@ class Backgrounds
         $directory = $this->statisticalFilter->backgroundDirectory();
 
         foreach ($state['tables'] as $code => $checksum) {
+            $code = (string) $code;
+
             if (in_array($code, $requested, true)) {
                 continue;
             }
@@ -536,7 +567,9 @@ class Backgrounds
             $name = $this->state()['languages'][$code]['name'] ?? $code;
         }
 
-        return mb_strtoupper(mb_substr($name, 0, 1)) . mb_substr($name, 1);
+        // WordPress fills in for mb_substr without the extension, not for
+        // mb_strtoupper.
+        return function_exists('mb_strtoupper') ? mb_strtoupper(mb_substr($name, 0, 1)) . mb_substr($name, 1) : ucfirst($name);
     }
 
     /**
@@ -571,16 +604,8 @@ class Backgrounds
         $languages = [];
 
         foreach ((array) ($saved['languages'] ?? []) as $code => $entry) {
-            if (is_array($entry)) {
-                $languages[(string) $code] = [
-                    'name' => (string) ($entry['name'] ?? $code),
-                    'sentences' => (int) ($entry['sentences'] ?? 0),
-                    'words' => (int) ($entry['words'] ?? 0),
-                    'sources' => array_map('strval', (array) ($entry['sources'] ?? [])),
-                    'sha256' => (string) ($entry['sha256'] ?? ''),
-                    'url' => (string) ($entry['url'] ?? ''),
-                    'bytes' => (int) ($entry['bytes'] ?? 0),
-                ];
+            if (is_array($entry) && count($languages) < self::MAX_LANGUAGES) {
+                $languages[(string) $code] = self::entry((string) $code, $entry);
             }
         }
 
@@ -592,6 +617,30 @@ class Backgrounds
             'checked' => (int) ($saved['checked'] ?? 0),
             'error' => (string) ($saved['error'] ?? ''),
             'errors' => array_map('strval', (array) ($saved['errors'] ?? [])),
+        ];
+    }
+
+    /**
+     * What is kept of a language a release offers, the texts cut to
+     * MAX_TEXT characters
+     *
+     * @param string               $code
+     * @param array<string, mixed> $entry As the release or the saved state gives it.
+     *
+     * @return array{name: string, sentences: int, words: int, sources: string[], sha256: string, url: string, bytes: int}
+     */
+    private static function entry(string $code, array $entry): array
+    {
+        $text = static fn(mixed $value): string => mb_substr(trim((string) (is_scalar($value) ? $value : '')), 0, self::MAX_TEXT);
+
+        return [
+            'name' => $text($entry['name'] ?? $code) ?: $code,
+            'sentences' => (int) ($entry['sentences'] ?? 0),
+            'words' => (int) ($entry['words'] ?? 0),
+            'sources' => array_values(array_filter(array_map($text, array_slice((array) ($entry['sources'] ?? []), 0, 10)))),
+            'sha256' => (string) ($entry['sha256'] ?? ''),
+            'url' => (string) ($entry['url'] ?? ''),
+            'bytes' => (int) ($entry['bytes'] ?? 0),
         ];
     }
 
@@ -811,6 +860,11 @@ class Backgrounds
             }
 
             $url = \WP_Http::make_absolute_url($location, $url);
+
+            if (strtolower((string) wp_parse_url($url, PHP_URL_SCHEME)) !== 'https') {
+                /* translators: %s: URL */
+                throw new \RuntimeException(esc_html(sprintf(__('Cannot download %s: redirected off HTTPS.', 'gecka-antispam'), $url)));
+            }
         }
 
         if ($status !== 200) {
