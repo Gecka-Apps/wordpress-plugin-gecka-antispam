@@ -57,6 +57,8 @@ class Flamingo extends Integration implements Learner
     private const HAM_DONE = 'gecka_antispam_ham_done';
 
     /**
+     * Whether Flamingo is active
+     *
      * @return bool
      */
     public function available(): bool
@@ -65,6 +67,9 @@ class Flamingo extends Integration implements Learner
     }
 
     /**
+     * Hooks the learning from the inbox, its column, its box, its actions
+     * and its notices up.
+     *
      * @return void
      */
     public function setup(): void

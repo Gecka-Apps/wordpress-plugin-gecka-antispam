@@ -53,6 +53,8 @@ class Comments extends Integration implements Learner
     private ?array $pending = null;
 
     /**
+     * Always: the comments are those of WordPress
+     *
      * @return bool
      */
     public function available(): bool
@@ -61,6 +63,10 @@ class Comments extends Integration implements Learner
     }
 
     /**
+     * Hooks the fields into the comment form, the check ahead of the other
+     * plugins, the approval, the count once the comment is saved, the
+     * learning from moderation and the column of the comments list.
+     *
      * @return void
      */
     public function setup(): void

@@ -85,6 +85,8 @@ class ContactForm7 extends Integration
     private const SUBJECT_TYPES = ['text', 'textarea', 'select', 'radio', 'checkbox'];
 
     /**
+     * Whether Contact Form 7 is active
+     *
      * @return bool
      */
     public function available(): bool
@@ -93,6 +95,9 @@ class ContactForm7 extends Integration
     }
 
     /**
+     * Hooks the tag, the fields, the spam check and the configuration
+     * validator of Contact Form 7 up.
+     *
      * @return void
      */
     public function setup(): void

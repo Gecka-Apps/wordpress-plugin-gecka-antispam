@@ -63,6 +63,8 @@ class Acf extends Integration
     private const CONTAINER_TYPES = ['group', 'repeater', 'flexible_content'];
 
     /**
+     * Whether ACF or Secure Custom Fields is active
+     *
      * @return bool
      */
     public function available(): bool
@@ -71,6 +73,8 @@ class Acf extends Integration
     }
 
     /**
+     * Hooks the fields into acf_form() and the check into its validation.
+     *
      * @return void
      */
     public function setup(): void

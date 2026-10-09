@@ -9,15 +9,15 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-09T17:15:31+11:00\n"
+"POT-Creation-Date: 2026-10-09T18:10:17+11:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: gecka-antispam\n"
 
 #. Plugin Name of the plugin
 #: bootstrap.php
-#: inc/core/Admin/SettingsPage.php:117
-#: inc/core/Admin/SiteHealth.php:326
+#: inc/core/Admin/SettingsPage.php:124
+#: inc/core/Admin/SiteHealth.php:367
 msgid "Gecka Antispam"
 msgstr ""
 
@@ -41,52 +41,52 @@ msgstr ""
 msgid "https://gecka.nc"
 msgstr ""
 
-#: inc/core/Admin/DashboardWidget.php:41
-#: inc/core/Admin/SettingsPage.php:151
-#: inc/core/Admin/SettingsPage.php:162
+#: inc/core/Admin/DashboardWidget.php:49
+#: inc/core/Admin/SettingsPage.php:158
 #: inc/core/Admin/SettingsPage.php:169
-#: inc/core/Admin/SiteHealth.php:408
-#: inc/core/Integrations/Comments.php:83
-#: inc/core/Integrations/Flamingo.php:277
-#: inc/core/Integrations/Flamingo.php:311
-#: inc/core/Integrations/GravityForms.php:347
-#: inc/core/Integrations/GravityForms.php:366
-#: inc/core/Integrations/GravityForms/AntispamField.php:45
+#: inc/core/Admin/SettingsPage.php:176
+#: inc/core/Admin/SiteHealth.php:449
+#: inc/core/Integrations/Comments.php:91
+#: inc/core/Integrations/Flamingo.php:284
+#: inc/core/Integrations/Flamingo.php:318
+#: inc/core/Integrations/GravityForms.php:360
+#: inc/core/Integrations/GravityForms.php:380
+#: inc/core/Integrations/GravityForms/AntispamField.php:50
 msgid "Antispam"
 msgstr ""
 
-#: inc/core/Admin/DashboardWidget.php:54
-#: inc/core/Admin/StatsView.php:166
+#: inc/core/Admin/DashboardWidget.php:65
+#: inc/core/Admin/StatsView.php:168
 msgid "Submissions checked"
 msgstr ""
 
-#: inc/core/Admin/DashboardWidget.php:55
-#: inc/core/Admin/StatsView.php:168
-#: inc/core/Guard.php:112
-#: inc/core/Integrations/Flamingo.php:472
+#: inc/core/Admin/DashboardWidget.php:66
+#: inc/core/Admin/StatsView.php:170
+#: inc/core/Guard.php:120
+#: inc/core/Integrations/Flamingo.php:474
 msgid "To review"
 msgstr ""
 
-#: inc/core/Admin/DashboardWidget.php:56
-#: inc/core/Admin/StatsView.php:169
-#: inc/core/Admin/StatsView.php:224
-#: inc/core/Admin/StatsView.php:283
-#: inc/core/Admin/StatsView.php:466
+#: inc/core/Admin/DashboardWidget.php:67
+#: inc/core/Admin/StatsView.php:171
+#: inc/core/Admin/StatsView.php:226
+#: inc/core/Admin/StatsView.php:285
+#: inc/core/Admin/StatsView.php:468
 msgid "Caught"
 msgstr ""
 
-#: inc/core/Admin/DashboardWidget.php:64
-#: inc/core/Admin/FilterView.php:150
+#: inc/core/Admin/DashboardWidget.php:75
+#: inc/core/Admin/FilterView.php:152
 msgid "Spam texts learnt"
 msgstr ""
 
-#: inc/core/Admin/DashboardWidget.php:65
-#: inc/core/Admin/FilterView.php:151
+#: inc/core/Admin/DashboardWidget.php:76
+#: inc/core/Admin/FilterView.php:153
 msgid "Legitimate texts learnt"
 msgstr ""
 
 #. translators: %d: number of days
-#: inc/core/Admin/DashboardWidget.php:68
+#: inc/core/Admin/DashboardWidget.php:79
 #, php-format
 msgid "Last %d day"
 msgid_plural "Last %d days"
@@ -94,668 +94,675 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of refused submissions
-#: inc/core/Admin/DashboardWidget.php:83
+#: inc/core/Admin/DashboardWidget.php:94
 #, php-format
 msgid "%s refused submission to review"
 msgid_plural "%s refused submissions to review"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Admin/DashboardWidget.php:87
+#: inc/core/Admin/DashboardWidget.php:98
 msgid "See the statistics"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:47
+#: inc/core/Admin/FilterView.php:49
 msgid "The statistical filter rates each message from 0 to 100 % spam, comparing it with what it learnt: the spam and the legitimate messages you mark in the comments, Flamingo, Gravity Forms and the Antispam tab of Security > Journal."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:62
+#: inc/core/Admin/FilterView.php:64
 msgid "The statistical filter forgot everything it learnt. The comments and messages already marked can be learnt again with the button below."
 msgstr ""
 
 #. translators: %s: language codes
-#: inc/core/Admin/FilterView.php:70
+#: inc/core/Admin/FilterView.php:72
 #, php-format
 msgid "Background tables up to date: %s."
 msgstr ""
 
 #. translators: %s: language codes
-#: inc/core/Admin/FilterView.php:70
+#: inc/core/Admin/FilterView.php:72
 msgid "No background table to download."
 msgstr ""
 
 #. translators: %s: error
-#: inc/core/Admin/FilterView.php:73
+#: inc/core/Admin/FilterView.php:75
 #, php-format
 msgid "The background tables could not all be downloaded: %s"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:75
+#: inc/core/Admin/FilterView.php:77
 msgid "Another request is updating the background tables. Try again in a minute."
 msgstr ""
 
 #. translators: 1: spam texts learnt, 2: legitimate texts learnt
-#: inc/core/Admin/FilterView.php:82
+#: inc/core/Admin/FilterView.php:84
 #, php-format
 msgid "Learnt: spam texts %1$s, legitimate texts %2$s."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:91
+#: inc/core/Admin/FilterView.php:93
 msgid "Learning stopped: the statistical filter could not learn a text. What is left was not marked and will be learnt next time."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:110
-#: inc/core/Admin/FilterView.php:339
+#: inc/core/Admin/FilterView.php:112
+#: inc/core/Admin/FilterView.php:341
 msgid "State"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:113
-#: inc/core/Admin/SiteHealth.php:376
+#: inc/core/Admin/FilterView.php:115
+#: inc/core/Admin/SiteHealth.php:417
 msgid "Switched off."
 msgstr ""
 
 #. translators: %s: why the filter cannot work
-#: inc/core/Admin/FilterView.php:116
-#: inc/core/Admin/SiteHealth.php:383
+#: inc/core/Admin/FilterView.php:118
+#: inc/core/Admin/SiteHealth.php:424
 #, php-format
 msgid "Not working: %s"
 msgstr ""
 
 #. translators: 1: rejection threshold, 2: spam threshold, 3: acceptance threshold, in percent
-#: inc/core/Admin/FilterView.php:120
+#: inc/core/Admin/FilterView.php:122
 #, php-format
 msgid "Active. Refused from %1$d %% spam, marked as spam from %2$d %%, flagged for review from %3$d %%, accepted below."
 msgstr ""
 
 #. translators: 1: spam texts still to learn, 2: legitimate texts still to learn
-#: inc/core/Admin/FilterView.php:128
+#: inc/core/Admin/FilterView.php:130
 #, php-format
 msgid "Learning: it rates nothing yet. Still to learn: spam texts %1$s, legitimate texts %2$s."
 msgstr ""
 
 #. translators: %s: directory on the server
-#: inc/core/Admin/FilterView.php:142
+#: inc/core/Admin/FilterView.php:144
 #, php-format
 msgid "The counters cannot be kept in %s: each rating reads them from the database, which takes longer. Let PHP write in that directory."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:152
+#: inc/core/Admin/FilterView.php:154
 msgid "Counters in use"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:161
+#: inc/core/Admin/FilterView.php:163
 msgid "Last rotation"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:162
-#: inc/core/Admin/SiteHealth.php:298
+#: inc/core/Admin/FilterView.php:164
+#: inc/core/Admin/SiteHealth.php:339
 msgid "none yet"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:168
+#: inc/core/Admin/FilterView.php:170
 msgid "Next rotation"
 msgstr ""
 
 #. translators: 1: rotation period in months, 2: twice that, 3: number of texts
-#: inc/core/Admin/FilterView.php:182
+#: inc/core/Admin/FilterView.php:184
 #, php-format
 msgid "A text learnt counts in full for %1$d to %2$d months, then its weight halves every %1$d months, so that the spam of today outweighs the campaigns of past years. The counters rotate every %1$d months, or sooner once %3$s texts of one kind were learnt since the last rotation."
 msgstr ""
 
 #. translators: 1: spam texts not learnt yet, 2: legitimate texts not learnt yet
-#: inc/core/Admin/FilterView.php:198
+#: inc/core/Admin/FilterView.php:200
 #, php-format
 msgid "Already on the site and not learnt yet: spam texts %1$s, legitimate texts %2$s. They come from the spam queue and the approved comments, the spam and the inbox of Flamingo, and the Gravity Forms entries."
 msgstr ""
 
 #. translators: %d: months
-#: inc/core/Admin/FilterView.php:206
+#: inc/core/Admin/FilterView.php:208
 #, php-format
 msgid "Those older than %d months are left out: they would have halved since. The most recent are learnt first."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:210
+#: inc/core/Admin/FilterView.php:212
 msgid "A spam is learnt only when a person or Akismet marked it: one this filter or a check for bots caught is left out, as it would only teach the filter what it already believes."
 msgstr ""
 
 #. translators: %d: months
-#: inc/core/Admin/FilterView.php:218
+#: inc/core/Admin/FilterView.php:220
 #, php-format
 msgid "Every comment and message of the last %d months already marked as spam or as legitimate has been read, and learnt unless left out."
 msgstr ""
 
 #. translators: 1: spam texts learnt, 2: legitimate texts learnt, 3: texts left
-#: inc/core/Admin/FilterView.php:237
+#: inc/core/Admin/FilterView.php:239
 #, php-format
 msgid "Learnt: spam texts %1$s, legitimate texts %2$s. Left: %3$s."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:238
+#: inc/core/Admin/FilterView.php:240
 msgid "The learning stopped on an error. What was learnt is kept: click again to go on."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:240
+#: inc/core/Admin/FilterView.php:242
 msgid "Learn from the existing comments and messages"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:241
+#: inc/core/Admin/FilterView.php:243
 msgid "Learning"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:245
+#: inc/core/Admin/FilterView.php:247
 msgid "Forget everything learnt"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:245
+#: inc/core/Admin/FilterView.php:247
 msgid "Forget every spam and legitimate text the filter learnt?"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:260
-#: inc/core/Admin/SettingsPage.php:179
-#: inc/core/Admin/SettingsPage.php:256
+#: inc/core/Admin/FilterView.php:262
+#: inc/core/Admin/SettingsPage.php:186
+#: inc/core/Admin/SettingsPage.php:266
 msgid "Settings"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:266
+#: inc/core/Admin/FilterView.php:268
 msgid "Filter"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:266
+#: inc/core/Admin/FilterView.php:268
 msgid "Rate the texts, and learn from what is marked as spam or not spam."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:270
+#: inc/core/Admin/FilterView.php:272
 msgid "Rejection threshold"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:270
+#: inc/core/Admin/FilterView.php:272
 msgid "From this rating, a text is refused with an error, as by the checks of the forms, and kept in the Antispam tab of Security > Journal. 100 refuses none."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:271
+#: inc/core/Admin/FilterView.php:273
 msgid "Spam threshold"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:271
+#: inc/core/Admin/FilterView.php:273
 msgid "From this rating, a text is marked as spam: a comment goes to the spam queue, a Contact Form 7 message to the spam of Flamingo, a Gravity Forms entry to its spam, where it can be marked as not spam."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:272
+#: inc/core/Admin/FilterView.php:274
 msgid "Acceptance threshold"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:272
+#: inc/core/Admin/FilterView.php:274
 msgid "Below this rating, a text goes through. From it up to the spam threshold, it goes through but is flagged for review: a comment waits for moderation, a Gravity Forms entry gets a note, Flamingo shows it in its Antispam column. The same value as the spam threshold flags none."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:273
+#: inc/core/Admin/FilterView.php:275
 msgid "Spam texts to learn first"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:273
-#: inc/core/Admin/FilterView.php:274
+#: inc/core/Admin/FilterView.php:275
+#: inc/core/Admin/FilterView.php:276
 msgid "texts"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:273
+#: inc/core/Admin/FilterView.php:275
 msgid "The filter rates nothing until it has learnt this many spam texts, and the legitimate texts below."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:274
+#: inc/core/Admin/FilterView.php:276
 msgid "Legitimate texts to learn first"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:274
+#: inc/core/Admin/FilterView.php:276
 msgid "The filter rates nothing until it has learnt this many legitimate texts, and the spam texts above."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:275
+#: inc/core/Admin/FilterView.php:277
 msgid "Rotation period"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:275
+#: inc/core/Admin/FilterView.php:277
 msgid "months"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:275
+#: inc/core/Admin/FilterView.php:277
 msgid "At each rotation, the archived counters halve and the counters learnt since the previous rotation join them. Shorter, the filter follows new spam sooner and forgets sooner; a site receiving few legitimate messages is better off with a longer period."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:277
+#: inc/core/Admin/FilterView.php:279
 msgid "Learn from approved comments"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:277
+#: inc/core/Admin/FilterView.php:279
 msgid "Learn as legitimate a comment approved from the moderation queue."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:303
-#: inc/core/Admin/Help.php:63
-#: inc/core/Admin/SiteHealth.php:302
+#: inc/core/Admin/FilterView.php:305
+#: inc/core/Admin/Help.php:65
+#: inc/core/Admin/SiteHealth.php:343
 msgid "Background tables"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:306
+#: inc/core/Admin/FilterView.php:308
 msgid "Background tables left out:"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:320
+#: inc/core/Admin/FilterView.php:322
 msgid "No background table yet. Without one, the filter tells common words from rare ones by what it learnt alone, and takes a text in a language it learnt as spam only for spam. The tables of the languages chosen below are downloaded in the background; the button below downloads them now."
 msgstr ""
 
 #. translators: %s: directory on the server
-#: inc/core/Admin/FilterView.php:323
+#: inc/core/Admin/FilterView.php:325
 #, php-format
 msgid "No background table found in %s. Without one, the filter tells common words from rare ones by what it learnt alone, and takes a text in a language it learnt as spam only for spam. Copy there the tables of the languages the site receives, fr.bin, en.bin."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:335
+#: inc/core/Admin/FilterView.php:337
 msgid "Language"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:336
+#: inc/core/Admin/FilterView.php:338
 msgid "Sentences"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:337
+#: inc/core/Admin/FilterView.php:339
 msgid "Dictionary words"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:338
+#: inc/core/Admin/FilterView.php:340
 msgid "Counters"
 msgstr ""
 
 #. translators: 1: release, 2: date
-#: inc/core/Admin/FilterView.php:369
+#: inc/core/Admin/FilterView.php:371
 #, php-format
 msgid "Release %1$s of the tables, checked on %2$s. The tables chosen are checked again every week."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:370
+#: inc/core/Admin/FilterView.php:372
 msgid "unknown"
 msgstr ""
 
 #. translators: %s: error
-#: inc/core/Admin/FilterView.php:379
+#: inc/core/Admin/FilterView.php:381
 #, php-format
 msgid "The last check of the background tables failed: %s"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:395
+#: inc/core/Admin/FilterView.php:397
 msgid "Save the languages"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:406
+#: inc/core/Admin/FilterView.php:408
 msgid "Reading the release of the tables…"
 msgstr ""
 
 #. translators: 1: language, 2: number of the table, 3: tables to download
-#: inc/core/Admin/FilterView.php:408
+#: inc/core/Admin/FilterView.php:410
 #, php-format
 msgid "Downloading %1$s (%2$s of %3$s)…"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:409
+#: inc/core/Admin/FilterView.php:411
 msgid "Another request is updating the tables, waiting for it…"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:410
+#: inc/core/Admin/FilterView.php:412
 msgid "The update stopped on an error. The tables downloaded are kept: click again to go on."
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:412
+#: inc/core/Admin/FilterView.php:414
 msgid "Update the background tables"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:413
+#: inc/core/Admin/FilterView.php:415
 msgid "Downloading"
 msgstr ""
 
 #. translators: %s: error
-#: inc/core/Admin/FilterView.php:435
+#: inc/core/Admin/FilterView.php:437
 #, php-format
 msgid "Error: %s"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:436
+#: inc/core/Admin/FilterView.php:438
 msgid "To download"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:437
+#: inc/core/Admin/FilterView.php:439
 msgid "Copied by hand"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:438
+#: inc/core/Admin/FilterView.php:440
 msgid "Update available"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:439
+#: inc/core/Admin/FilterView.php:441
 msgid "Up to date"
-msgstr ""
-
-#: inc/core/Admin/FilterView.php:454
-#: inc/core/Admin/FilterView.php:503
-msgid "solid"
-msgstr ""
-
-#: inc/core/Admin/FilterView.php:455
-#: inc/core/Admin/FilterView.php:504
-msgid "average"
 msgstr ""
 
 #: inc/core/Admin/FilterView.php:456
 #: inc/core/Admin/FilterView.php:505
-msgid "weak"
+msgid "solid"
 msgstr ""
 
 #: inc/core/Admin/FilterView.php:457
 #: inc/core/Admin/FilterView.php:506
+msgid "average"
+msgstr ""
+
+#: inc/core/Admin/FilterView.php:458
+#: inc/core/Admin/FilterView.php:507
+msgid "weak"
+msgstr ""
+
+#: inc/core/Admin/FilterView.php:459
+#: inc/core/Admin/FilterView.php:508
 msgid "poor"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:471
+#: inc/core/Admin/FilterView.php:473
 msgid "A background table holds how often words, pairs of words, links and the like come up in ordinary text of a language, drawn from up to 300,000 sentences of news, encyclopaedia and everyday corpora. The filter compares what it learnt with it, to tell a word common in the language from one that marks spam. Without it, a legitimate message in a language the filter saw in spam only is taken for spam."
 msgstr ""
 
 #. translators: 1: maximum number of languages, 2: sentences of a solid table, 3: of an average one, 4: of a weak one
-#: inc/core/Admin/FilterView.php:478
+#: inc/core/Admin/FilterView.php:480
 #, php-format
 msgid "Choose the languages of the messages the site receives, not only the language of its pages: English nearly always, in which much of the spam is written. %1$d at most, each table taking 4 MB of memory when a text is rated. A table drawn from few sentences knows little of its language: it is solid from %2$s sentences, average from %3$s, weak from %4$s and poor below."
 msgstr ""
 
-#. translators: 1: number of sentences, 2: quality of the table
+#. translators: 1: name of the language, 2: its code
 #: inc/core/Admin/FilterView.php:514
+#, php-format
+msgctxt "language and its code"
+msgid "%1$s (%2$s)"
+msgstr ""
+
+#. translators: 1: number of sentences, 2: quality of the table
+#: inc/core/Admin/FilterView.php:517
 #, php-format
 msgid "%1$s sentence, %2$s"
 msgid_plural "%1$s sentences, %2$s"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Admin/FilterView.php:527
+#: inc/core/Admin/FilterView.php:530
 msgid "Language background tables"
 msgstr ""
 
-#: inc/core/Admin/FilterView.php:530
+#: inc/core/Admin/FilterView.php:533
 msgid "Add a language"
 msgstr ""
 
 #. translators: 1: maximum number of languages, 2: language codes
-#: inc/core/Admin/FilterView.php:537
+#: inc/core/Admin/FilterView.php:540
 #, php-format
 msgid "The languages of the messages the site receives, %1$d at most. Empty, those of the site and English: %2$s."
 msgstr ""
 
-#: inc/core/Admin/Help.php:45
+#: inc/core/Admin/Help.php:47
 msgid "What the filter reads"
 msgstr ""
 
-#: inc/core/Admin/Help.php:59
+#: inc/core/Admin/Help.php:61
 msgid "Comments and reviews"
 msgstr ""
 
-#: inc/core/Admin/Help.php:60
+#: inc/core/Admin/Help.php:62
 msgid "Other forms"
 msgstr ""
 
-#: inc/core/Admin/Help.php:86
-#: inc/core/Admin/Help.php:87
+#: inc/core/Admin/Help.php:88
+#: inc/core/Admin/Help.php:89
 msgid "Learn more"
 msgstr ""
 
-#: inc/core/Admin/Help.php:100
+#: inc/core/Admin/Help.php:102
 msgid "The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender."
 msgstr ""
 
-#: inc/core/Admin/Help.php:101
+#: inc/core/Admin/Help.php:103
 msgid "The statistical filter reads the subject and the message of a submission, and nothing of the sender: no name, email address, phone number nor address. Each integration finds them by the structure of its forms, never by the names of the fields; the tabs beside give its rules, the first that applies winning. A field found twice is read once, the subject first."
 msgstr ""
 
-#: inc/core/Admin/Help.php:113
-#: inc/core/Admin/Help.php:155
-#: inc/core/Admin/Help.php:191
+#: inc/core/Admin/Help.php:115
+#: inc/core/Admin/Help.php:157
+#: inc/core/Admin/Help.php:193
 msgid "Subject, the first rule that applies:"
 msgstr ""
 
 #. translators: 1: additional setting, 2: example
-#: inc/core/Admin/Help.php:117
+#: inc/core/Admin/Help.php:119
 #, php-format
 msgid "the fields the additional setting %1$s of the form cites as mail tags, for instance %2$s;"
 msgstr ""
 
 #. translators: %s: additional setting
-#: inc/core/Admin/Help.php:119
+#: inc/core/Admin/Help.php:121
 #, php-format
 msgid "the fields the additional setting %s cites, the subject Flamingo keeps;"
 msgstr ""
 
-#: inc/core/Admin/Help.php:120
+#: inc/core/Admin/Help.php:122
 msgid "the fields the subject of the Mail tab cites."
 msgstr ""
 
 #. translators: 1, 2: additional settings, 3, 4: mail tags
-#: inc/core/Admin/Help.php:124
+#: inc/core/Admin/Help.php:126
 #, php-format
 msgid "Only text, textarea, drop-down menu, radio button and checkbox fields count as the subject. The fields of the sender never do: those %1$s and %2$s cite, or %3$s and %4$s without them."
 msgstr ""
 
-#: inc/core/Admin/Help.php:125
-#: inc/core/Admin/Help.php:166
-#: inc/core/Admin/Help.php:200
+#: inc/core/Admin/Help.php:127
+#: inc/core/Admin/Help.php:168
+#: inc/core/Admin/Help.php:202
 msgid "Message, the first rule that applies:"
 msgstr ""
 
 #. translators: 1: additional setting, 2: example
-#: inc/core/Admin/Help.php:129
+#: inc/core/Admin/Help.php:131
 #, php-format
 msgid "the fields the additional setting %1$s cites, as many as needed, of any type, for instance %2$s;"
 msgstr ""
 
-#: inc/core/Admin/Help.php:130
+#: inc/core/Admin/Help.php:132
 msgid "every textarea field of the form."
 msgstr ""
 
 #. translators: %s: form tag option
-#: inc/core/Admin/Help.php:134
+#: inc/core/Admin/Help.php:136
 #, php-format
 msgid "A field marked %s is never read. A Flamingo message is read by the same rules, through the form it came from; once that form is deleted, by the names of its fields."
 msgstr ""
 
-#: inc/core/Admin/Help.php:135
-#: inc/core/Admin/Help.php:174
+#: inc/core/Admin/Help.php:137
+#: inc/core/Admin/Help.php:176
 msgid "Random names, the first rule that applies:"
 msgstr ""
 
 #. translators: 1: additional setting, 2: example
-#: inc/core/Admin/Help.php:139
+#: inc/core/Admin/Help.php:141
 #, php-format
 msgid "the text fields the additional setting %1$s cites, for instance %2$s;"
 msgstr ""
 
 #. translators: %s: additional setting
-#: inc/core/Admin/Help.php:141
+#: inc/core/Admin/Help.php:143
 #, php-format
 msgid "the text fields the additional setting %s cites;"
 msgstr ""
 
 #. translators: 1, 2, 3, 4: field names
-#: inc/core/Admin/Help.php:143
+#: inc/core/Admin/Help.php:145
 #, php-format
 msgid "the text fields named as a name, %1$s, %2$s, %3$s, %4$s and the like."
 msgstr ""
 
 #. translators: %s: CSS class
-#: inc/core/Admin/Help.php:159
+#: inc/core/Admin/Help.php:161
 #, php-format
 msgid "the fields carrying the CSS class %s, set under Appearance in the form editor;"
 msgstr ""
 
 #. translators: %s: merge tag
-#: inc/core/Admin/Help.php:161
+#: inc/core/Admin/Help.php:163
 #, php-format
 msgid "the fields the subject of an active notification cites as merge tags, such as %s."
 msgstr ""
 
 #. translators: %s: subject of the default notification
-#: inc/core/Admin/Help.php:165
+#: inc/core/Admin/Help.php:167
 #, php-format
 msgid "Only single line text, drop down, radio button and checkbox fields count as the subject, and never a field a notification takes its sender or recipient from: From Name, From Email, Reply To, Send To, BCC. The default notification, %s, cites no field: such a form has no subject until a notification cites one or a field carries the class."
 msgstr ""
 
 #. translators: %s: CSS class
-#: inc/core/Admin/Help.php:170
+#: inc/core/Admin/Help.php:172
 #, php-format
 msgid "the fields carrying the CSS class %s, of any type;"
 msgstr ""
 
-#: inc/core/Admin/Help.php:171
+#: inc/core/Admin/Help.php:173
 msgid "every paragraph, post title, post content and post excerpt field."
 msgstr ""
 
 #. translators: %s: CSS class
-#: inc/core/Admin/Help.php:178
+#: inc/core/Admin/Help.php:180
 #, php-format
 msgid "the single line text and Name fields carrying the CSS class %s;"
 msgstr ""
 
-#: inc/core/Admin/Help.php:179
+#: inc/core/Admin/Help.php:181
 msgid "the first and last names of the Name fields."
 msgstr ""
 
 #. translators: 1: argument of acf_form(), 2: example
-#: inc/core/Admin/Help.php:195
+#: inc/core/Admin/Help.php:197
 #, php-format
 msgid "the fields the %1$s argument of acf_form() names under subject, by name or by key, for instance %2$s;"
 msgstr ""
 
-#: inc/core/Admin/Help.php:196
+#: inc/core/Admin/Help.php:198
 msgid "the title of the post, when the form shows it."
 msgstr ""
 
-#: inc/core/Admin/Help.php:199
+#: inc/core/Admin/Help.php:201
 msgid "Only text, textarea, select, radio button, checkbox and button group fields count as the subject."
 msgstr ""
 
 #. translators: 1: argument of acf_form(), 2: example
-#: inc/core/Admin/Help.php:204
+#: inc/core/Admin/Help.php:206
 #, php-format
 msgid "the fields the %1$s argument names under message, of any type, for instance %2$s;"
 msgstr ""
 
-#: inc/core/Admin/Help.php:205
+#: inc/core/Admin/Help.php:207
 msgid "the content of the post when the form shows it, and every textarea and editor field."
 msgstr ""
 
-#: inc/core/Admin/Help.php:210
+#: inc/core/Admin/Help.php:212
 msgid "Only the fields the form shows are read, with the sub fields of its groups, repeaters and flexible contents, every row, without their HTML; the argument names a sub field as any other. A part the argument leaves out keeps its default. The argument given as an array also marks the form for protection."
 msgstr ""
 
-#: inc/core/Admin/Help.php:211
+#: inc/core/Admin/Help.php:213
 msgid "These forms create or change content and have no spam queue: the filter refuses a submission from the rejection threshold, lets the others through, and learns nothing from them."
 msgstr ""
 
 #. translators: 1: argument of acf_form(), 2: example
-#: inc/core/Admin/Help.php:215
+#: inc/core/Admin/Help.php:217
 #, php-format
 msgid "Random names: the text fields the %1$s argument names under name, for instance %2$s; none without it."
 msgstr ""
 
-#: inc/core/Admin/Help.php:227
+#: inc/core/Admin/Help.php:229
 msgid "The statistical filter reads the content of a comment, and of a WooCommerce product review, which is a comment: there is no subject."
 msgstr ""
 
-#: inc/core/Admin/Help.php:228
+#: inc/core/Admin/Help.php:230
 msgid "Random names: the name of the author."
 msgstr ""
 
-#: inc/core/Admin/Help.php:243
+#: inc/core/Admin/Help.php:245
 msgid "Login and lost password: the checks only, with nothing to read."
 msgstr ""
 
-#: inc/core/Admin/Help.php:244
+#: inc/core/Admin/Help.php:246
 msgid "Registration: the checks, and the random names check on the username."
 msgstr ""
 
-#: inc/core/Admin/Help.php:248
+#: inc/core/Admin/Help.php:250
 msgid "WooCommerce checkout and My account: the checks, and the random names check on the first and last names of the billing address, or on the username of a registration."
 msgstr ""
 
-#: inc/core/Admin/Help.php:251
+#: inc/core/Admin/Help.php:253
 msgid "These forms carry no message: the statistical filter does not read them."
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:98
+#: inc/core/Admin/RefusedTable.php:103
 msgid "Text"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:99
-#: inc/core/Admin/StatsView.php:417
+#: inc/core/Admin/RefusedTable.php:104
+#: inc/core/Admin/StatsView.php:419
 msgid "Form"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:100
+#: inc/core/Admin/RefusedTable.php:105
 msgid "Reason"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:104
+#: inc/core/Admin/RefusedTable.php:109
 msgid "Spam rating"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:107
+#: inc/core/Admin/RefusedTable.php:112
 msgid "Date"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:110
+#: inc/core/Admin/RefusedTable.php:115
 msgid "Learnt as"
 msgstr ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedTable.php:142
+#: inc/core/Admin/RefusedTable.php:152
 #, php-format
 msgid "To review (%s)"
 msgstr ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedTable.php:144
+#: inc/core/Admin/RefusedTable.php:154
 #, php-format
 msgid "Learnt (%s)"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:171
-#: inc/core/Admin/RefusedTable.php:293
+#: inc/core/Admin/RefusedTable.php:181
+#: inc/core/Admin/RefusedTable.php:305
 msgid "Learn as spam"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:172
-#: inc/core/Admin/RefusedTable.php:297
-#: inc/core/Integrations/Flamingo.php:114
-#: inc/core/Integrations/GravityForms.php:155
+#: inc/core/Admin/RefusedTable.php:182
+#: inc/core/Admin/RefusedTable.php:309
+#: inc/core/Integrations/Flamingo.php:121
+#: inc/core/Integrations/GravityForms.php:163
 msgid "Learn as legitimate"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:175
-#: inc/core/Admin/RefusedTable.php:301
+#: inc/core/Admin/RefusedTable.php:185
+#: inc/core/Admin/RefusedTable.php:313
 msgid "Unlearn"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:179
-#: inc/core/Admin/RefusedTable.php:305
+#: inc/core/Admin/RefusedTable.php:189
+#: inc/core/Admin/RefusedTable.php:317
 msgid "Delete"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:189
+#: inc/core/Admin/RefusedTable.php:201
 msgid "No refused submission learnt."
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:189
+#: inc/core/Admin/RefusedTable.php:201
 msgid "No refused submission to review."
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:204
+#: inc/core/Admin/RefusedTable.php:216
 msgid "Select this entry"
 msgstr ""
 
 #. translators: %s: number of times the same text was sent
-#: inc/core/Admin/RefusedTable.php:223
+#: inc/core/Admin/RefusedTable.php:235
 #, php-format
 msgid "sent %s time"
 msgid_plural "sent %s times"
@@ -763,59 +770,59 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: rating of the statistical filter, in percent
-#: inc/core/Admin/RefusedTable.php:268
-#: inc/core/Integrations/Comments.php:112
-#: inc/core/Integrations/Flamingo.php:469
+#: inc/core/Admin/RefusedTable.php:280
+#: inc/core/Integrations/Comments.php:120
+#: inc/core/Integrations/Flamingo.php:471
 #, php-format
 msgid "%s %% spam"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:345
+#: inc/core/Admin/RefusedTable.php:357
 msgid "Spam"
 msgstr ""
 
-#: inc/core/Admin/RefusedTable.php:345
-#: inc/core/Integrations/Flamingo.php:231
+#: inc/core/Admin/RefusedTable.php:357
+#: inc/core/Integrations/Flamingo.php:243
 msgid "Legitimate"
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:118
+#: inc/core/Admin/RefusedView.php:123
 msgid "Display mode"
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:120
+#: inc/core/Admin/RefusedView.php:125
 msgid "Compact view"
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:122
+#: inc/core/Admin/RefusedView.php:127
 msgid "Extended view"
 msgstr ""
 
 #. translators: %d: number of days
-#: inc/core/Admin/RefusedView.php:146
+#: inc/core/Admin/RefusedView.php:151
 #, php-format
 msgid "The submissions refused: those the checks of the form caught, and those the statistical filter rated past the rejection threshold. What the filter reads of each is kept, the subject and the message, with nothing of the sender, for %d days. Learn them as spam or as legitimate, or delete them. A submission learnt stays in the Learnt view, where it can be learnt the other way or unlearnt."
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:153
+#: inc/core/Admin/RefusedView.php:158
 msgid "The spam rating is what the statistical filter makes of each text today, for information: it moves as the filter learns, and stays empty while the filter is still learning."
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:179
+#: inc/core/Admin/RefusedView.php:184
 msgid "Delete every refused submission, learnt or not? What was learnt of them stays learnt."
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:180
+#: inc/core/Admin/RefusedView.php:185
 msgid "Delete everything"
 msgstr ""
 
-#: inc/core/Admin/RefusedView.php:209
-#: inc/core/Admin/SettingsPage.php:683
+#: inc/core/Admin/RefusedView.php:214
+#: inc/core/Admin/SettingsPage.php:717
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:257
+#: inc/core/Admin/RefusedView.php:262
 #, php-format
 msgid "%s entry learnt as spam."
 msgid_plural "%s entries learnt as spam."
@@ -823,7 +830,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:259
+#: inc/core/Admin/RefusedView.php:264
 #, php-format
 msgid "%s entry learnt as legitimate."
 msgid_plural "%s entries learnt as legitimate."
@@ -831,7 +838,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:261
+#: inc/core/Admin/RefusedView.php:266
 #, php-format
 msgid "%s entry deleted."
 msgid_plural "%s entries deleted."
@@ -839,19 +846,19 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:263
+#: inc/core/Admin/RefusedView.php:268
 #, php-format
 msgid "%s entry unlearnt, back to review."
 msgid_plural "%s entries unlearnt, back to review."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Admin/RefusedView.php:264
+#: inc/core/Admin/RefusedView.php:269
 msgid "Every refused submission was deleted."
 msgstr ""
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:275
+#: inc/core/Admin/RefusedView.php:280
 #, php-format
 msgid "%s entry was learnt before the previous rotation of the counters and has halved since: it cannot be unlearnt exactly and stays learnt. Learn it the other way to correct it."
 msgid_plural "%s entries were learnt before the previous rotation of the counters and have halved since: they cannot be unlearnt exactly and stay learnt. Learn them the other way to correct them."
@@ -859,647 +866,694 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. translators: %d: days a refused submission is kept
-#: inc/core/Admin/SettingsPage.php:122
+#: inc/core/Admin/SettingsPage.php:129
 #, php-format
 msgid "The forms of this site are checked for spam on this server, with no external service, no cookie and no IP address kept. The check keeps daily counts of the submissions by form and by outcome, with nothing of who sent them. To tell spam from legitimate messages, it keeps counts on hashes of the words of the subject and the message of the submissions marked as spam or not spam: no text is kept in them, and nothing ties these counts to a person. The rating the filter gives and the reason for a refusal are stored with the comment or the entry they concern, and deleted with it. A refused submission keeps its subject and its message, without the name or the email address of the sender, for a moderator to review; that message may hold personal details the sender wrote in it. It is deleted %d days after it was last sent."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:142
+#: inc/core/Admin/SettingsPage.php:149
 msgid "Security"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:147
-#: inc/core/Admin/SettingsPage.php:600
+#: inc/core/Admin/SettingsPage.php:154
+#: inc/core/Admin/SettingsPage.php:634
 msgid "Statistics"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:158
+#: inc/core/Admin/SettingsPage.php:165
 msgid "Journal"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:172
-#: inc/core/Admin/SiteHealth.php:269
+#: inc/core/Admin/SettingsPage.php:179
+#: inc/core/Admin/SiteHealth.php:310
 msgid "Statistical filter"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:533
+#. translators: %s: the error
+#: inc/core/Admin/SettingsPage.php:318
+#, php-format
+msgid "Gecka Antispam could not set its tables up, and protects nothing until it can. The setup is tried again every hour. The database said: %s"
+msgstr ""
+
+#: inc/core/Admin/SettingsPage.php:567
 msgid "Every setting is back to its default."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:540
-#: inc/core/Admin/SiteHealth.php:268
+#: inc/core/Admin/SettingsPage.php:574
+#: inc/core/Admin/SiteHealth.php:309
 msgid "Protected forms"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:571
+#: inc/core/Admin/SettingsPage.php:605
 msgid "The plugin providing these forms is not active."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:575
+#: inc/core/Admin/SettingsPage.php:609
 msgid "Only the classic checkout, the [woocommerce_checkout] shortcode, is protected: the checkout block posts to the Store API."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:583
+#: inc/core/Admin/SettingsPage.php:617
 msgid "Honeypot and timing"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:584
+#: inc/core/Admin/SettingsPage.php:618
 msgid "A submission these checks catch is refused with an error, which lets a person send it again, and kept in the Antispam tab of Security > Journal."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:589
+#: inc/core/Admin/SettingsPage.php:623
 msgid "Honeypot field name"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:591
+#: inc/core/Admin/SettingsPage.php:625
 msgid "A field people never see, which bots fill in. Drawn at random on each site; a name a bot would fill in, and that no browser autofills."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:593
+#: inc/core/Admin/SettingsPage.php:627
 msgid "Minimum delay"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:593
-#: inc/core/Admin/SettingsPage.php:594
+#: inc/core/Admin/SettingsPage.php:627
+#: inc/core/Admin/SettingsPage.php:628
 msgid "seconds"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:593
+#: inc/core/Admin/SettingsPage.php:627
 msgid "Time a form must stay on screen before it is sent: comments, contact forms, registration, checkout."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:594
+#: inc/core/Admin/SettingsPage.php:628
 msgid "Minimum delay to sign in"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:594
+#: inc/core/Admin/SettingsPage.php:628
 msgid "Same for the login and lost password forms, which password managers fill and send in a blink."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:595
+#: inc/core/Admin/SettingsPage.php:629
 msgid "Maximum age of a form"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:595
+#: inc/core/Admin/SettingsPage.php:629
 msgid "hours"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:595
+#: inc/core/Admin/SettingsPage.php:629
 msgid "8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:596
+#: inc/core/Admin/SettingsPage.php:630
 msgid "Random names"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:596
+#: inc/core/Admin/SettingsPage.php:630
 msgid "Catch names made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:602
+#: inc/core/Admin/SettingsPage.php:636
 msgid "Keep the statistics"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:602
+#: inc/core/Admin/SettingsPage.php:636
 msgid "days"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:602
+#: inc/core/Admin/SettingsPage.php:636
 msgid "Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:612
+#: inc/core/Admin/SettingsPage.php:646
 msgid "Put every setting back to its default? The name of the honeypot field is kept."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:613
+#: inc/core/Admin/SettingsPage.php:647
 msgid "Restore the default settings"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:671
 msgid "Off"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:638
+#: inc/core/Admin/SettingsPage.php:672
 msgid "Every form"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:639
+#: inc/core/Admin/SettingsPage.php:673
 msgid "Only the forms holding the marker"
 msgstr ""
 
 #. translators: %s: the form tag
-#: inc/core/Admin/SettingsPage.php:663
+#: inc/core/Admin/SettingsPage.php:697
 #, php-format
 msgid "Marker: the %s form tag, placed in the form where the fields go."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:664
+#: inc/core/Admin/SettingsPage.php:698
 msgid "Marker: the Antispam field, among the advanced fields of the form editor."
 msgstr ""
 
 #. translators: 1: the argument, 2: function, 3: function
-#: inc/core/Admin/SettingsPage.php:666
+#: inc/core/Admin/SettingsPage.php:700
 #, php-format
 msgid "Marker: %1$s in the arguments of %2$s or %3$s."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:57
-msgid "The daily task of Gecka Antispam"
-msgstr ""
-
-#: inc/core/Admin/SiteHealth.php:60
-msgid "The statistical filter of Gecka Antispam"
-msgstr ""
-
 #: inc/core/Admin/SiteHealth.php:61
-msgid "The background tables of Gecka Antispam"
+msgid "The tables of Gecka Antispam"
 msgstr ""
 
 #: inc/core/Admin/SiteHealth.php:62
+msgid "The daily task of Gecka Antispam"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:65
+msgid "The statistical filter of Gecka Antispam"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:66
+msgid "The background tables of Gecka Antispam"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:67
 msgid "The snapshot of the counters of Gecka Antispam"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:81
+#: inc/core/Admin/SiteHealth.php:86
+msgid "The tables of Gecka Antispam could not be set up"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:87
+msgid "The plugin protects nothing until they are. The setup is tried again every hour; if this persists, the database user of the site cannot create or alter tables. The database said:"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:96
+msgid "The tables of Gecka Antispam are not set up yet"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:97
+msgid "The setup runs on the next page load."
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:104
+msgid "The tables of Gecka Antispam are set up"
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:105
+msgid "They match the version of the plugin running."
+msgstr ""
+
+#: inc/core/Admin/SiteHealth.php:122
 msgid "The statistical filter of Gecka Antispam does not work"
 msgstr ""
 
 #. translators: %s: why the filter cannot work
-#: inc/core/Admin/SiteHealth.php:84
+#: inc/core/Admin/SiteHealth.php:125
 #, php-format
 msgid "It is switched on but cannot rate nor learn: %s The checks of the forms, the honeypot first, keep protecting the site."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:93
+#: inc/core/Admin/SiteHealth.php:134
 msgid "The statistical filter of Gecka Antispam works"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:94
+#: inc/core/Admin/SiteHealth.php:135
 msgid "Its tables can be read and written."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:114
+#: inc/core/Admin/SiteHealth.php:155
 msgid "Gecka Antispam could not download its background tables"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:115
+#: inc/core/Admin/SiteHealth.php:156
 msgid "The statistical filter reads on with the tables in place, if any. The download is tried again every day, and from the button of the statistical filter tab:"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:124
+#: inc/core/Admin/SiteHealth.php:165
 msgid "Gecka Antispam left background tables out"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:125
+#: inc/core/Admin/SiteHealth.php:166
 msgid "The statistical filter reads on without them:"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:134
+#: inc/core/Admin/SiteHealth.php:175
 msgid "Gecka Antispam has no background table"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:136
+#: inc/core/Admin/SiteHealth.php:177
 msgid "Without one, the statistical filter tells common words from rare ones by what it learnt alone: until it has learnt many legitimate messages, a text in a language it saw in spam only is taken for spam. The tables of the languages of the site are downloaded in the background, or now from the button of the statistical filter tab."
 msgstr ""
 
 #. translators: %s: directory on the server
-#: inc/core/Admin/SiteHealth.php:139
+#: inc/core/Admin/SiteHealth.php:180
 #, php-format
 msgid "Without one, the statistical filter tells common words from rare ones by what it learnt alone: until it has learnt many legitimate messages, a text in a language it saw in spam only is taken for spam. Copy to %s the tables of the languages the site receives, fr.bin, en.bin."
 msgstr ""
 
 #. translators: 1: language code, 2: number of sentences
-#: inc/core/Admin/SiteHealth.php:153
+#: inc/core/Admin/SiteHealth.php:194
 #, php-format
 msgid "%1$s: %2$s sentence"
 msgid_plural "%1$s: %2$s sentences"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Admin/SiteHealth.php:161
+#: inc/core/Admin/SiteHealth.php:202
 msgid "Gecka Antispam reads weak background tables"
 msgstr ""
 
 #. translators: %s: number of sentences
-#: inc/core/Admin/SiteHealth.php:164
+#: inc/core/Admin/SiteHealth.php:205
 #, php-format
 msgid "A table drawn from fewer than %s sentences knows little of its language, and helps the statistical filter little. Check that the site receives these languages, or learn more legitimate messages in them:"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:174
+#: inc/core/Admin/SiteHealth.php:215
 msgid "Gecka Antispam reads its background tables"
 msgstr ""
 
 #. translators: %s: language codes
-#: inc/core/Admin/SiteHealth.php:176
+#: inc/core/Admin/SiteHealth.php:217
 #, php-format
 msgid "Languages: %s."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:191
+#: inc/core/Admin/SiteHealth.php:232
 msgid "Gecka Antispam cannot keep a snapshot of its counters"
 msgstr ""
 
 #. translators: %s: directory on the server
-#: inc/core/Admin/SiteHealth.php:194
+#: inc/core/Admin/SiteHealth.php:235
 #, php-format
 msgid "Each rating reads the counters from the database, which takes longer. Let PHP write in %s."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:203
+#: inc/core/Admin/SiteHealth.php:244
 msgid "Gecka Antispam keeps a snapshot of its counters"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:204
+#: inc/core/Admin/SiteHealth.php:245
 msgid "A rating reads the counters from a file, not from the database."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:221
+#: inc/core/Admin/SiteHealth.php:262
 msgid "The daily task of Gecka Antispam is not scheduled"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:222
+#: inc/core/Admin/SiteHealth.php:263
 msgid "Without it, the statistics and the refused submissions are never purged, and the counters of the statistical filter never rotate. The plugin schedules it again on the next page load; if this persists, WordPress cannot save its scheduled tasks."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:230
+#: inc/core/Admin/SiteHealth.php:271
 msgid "The daily task of Gecka Antispam does not run"
 msgstr ""
 
 #. translators: %s: date
-#: inc/core/Admin/SiteHealth.php:233
+#: inc/core/Admin/SiteHealth.php:274
 #, php-format
 msgid "It was due on %s. The scheduled tasks of WordPress do not run on this site: without them, the statistics and the refused submissions are never purged, and the counters of the statistical filter never rotate."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:242
+#: inc/core/Admin/SiteHealth.php:283
 msgid "The daily task of Gecka Antispam runs"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:243
+#: inc/core/Admin/SiteHealth.php:284
 msgid "It purges the statistics and the refused submissions, and rotates the counters of the statistical filter when due."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:267
+#: inc/core/Admin/SiteHealth.php:308
 msgid "Version"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:275
+#: inc/core/Admin/SiteHealth.php:316
 msgid "Thresholds"
 msgstr ""
 
 #. translators: 1: rejection, 2: spam, 3: acceptance threshold, in percent
-#: inc/core/Admin/SiteHealth.php:277
+#: inc/core/Admin/SiteHealth.php:318
 #, php-format
 msgid "rejection %1$d %%, spam %2$d %%, acceptance %3$d %%"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:281
+#: inc/core/Admin/SiteHealth.php:322
 msgid "Texts to learn first"
 msgstr ""
 
 #. translators: 1: spam texts, 2: legitimate texts
-#: inc/core/Admin/SiteHealth.php:283
+#: inc/core/Admin/SiteHealth.php:324
 #, php-format
 msgid "spam %1$d, legitimate %2$d"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:286
+#: inc/core/Admin/SiteHealth.php:327
 msgid "Texts learnt"
 msgstr ""
 
 #. translators: 1: spam texts, 2: legitimate texts
-#: inc/core/Admin/SiteHealth.php:288
+#: inc/core/Admin/SiteHealth.php:329
 #, php-format
 msgid "spam %1$s, legitimate %2$s"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:292
+#: inc/core/Admin/SiteHealth.php:333
 msgid "Rotation of the counters"
 msgstr ""
 
 #. translators: 1: period in months, 2: generation number, 3: date of the last rotation
-#: inc/core/Admin/SiteHealth.php:295
+#: inc/core/Admin/SiteHealth.php:336
 #, php-format
 msgid "every %1$d months; generation %2$d; last rotation: %3$s"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:303
-#: inc/core/Admin/SiteHealth.php:307
-#: inc/core/Admin/SiteHealth.php:365
+#: inc/core/Admin/SiteHealth.php:344
+#: inc/core/Admin/SiteHealth.php:348
+#: inc/core/Admin/SiteHealth.php:406
 msgid "none"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:306
+#: inc/core/Admin/SiteHealth.php:347
 msgid "Background tables left out"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:310
+#: inc/core/Admin/SiteHealth.php:351
 msgid "Snapshot of the counters"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:311
+#: inc/core/Admin/SiteHealth.php:352
 msgid "written"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:311
+#: inc/core/Admin/SiteHealth.php:352
 msgid "cannot be written"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:319
+#: inc/core/Admin/SiteHealth.php:360
 msgid "Refused submissions"
 msgstr ""
 
 #. translators: 1: entries to review, 2: entries learnt
-#: inc/core/Admin/SiteHealth.php:321
+#: inc/core/Admin/SiteHealth.php:362
 #, php-format
 msgid "to review %1$s, learnt %2$s"
 msgstr ""
 
 #. translators: %s: form
-#: inc/core/Admin/SiteHealth.php:358
+#: inc/core/Admin/SiteHealth.php:399
 #, php-format
 msgid "%s (marked forms only)"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:386
+#: inc/core/Admin/SiteHealth.php:427
 msgid "Active"
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:386
+#: inc/core/Admin/SiteHealth.php:427
 msgid "Learning: it rates nothing yet."
 msgstr ""
 
-#: inc/core/Admin/SiteHealth.php:410
+#: inc/core/Admin/SiteHealth.php:451
 msgid "Statistical filter of Gecka Antispam"
 msgstr ""
 
 #. translators: %d: number of days
-#: inc/core/Admin/StatsView.php:86
+#: inc/core/Admin/StatsView.php:88
 #, php-format
 msgid "%d day"
 msgid_plural "%d days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Admin/StatsView.php:103
+#: inc/core/Admin/StatsView.php:105
 msgid "Reset the statistics"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:103
+#: inc/core/Admin/StatsView.php:105
 msgid "Drop every counter?"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:149
+#: inc/core/Admin/StatsView.php:151
 msgid "The statistics were reset."
 msgstr ""
 
 #. translators: %s: share of the submissions caught, in percent
-#: inc/core/Admin/StatsView.php:164
+#: inc/core/Admin/StatsView.php:166
 #, php-format
 msgid "%s %%"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:167
-#: inc/core/Admin/StatsView.php:223
-#: inc/core/Admin/StatsView.php:283
-#: inc/core/Admin/StatsView.php:466
-#: inc/core/Guard.php:111
+#: inc/core/Admin/StatsView.php:169
+#: inc/core/Admin/StatsView.php:225
+#: inc/core/Admin/StatsView.php:285
+#: inc/core/Admin/StatsView.php:468
+#: inc/core/Guard.php:119
 msgid "Accepted"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:170
+#: inc/core/Admin/StatsView.php:172
 msgid "Catch rate"
 msgstr ""
 
 #. translators: %s: first day of the week
-#: inc/core/Admin/StatsView.php:205
+#: inc/core/Admin/StatsView.php:207
 #, php-format
 msgid "Week of %s"
 msgstr ""
 
 #. translators: short date on the axis of the chart, see https://www.php.net/manual/datetime.format.php
-#: inc/core/Admin/StatsView.php:207
+#: inc/core/Admin/StatsView.php:209
 msgctxt "chart axis"
 msgid "j M"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:220
+#: inc/core/Admin/StatsView.php:222
 msgid "Accepted and caught"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:232
+#: inc/core/Admin/StatsView.php:234
 msgid "Submissions accepted and caught over the period. The same figures follow in a table."
 msgstr ""
 
 #. translators: 1: day or week, 2: submissions accepted, 3: submissions caught
-#: inc/core/Admin/StatsView.php:254
+#: inc/core/Admin/StatsView.php:256
 #, php-format
 msgid "%1$s. Accepted: %2$s, caught: %3$s"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:280
+#: inc/core/Admin/StatsView.php:282
 msgid "Figures week by week"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:280
+#: inc/core/Admin/StatsView.php:282
 msgid "Figures day by day"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:282
+#: inc/core/Admin/StatsView.php:284
 msgid "Week"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:282
+#: inc/core/Admin/StatsView.php:284
 msgid "Day"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:366
+#: inc/core/Admin/StatsView.php:368
 msgid "Caught by check"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:369
+#: inc/core/Admin/StatsView.php:371
 msgid "Nothing caught over this period."
 msgstr ""
 
 #. translators: 1: submissions caught, 2: share in percent
-#: inc/core/Admin/StatsView.php:386
+#: inc/core/Admin/StatsView.php:388
 #, php-format
 msgid "%1$s (%2$s %%)"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:406
+#: inc/core/Admin/StatsView.php:408
 msgid "By form"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:409
+#: inc/core/Admin/StatsView.php:411
 msgid "No submission checked over this period."
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:462
+#: inc/core/Admin/StatsView.php:464
 msgid "Origins"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:480
+#: inc/core/Admin/StatsView.php:482
 msgid "Countries"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:480
+#: inc/core/Admin/StatsView.php:482
 msgid "Networks"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:480
+#: inc/core/Admin/StatsView.php:482
 msgid "Systems"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:495
+#: inc/core/Admin/StatsView.php:497
 msgid "With the Gecka Geolocation plugin, the countries and the networks the submissions come from are counted too."
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:520
+#: inc/core/Admin/StatsView.php:522
 msgid "No submission over this period."
 msgstr ""
 
 #. translators: %s: share of the submissions, a number
-#: inc/core/Admin/StatsView.php:537
+#: inc/core/Admin/StatsView.php:539
 msgid "<1%"
 msgstr ""
 
 #. translators: %s: share of the submissions, a number
-#: inc/core/Admin/StatsView.php:537
+#: inc/core/Admin/StatsView.php:539
 #, php-format
 msgctxt "share"
 msgid "%s%%"
 msgstr ""
 
-#: inc/core/Admin/StatsView.php:589
+#: inc/core/Admin/StatsView.php:591
 msgid "Unknown or private address"
 msgstr ""
 
-#: inc/core/Backgrounds.php:427
+#: inc/core/Backgrounds.php:458
 msgid "the release does not offer it."
 msgstr ""
 
-#: inc/core/Backgrounds.php:668
+#. translators: 1: language code, 2: what went wrong
+#: inc/core/Backgrounds.php:589
+#, php-format
+msgctxt "language and its error"
+msgid "%1$s: %2$s"
+msgstr ""
+
+#: inc/core/Backgrounds.php:720
 msgid "The manifest of the background tables is malformed."
 msgstr ""
 
 #. translators: 1: version of the published tables, 2: version of the filter
-#: inc/core/Backgrounds.php:676
+#: inc/core/Backgrounds.php:728
 #, php-format
 msgid "The published background tables are built for feature hash version %1$d, the filter of this version of the plugin reads version %2$d. The tables in place are kept."
 msgstr ""
 
 #. translators: %s: directory on the server
-#: inc/core/Backgrounds.php:699
+#: inc/core/Backgrounds.php:751
 #, php-format
 msgid "Cannot write in %s."
 msgstr ""
 
-#: inc/core/Backgrounds.php:723
+#: inc/core/Backgrounds.php:775
 msgid "its entry in the manifest is malformed."
 msgstr ""
 
-#: inc/core/Backgrounds.php:729
+#: inc/core/Backgrounds.php:781
 msgid "the download does not match its checksum."
 msgstr ""
 
 #. translators: %s: file on the server
-#: inc/core/Backgrounds.php:741
+#: inc/core/Backgrounds.php:793
 #, php-format
 msgid "cannot write %s."
 msgstr ""
 
-#: inc/core/Backgrounds.php:799
+#: inc/core/Backgrounds.php:851
 msgid "Operation timed out."
 msgstr ""
 
 #. translators: 1: URL, 2: error
-#: inc/core/Backgrounds.php:803
+#: inc/core/Backgrounds.php:855
 #, php-format
 msgid "Cannot download %1$s: %2$s"
 msgstr ""
 
+#. translators: %s: URL
+#: inc/core/Backgrounds.php:869
+#, php-format
+msgid "Cannot download %s: redirected off HTTPS."
+msgstr ""
+
 #. translators: 1: URL, 2: HTTP status code
-#: inc/core/Backgrounds.php:818
+#: inc/core/Backgrounds.php:875
 #, php-format
 msgid "Cannot download %1$s: HTTP %2$d."
 msgstr ""
 
 #. translators: %s: URL
-#: inc/core/Backgrounds.php:825
+#: inc/core/Backgrounds.php:882
 #, php-format
 msgid "%s is larger than announced."
 msgstr ""
 
-#: inc/core/Guard.php:113
+#: inc/core/Guard.php:121
 msgid "Honeypot filled in"
 msgstr ""
 
-#: inc/core/Guard.php:114
+#: inc/core/Guard.php:122
 msgid "Timestamp missing or forged"
 msgstr ""
 
-#: inc/core/Guard.php:115
+#: inc/core/Guard.php:123
 msgid "Sent too fast"
 msgstr ""
 
-#: inc/core/Guard.php:116
+#: inc/core/Guard.php:124
 msgid "Timestamp expired"
 msgstr ""
 
-#: inc/core/Guard.php:117
+#: inc/core/Guard.php:125
 msgid "Random name"
 msgstr ""
 
-#: inc/core/Guard.php:118
+#: inc/core/Guard.php:126
 msgid "Statistical filter: spam"
 msgstr ""
 
-#: inc/core/Guard.php:119
+#: inc/core/Guard.php:127
 msgid "Statistical filter: refused"
 msgstr ""
 
-#: inc/core/Guard.php:174
+#: inc/core/Guard.php:182
 msgid "Leave this field empty"
 msgstr ""
 
-#: inc/core/Integrations/Acf.php:117
+#: inc/core/Integrations/Acf.php:123
 msgid "Submission refused"
 msgstr ""
 
-#: inc/core/Integrations/Comments.php:120
-#: inc/core/Integrations/Flamingo.php:482
+#: inc/core/Integrations/Comments.php:128
+#: inc/core/Integrations/Flamingo.php:484
 msgid "Learnt as spam"
 msgstr ""
 
-#: inc/core/Integrations/Comments.php:122
-#: inc/core/Integrations/Flamingo.php:484
+#: inc/core/Integrations/Comments.php:130
+#: inc/core/Integrations/Flamingo.php:486
 msgid "Learnt as not spam"
 msgstr ""
 
-#: inc/core/Integrations/Comments.php:173
+#: inc/core/Integrations/Comments.php:181
 msgid "Comment refused"
 msgstr ""
 
 #. translators: %s: number of messages
-#: inc/core/Integrations/Flamingo.php:170
+#: inc/core/Integrations/Flamingo.php:182
 #, php-format
 msgid "%s message learnt as legitimate."
 msgid_plural "%s messages learnt as legitimate."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Integrations/Flamingo.php:231
+#: inc/core/Integrations/Flamingo.php:243
 msgid "Confirm as legitimate"
 msgstr ""
 
-#: inc/core/Integrations/Flamingo.php:476
+#: inc/core/Integrations/Flamingo.php:478
 msgid "The statistical filter has not learnt enough messages yet to rate this one."
 msgstr ""
 
 #. translators: %s: number of Gravity Forms entries
-#: inc/core/Integrations/GravityForms.php:185
+#: inc/core/Integrations/GravityForms.php:193
 #, php-format
 msgctxt "Gravity Forms entries"
 msgid "%s entry learnt as legitimate."
@@ -1507,135 +1561,144 @@ msgid_plural "%s entries learnt as legitimate."
 msgstr[0] ""
 msgstr[1] ""
 
-#: inc/core/Integrations/GravityForms.php:366
+#: inc/core/Integrations/GravityForms.php:380
 msgid "To review."
 msgstr ""
 
-#: inc/core/Integrations/GravityForms/AntispamField.php:53
+#: inc/core/Integrations/GravityForms/AntispamField.php:60
 msgid "Protects the form with the honeypot and the timestamp of Gecka Antispam. Visitors see nothing."
 msgstr ""
 
-#: inc/core/Integrations/GravityForms/AntispamField.php:110
+#: inc/core/Integrations/GravityForms/AntispamField.php:124
 msgid "Honeypot and timestamp, invisible to visitors."
 msgstr ""
 
 #. translators: %s: rating of the statistical filter, in percent
-#: inc/core/Integrations/Integration.php:202
+#: inc/core/Integrations/Integration.php:276
 #, php-format
 msgid "Statistical filter: %s %% spam"
 msgstr ""
 
-#: inc/core/Integrations/Integration.php:215
+#: inc/core/Integrations/Integration.php:289
 msgid "Your submission could not be verified. Please reload the page and try again."
 msgstr ""
 
-#: inc/core/Origins.php:193
+#: inc/core/Origins.php:194
 msgid "Other, or a script"
 msgstr ""
 
-#: inc/core/Origins.php:194
+#: inc/core/Origins.php:195
 msgid "No user agent"
 msgstr ""
 
-#: inc/core/Settings.php:111
+#: inc/core/Settings.php:132
 msgid "WordPress"
 msgstr ""
 
-#: inc/core/Settings.php:113
+#: inc/core/Settings.php:134
 msgid "Comments"
 msgstr ""
 
-#: inc/core/Settings.php:114
+#: inc/core/Settings.php:135
 msgid "Login"
 msgstr ""
 
-#: inc/core/Settings.php:115
+#: inc/core/Settings.php:136
 msgid "Registration"
 msgstr ""
 
-#: inc/core/Settings.php:116
+#: inc/core/Settings.php:137
 msgid "Lost password"
 msgstr ""
 
-#: inc/core/Settings.php:122
+#: inc/core/Settings.php:143
 msgid "Checkout"
 msgstr ""
 
-#: inc/core/Settings.php:123
+#: inc/core/Settings.php:144
 msgid "Product reviews"
 msgstr ""
 
-#: inc/core/Settings.php:124
+#: inc/core/Settings.php:145
 msgid "My account: login"
 msgstr ""
 
-#: inc/core/Settings.php:125
+#: inc/core/Settings.php:146
 msgid "My account: registration"
 msgstr ""
 
-#: inc/core/Settings.php:126
+#: inc/core/Settings.php:147
 msgid "My account: lost password"
 msgstr ""
 
-#: inc/core/Settings.php:132
-#: inc/core/Settings.php:138
+#: inc/core/Settings.php:153
+#: inc/core/Settings.php:159
 msgid "Forms"
 msgstr ""
 
-#: inc/core/Settings.php:144
+#: inc/core/Settings.php:165
 msgid "Front-end forms"
 msgstr ""
 
 #. translators: %s: name a developer gave the form
-#: inc/core/Settings.php:161
+#: inc/core/Settings.php:182
 #, php-format
 msgid "Custom form: %s"
 msgstr ""
 
 #. translators: 1: plugin providing the form, 2: the form
-#: inc/core/Settings.php:169
+#: inc/core/Settings.php:190
 #, php-format
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: inc/core/Settings.php:418
+#: inc/core/Settings.php:440
 msgid "The honeypot field name must start with a letter, hold 3 to 40 lowercase letters, digits or underscores, and not be a name a form already uses. The previous name is kept."
 msgstr ""
 
-#: inc/core/StatisticalFilter.php:347
+#: inc/core/StatisticalFilter.php:397
 msgid "The intl and mbstring extensions of PHP are needed."
 msgstr ""
 
 #. translators: %s: file name
-#: inc/core/StatisticalFilter.php:555
+#: inc/core/StatisticalFilter.php:605
 #, php-format
 msgid "%s: the name is not a language code."
 msgstr ""
 
 #. translators: 1: file name, 2: number of tables
-#: inc/core/StatisticalFilter.php:558
+#: inc/core/StatisticalFilter.php:608
 #, php-format
 msgid "%1$s: the filter reads %2$d tables at most."
 msgstr ""
 
-#: inc/core/StatisticalFilter.php:628
+#. translators: 1: file name, 2: what is wrong with it
+#: inc/core/StatisticalFilter.php:614
+#, php-format
+msgctxt "file and its problem"
+msgid "%1$s: %2$s."
+msgstr ""
+
+#: inc/core/StatisticalFilter.php:679
 msgid "not a background table, or one larger than the filter accepts."
 msgstr ""
 
 #. translators: 1: feature space size of the tables, 2: size asked for
-#: inc/core/StatisticalFilter/WpdbStorage.php:150
+#: inc/core/StatisticalFilter/WpdbStorage.php:153
 #, php-format
 msgid "The spam filter tables were installed with %1$d bits, they cannot become %2$d: forget everything learnt and learn again."
 msgstr ""
 
-#: inc/core/StatisticalFilter/WpdbStorage.php:521
-msgid "A query on the spam filter tables failed:"
-msgstr ""
-
-#: inc/core/StatisticalFilter/WpdbStorage.php:549
-msgid "The spam filter tables are not installed."
+#. translators: %s: the error of the database
+#: inc/core/StatisticalFilter/WpdbStorage.php:525
+#, php-format
+msgid "A query on the spam filter tables failed: %s"
 msgstr ""
 
 #: inc/core/StatisticalFilter/WpdbStorage.php:553
+msgid "The spam filter tables are not installed."
+msgstr ""
+
+#: inc/core/StatisticalFilter/WpdbStorage.php:557
 msgid "The spam filter tables hold counts of another version of the filter: forget everything learnt and learn again."
 msgstr ""

@@ -91,6 +91,9 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
+     * The columns of the view: the rating only while the filter is on, what
+     * the entry was learnt as only in the Learnt view
+     *
      * @return array<string, string>
      */
     public function get_columns(): array
@@ -116,6 +119,9 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
+     * The text is the primary column: the row actions hang under it, and
+     * the other columns fold under it on a small screen.
+     *
      * @return string
      */
     protected function get_default_primary_column_name(): string
@@ -124,6 +130,8 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
+     * The classes of the table, with the one its style sheet targets
+     *
      * @return string[]
      */
     protected function get_table_classes(): array
@@ -184,6 +192,8 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
+     * Prints what stands for an empty view.
+     *
      * @return void
      */
     public function no_items(): void

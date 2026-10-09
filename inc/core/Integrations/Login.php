@@ -23,6 +23,8 @@ use Gecka\WP\Plugin\Antispam\Request;
 class Login extends Integration
 {
     /**
+     * Always: the login forms are those of WordPress
+     *
      * @return bool
      */
     public function available(): bool
@@ -31,6 +33,9 @@ class Login extends Integration
     }
 
     /**
+     * Hooks the fields into the login and lost password forms, and the
+     * checks ahead of the other plugins.
+     *
      * @return void
      */
     public function setup(): void

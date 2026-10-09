@@ -19,6 +19,8 @@ use Gecka\WP\Plugin\Antispam\Request;
 class Registration extends Integration
 {
     /**
+     * Always: the registration forms are those of WordPress
+     *
      * @return bool
      */
     public function available(): bool
@@ -27,6 +29,9 @@ class Registration extends Integration
     }
 
     /**
+     * Hooks the fields into the registration form of wp-login.php and the
+     * signup form of a network, and the checks ahead of the other plugins.
+     *
      * @return void
      */
     public function setup(): void

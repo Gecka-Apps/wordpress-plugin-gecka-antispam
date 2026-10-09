@@ -41,6 +41,8 @@ class AntispamField extends \GF_Field
     public $displayOnly = true;
 
     /**
+     * Name of the field in the editor
+     *
      * @return string
      */
     public function get_form_editor_field_title(): string
@@ -49,6 +51,8 @@ class AntispamField extends \GF_Field
     }
 
     /**
+     * What the editor says of the field
+     *
      * @return string
      */
     public function get_form_editor_field_description(): string
@@ -57,6 +61,8 @@ class AntispamField extends \GF_Field
     }
 
     /**
+     * Where the editor offers the field: among the advanced fields
+     *
      * @return array{group: string, text: string}
      */
     public function get_form_editor_button(): array
@@ -68,6 +74,9 @@ class AntispamField extends \GF_Field
     }
 
     /**
+     * The settings the editor shows for the field: a label for the admin,
+     * CSS classes
+     *
      * @return string[]
      */
     public function get_form_editor_field_settings(): array
@@ -76,6 +85,8 @@ class AntispamField extends \GF_Field
     }
 
     /**
+     * The field cannot be hidden by a rule: it has nothing to show.
+     *
      * @return bool
      */
     public function is_conditional_logic_supported(): bool

@@ -109,6 +109,8 @@ class GravityForms extends Integration implements Learner
     private static array $tables = [];
 
     /**
+     * Whether Gravity Forms is active
+     *
      * @return bool
      */
     public function available(): bool
@@ -117,6 +119,10 @@ class GravityForms extends Integration implements Learner
     }
 
     /**
+     * Hooks the Antispam field, the fields of the forms, the validation,
+     * the notes of the entries, the learning from their status and the
+     * actions of their list up.
+     *
      * @return void
      */
     public function setup(): void

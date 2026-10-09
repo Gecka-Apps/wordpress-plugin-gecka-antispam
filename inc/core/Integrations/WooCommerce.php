@@ -36,6 +36,8 @@ class WooCommerce extends Integration
     private bool $holding = false;
 
     /**
+     * Whether WooCommerce is active
+     *
      * @return bool
      */
     public function available(): bool
@@ -44,6 +46,9 @@ class WooCommerce extends Integration
     }
 
     /**
+     * Hooks the fields into the checkout and the My account forms, and the
+     * checks ahead of the other plugins.
+     *
      * @return void
      */
     public function setup(): void
@@ -64,6 +69,8 @@ class WooCommerce extends Integration
     }
 
     /**
+     * Prints the fields in the checkout form.
+     *
      * @return void
      */
     public function renderCheckout(): void
@@ -72,6 +79,8 @@ class WooCommerce extends Integration
     }
 
     /**
+     * Prints the fields in the login form of My account.
+     *
      * @return void
      */
     public function renderLogin(): void
@@ -111,6 +120,8 @@ class WooCommerce extends Integration
     }
 
     /**
+     * Prints the fields in the registration form of My account.
+     *
      * @return void
      */
     public function renderRegistration(): void
@@ -119,6 +130,8 @@ class WooCommerce extends Integration
     }
 
     /**
+     * Prints the fields in the lost password form of My account.
+     *
      * @return void
      */
     public function renderLostPassword(): void

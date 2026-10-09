@@ -22,6 +22,8 @@ use Gecka\WP\Plugin\Antispam\Settings;
 class Custom extends Integration
 {
     /**
+     * Always: the custom forms are those of the developers of the site
+     *
      * @return bool
      */
     public function available(): bool
@@ -30,6 +32,9 @@ class Custom extends Integration
     }
 
     /**
+     * Nothing to hook: a custom form calls the plugin itself, through
+     * gecka_antispam_fields() and gecka_antispam_check().
+     *
      * @return void
      */
     public function setup(): void {}

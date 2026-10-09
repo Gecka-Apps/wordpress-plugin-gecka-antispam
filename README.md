@@ -276,9 +276,8 @@ where GitHub serves the files of a release.
 
 The State section lists each table with its sources, the sentences it was
 drawn from and its quality: solid from 100,000 sentences, average from
-10,000, weak from 1,000, poor below (the release ranges from 56 sentences to
-300,000). These thresholds are estimates: the benchmarks only measured
-tables of 300,000 sentences. It also shows the words of the dictionary of
+10,000, weak from 1,000, poor below. These thresholds are estimates, not
+measured. It also shows the words of the dictionary of
 the language, the counters the table fills, and whether it is up to date,
 has an update, was copied by hand or failed.
 

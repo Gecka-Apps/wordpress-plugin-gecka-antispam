@@ -303,6 +303,8 @@ class Plugin
     }
 
     /**
+     * The settings of the plugin
+     *
      * @return Settings
      */
     public function settings(): Settings
@@ -311,6 +313,8 @@ class Plugin
     }
 
     /**
+     * The fields and the checks of the forms
+     *
      * @return Guard
      */
     public function guard(): Guard
@@ -329,6 +333,8 @@ class Plugin
     }
 
     /**
+     * The daily counters
+     *
      * @return Stats
      */
     public function stats(): Stats
@@ -337,6 +343,8 @@ class Plugin
     }
 
     /**
+     * The daily counters by country, network and system
+     *
      * @return Origins
      */
     public function origins(): Origins
@@ -345,6 +353,8 @@ class Plugin
     }
 
     /**
+     * The statistical filter
+     *
      * @return StatisticalFilter
      */
     public function statisticalFilter(): StatisticalFilter
@@ -353,6 +363,8 @@ class Plugin
     }
 
     /**
+     * The refused submissions
+     *
      * @return Journal
      */
     public function journal(): Journal
@@ -361,6 +373,8 @@ class Plugin
     }
 
     /**
+     * The background tables of the filter and their downloads
+     *
      * @return Backgrounds
      */
     public function backgrounds(): Backgrounds

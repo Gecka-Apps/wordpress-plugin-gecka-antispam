@@ -85,6 +85,9 @@ class SettingsPage extends Base
     private ?RefusedView $refused = null;
 
     /**
+     * Hooks the screens, the handlers of their buttons, the REST routes and
+     * the screen options up.
+     *
      * @return void
      */
     public function setup(): void
@@ -233,6 +236,9 @@ class SettingsPage extends Base
     }
 
     /**
+     * Registers the option of the plugin with its sanitizer, and the
+     * paragraph offered for the privacy policy.
+     *
      * @return void
      */
     public function registerSetting(): void

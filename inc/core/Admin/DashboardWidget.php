@@ -25,6 +25,8 @@ class DashboardWidget extends Base
     private const DAYS = 7;
 
     /**
+     * Adds the widget when the dashboard is set up.
+     *
      * @return void
      */
     public function setup(): void
@@ -33,6 +35,9 @@ class DashboardWidget extends Base
     }
 
     /**
+     * Registers the widget for those who see the statistics, with its style
+     * sheet.
+     *
      * @return void
      */
     public function add(): void
@@ -46,6 +51,9 @@ class DashboardWidget extends Base
     }
 
     /**
+     * Prints the figures of the last DAYS days, what the filter learnt, and
+     * a link to the refused submissions when there are some.
+     *
      * @return void
      */
     public function render(): void

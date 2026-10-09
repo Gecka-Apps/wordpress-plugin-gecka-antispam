@@ -35,6 +35,8 @@ class SiteHealth extends Base
     private const LATE = DAY_IN_SECONDS;
 
     /**
+     * Hooks the tests and the Info section up.
+     *
      * @return void
      */
     public function setup(): void

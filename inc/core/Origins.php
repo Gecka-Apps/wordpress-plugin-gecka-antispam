@@ -22,6 +22,10 @@ namespace Gecka\WP\Plugin\Antispam;
  */
 class Origins
 {
+    /**
+     * The facets a submission is counted under: the country of the sender,
+     * the network, and the operating system.
+     */
     public const COUNTRY = 'country';
 
     public const NETWORK = 'network';
