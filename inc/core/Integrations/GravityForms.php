@@ -208,21 +208,26 @@ class GravityForms extends Integration implements Learner
             return null;
         }
 
-        $previous = self::category(gform_get_meta($entryId, self::META_TRAINED));
-        $generation = self::generation(gform_get_meta($entryId, self::META_GENERATION));
+        return $this->confirmHam(self::entryText($entry), self::category(gform_get_meta($entryId, self::META_TRAINED)), self::generation(gform_get_meta($entryId, self::META_GENERATION)), self::marker($entryId));
+    }
 
-        if ($previous === StatisticalFilter::HAM) {
-            return $generation ?? 0;
-        }
+    /**
+     * What writes the mark of an entry: what it was learnt as, and the
+     * generation when it was
+     *
+     * @param int $entryId
+     *
+     * @return callable(string, int|null): void
+     */
+    private static function marker(int $entryId): callable
+    {
+        return static function (string $trained, ?int $generation) use ($entryId): void {
+            gform_update_meta($entryId, self::META_TRAINED, $trained);
 
-        $generation = $this->train(self::entryText($entry), $previous, $generation, StatisticalFilter::HAM);
-
-        if ($generation !== null) {
-            gform_update_meta($entryId, self::META_TRAINED, StatisticalFilter::HAM);
-            gform_update_meta($entryId, self::META_GENERATION, $generation);
-        }
-
-        return $generation;
+            if ($generation !== null) {
+                gform_update_meta($entryId, self::META_GENERATION, $generation);
+            }
+        };
     }
 
     /**
@@ -422,24 +427,23 @@ class GravityForms extends Integration implements Learner
         $learnt = 0;
 
         foreach ((array) $ids as $id) {
-            $entry = \GFAPI::get_entry((int) $id);
-            $generation = null;
+            $id = (int) $id;
+            $entry = \GFAPI::get_entry($id);
 
-            if (! is_wp_error($entry)) {
-                $outcome = (string) gform_get_meta((int) $id, self::META_REASON);
-                $generation = $this->learnMarked(self::entryText($entry), $category, $outcome ?: null, (int) strtotime($entry['date_created'] . ' UTC'), self::judged((int) $id));
+            if (is_wp_error($entry)) {
+                self::marker($id)(Plugin::TRAINED_SKIPPED, null);
+
+                continue;
             }
 
-            if ($generation === false) {
+            $outcome = (string) gform_get_meta($id, self::META_REASON);
+            $done = $this->learnItem(self::entryText($entry), $category, $outcome ?: null, (int) strtotime($entry['date_created'] . ' UTC'), self::judged($id), self::marker($id));
+
+            if ($done === null) {
                 break;
             }
 
-            gform_update_meta((int) $id, self::META_TRAINED, $generation === null ? Plugin::TRAINED_SKIPPED : $category);
-
-            if ($generation !== null) {
-                gform_update_meta((int) $id, self::META_GENERATION, $generation);
-                $learnt++;
-            }
+            $learnt += (int) $done;
         }
 
         return $learnt;
@@ -536,13 +540,7 @@ class GravityForms extends Integration implements Learner
             return;
         }
 
-        $previous = self::category(gform_get_meta((int) $entryId, self::META_TRAINED));
-        $generation = $this->train(self::entryText($entry), $previous, self::generation(gform_get_meta((int) $entryId, self::META_GENERATION)), $category);
-
-        if ($generation !== null) {
-            gform_update_meta((int) $entryId, self::META_TRAINED, $category);
-            gform_update_meta((int) $entryId, self::META_GENERATION, $generation);
-        }
+        $this->learnAndMark(self::entryText($entry), self::category(gform_get_meta((int) $entryId, self::META_TRAINED)), self::generation(gform_get_meta((int) $entryId, self::META_GENERATION)), $category, self::marker((int) $entryId));
     }
 
     /**

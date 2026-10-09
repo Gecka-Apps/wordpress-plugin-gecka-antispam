@@ -137,6 +137,78 @@ abstract class Integration extends Base
     }
 
     /**
+     * Learns a text as a category and has the source mark the item with
+     * what it was learnt as and the generation, when the filter learnt it.
+     *
+     * @param string                          $text
+     * @param string|null                     $previous   What the item was learnt as before, null when it never was.
+     * @param int|null                        $generation The generation it was learnt in before.
+     * @param string                          $category   StatisticalFilter::SPAM or StatisticalFilter::HAM.
+     * @param callable(string, int|null): void $mark       Writes the mark of the item: what it is learnt as, the generation.
+     *
+     * @return int|null The generation it is now learnt in as $category, null when it is not.
+     */
+    protected function learnAndMark(string $text, ?string $previous, ?int $generation, string $category, callable $mark): ?int
+    {
+        $generation = $this->train($text, $previous, $generation, $category);
+
+        if ($generation !== null) {
+            $mark($category, $generation);
+        }
+
+        return $generation;
+    }
+
+    /**
+     * Confirms an item as legitimate: the filter learns it as ham, moving it
+     * from spam when it was learnt as such; one already learnt as ham stays
+     * as it is.
+     *
+     * @param string                          $text
+     * @param string|null                     $previous   What the item was learnt as before, null when it never was.
+     * @param int|null                        $generation The generation it was learnt in before.
+     * @param callable(string, int|null): void $mark       Writes the mark of the item.
+     *
+     * @return int|null The generation it is learnt in, null when it was not.
+     */
+    protected function confirmHam(string $text, ?string $previous, ?int $generation, callable $mark): ?int
+    {
+        if ($previous === StatisticalFilter::HAM) {
+            return $generation ?? 0;
+        }
+
+        return $this->learnAndMark($text, $previous, $generation, StatisticalFilter::HAM, $mark);
+    }
+
+    /**
+     * Learns one item a source holds, in one go, and has the source mark it:
+     * learnt as the category with its generation, or skipped, so it is never
+     * read again. An item the filter failed on is not marked: it stays to
+     * learn, and the caller stops.
+     *
+     * @param string                          $text
+     * @param string                          $category StatisticalFilter::SPAM or StatisticalFilter::HAM.
+     * @param string|null                     $outcome  What caught the item, when the plugin did.
+     * @param int                             $time     When the item was sent, Unix time.
+     * @param bool                            $judged   Whether a person, or Akismet, marked the item as spam.
+     * @param callable(string, int|null): void $mark     Writes the mark of the item.
+     *
+     * @return bool|null True when learnt, false when left out, null when the filter failed.
+     */
+    protected function learnItem(string $text, string $category, ?string $outcome, int $time, bool $judged, callable $mark): ?bool
+    {
+        $generation = $this->learnMarked($text, $category, $outcome, $time, $judged);
+
+        if ($generation === false) {
+            return null;
+        }
+
+        $mark($generation === null ? Plugin::TRAINED_SKIPPED : $category, $generation);
+
+        return $generation !== null;
+    }
+
+    /**
      * Learns an item someone, or a filter, already marked as spam or as
      * legitimate, in the generation its date belongs to. A spam is learnt
      * only when a person, or Akismet, judged it: one a check of the form or

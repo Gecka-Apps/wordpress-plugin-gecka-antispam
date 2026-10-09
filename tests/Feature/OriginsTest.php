@@ -99,9 +99,9 @@ it('counts the country and the network the geolocation gives', function () {
         ['value' => 'DE', 'name' => '', 'hits' => 1],
     ])
         ->and($this->origins->top(Origins::NETWORK, 7, Origins::caught())[0])->toBe(['value' => '17480', 'name' => 'CANL', 'hits' => 2])
-        ->and($this->origins->top(Origins::COUNTRY, 7, Origins::ACCEPTED))->toBe([['value' => 'NC', 'name' => '', 'hits' => 1]])
+        ->and($this->origins->top(Origins::COUNTRY, 7, Guard::ACCEPTED))->toBe([['value' => 'NC', 'name' => '', 'hits' => 1]])
         ->and($this->origins->total(Origins::COUNTRY, 7, Origins::caught()))->toBe(4)
-        ->and($this->origins->total(Origins::SYSTEM, 7, Origins::ACCEPTED))->toBe(1);
+        ->and($this->origins->total(Origins::SYSTEM, 7, Guard::ACCEPTED))->toBe(1);
 });
 
 it('counts a submission checked, as the statistics count it', function () {
@@ -112,8 +112,8 @@ it('counts a submission checked, as the statistics count it', function () {
     gecka_antispam_check('devis', 'Bonjour, je voudrais un devis.', ['Marie Dupont']);
 
     expect($this->origins->top(Origins::COUNTRY, 7, [Guard::TOKEN]))->toBe([['value' => 'NC', 'name' => '', 'hits' => 1]])
-        ->and($this->origins->top(Origins::NETWORK, 7, Origins::ACCEPTED))->toBe([['value' => '17480', 'name' => 'CANL', 'hits' => 1]])
-        ->and($this->origins->total(Origins::SYSTEM, 7, [...Origins::caught(), ...Origins::ACCEPTED]))->toBe(2);
+        ->and($this->origins->top(Origins::NETWORK, 7, Guard::ACCEPTED))->toBe([['value' => '17480', 'name' => 'CANL', 'hits' => 1]])
+        ->and($this->origins->total(Origins::SYSTEM, 7, [...Origins::caught(), ...Guard::ACCEPTED]))->toBe(2);
 });
 
 it('shows the origins on the statistics tab', function () {

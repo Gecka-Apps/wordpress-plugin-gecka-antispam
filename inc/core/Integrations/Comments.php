@@ -271,12 +271,28 @@ class Comments extends Integration implements Learner
             $category = StatisticalFilter::HAM;
         }
 
-        $generation = $category ? $this->train(self::commentText((array) $comment), $previous, self::generation(get_comment_meta($id, Plugin::META_GENERATION, true)), $category) : null;
-
-        if ($category && $generation !== null) {
-            update_comment_meta($id, Plugin::META_TRAINED, $category);
-            update_comment_meta($id, Plugin::META_GENERATION, $generation);
+        if ($category) {
+            $this->learnAndMark(self::commentText((array) $comment), $previous, self::generation(get_comment_meta($id, Plugin::META_GENERATION, true)), $category, self::marker($id));
         }
+    }
+
+    /**
+     * What writes the mark of a comment: what it was learnt as, and the
+     * generation when it was
+     *
+     * @param int $id
+     *
+     * @return callable(string, int|null): void
+     */
+    private static function marker(int $id): callable
+    {
+        return static function (string $trained, ?int $generation) use ($id): void {
+            update_comment_meta($id, Plugin::META_TRAINED, $trained);
+
+            if ($generation !== null) {
+                update_comment_meta($id, Plugin::META_GENERATION, $generation);
+            }
+        };
     }
 
     /**
@@ -335,18 +351,13 @@ class Comments extends Integration implements Learner
 
             $id = (int) $comment->comment_ID;
             $outcome = (string) get_comment_meta($id, Plugin::META_REASON, true);
-            $generation = $this->learnMarked(self::commentText((array) $comment), $category, $outcome ?: null, (int) strtotime($comment->comment_date_gmt . ' UTC'), self::judged($id));
+            $done = $this->learnItem(self::commentText((array) $comment), $category, $outcome ?: null, (int) strtotime($comment->comment_date_gmt . ' UTC'), self::judged($id), self::marker($id));
 
-            if ($generation === false) {
+            if ($done === null) {
                 break;
             }
 
-            update_comment_meta($id, Plugin::META_TRAINED, $generation === null ? Plugin::TRAINED_SKIPPED : $category);
-
-            if ($generation !== null) {
-                update_comment_meta($id, Plugin::META_GENERATION, $generation);
-                $learnt++;
-            }
+            $learnt += (int) $done;
         }
 
         return $learnt;

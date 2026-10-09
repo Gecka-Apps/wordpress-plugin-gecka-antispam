@@ -72,8 +72,10 @@ class Stats
 
         $table = Schema::stats();
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin, read on the statistics screen only.
-        $rows = $wpdb->get_results($wpdb->prepare('SELECT day, outcome IN (%s, %s) AS passed, SUM(hits) AS hits FROM %i WHERE day >= %s GROUP BY day, outcome IN (%s, %s)', Guard::PASSED, Guard::REVIEW, $table, self::since($days), Guard::PASSED, Guard::REVIEW));
+        $in = implode(',', array_fill(0, count(Guard::ACCEPTED), '%s'));
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Table of the plugin, read on the statistics screen only; $in is one placeholder per accepted outcome.
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT day, outcome IN ($in) AS passed, SUM(hits) AS hits FROM %i WHERE day >= %s GROUP BY day, outcome IN ($in)", ...[...Guard::ACCEPTED, $table, self::since($days), ...Guard::ACCEPTED]));
 
         $daily = [];
         $day = new \DateTimeImmutable(self::since($days), wp_timezone());

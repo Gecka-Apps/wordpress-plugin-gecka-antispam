@@ -29,11 +29,6 @@ class Origins
     public const SYSTEM = 'os';
 
     /**
-     * The outcomes of a submission that went through.
-     */
-    public const ACCEPTED = [Guard::PASSED, Guard::REVIEW];
-
-    /**
      * Characters of the name of a network kept.
      */
     private const NAME_LENGTH = 191;
@@ -46,7 +41,7 @@ class Origins
      */
     public static function caught(): array
     {
-        return array_values(array_diff(array_keys(Guard::outcomes()), self::ACCEPTED));
+        return array_values(array_diff(array_keys(Guard::outcomes()), Guard::ACCEPTED));
     }
 
     /**

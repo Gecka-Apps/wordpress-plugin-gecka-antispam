@@ -134,21 +134,26 @@ class Flamingo extends Integration implements Learner
             return null;
         }
 
-        $previous = $this->trained($postId);
-        $generation = self::generation(get_post_meta($postId, Plugin::META_GENERATION, true));
+        return $this->confirmHam($this->messageText($postId), $this->trained($postId), self::generation(get_post_meta($postId, Plugin::META_GENERATION, true)), self::marker($postId));
+    }
 
-        if ($previous === StatisticalFilter::HAM) {
-            return $generation ?? 0;
-        }
+    /**
+     * What writes the mark of a message: what it was learnt as, and the
+     * generation when it was
+     *
+     * @param int $postId
+     *
+     * @return callable(string, int|null): void
+     */
+    private static function marker(int $postId): callable
+    {
+        return static function (string $trained, ?int $generation) use ($postId): void {
+            update_post_meta($postId, Plugin::META_TRAINED, $trained);
 
-        $generation = $this->train($this->messageText($postId), $previous, $generation, StatisticalFilter::HAM);
-
-        if ($generation !== null) {
-            update_post_meta($postId, Plugin::META_TRAINED, StatisticalFilter::HAM);
-            update_post_meta($postId, Plugin::META_GENERATION, $generation);
-        }
-
-        return $generation;
+            if ($generation !== null) {
+                update_post_meta($postId, Plugin::META_GENERATION, $generation);
+            }
+        };
     }
 
     /**
@@ -261,12 +266,7 @@ class Flamingo extends Integration implements Learner
             return;
         }
 
-        $generation = $this->train($this->messageText($post->ID), $this->trained($post->ID), self::generation(get_post_meta($post->ID, Plugin::META_GENERATION, true)), $category);
-
-        if ($generation !== null) {
-            update_post_meta($post->ID, Plugin::META_TRAINED, $category);
-            update_post_meta($post->ID, Plugin::META_GENERATION, $generation);
-        }
+        $this->learnAndMark($this->messageText($post->ID), $this->trained($post->ID), self::generation(get_post_meta($post->ID, Plugin::META_GENERATION, true)), $category, self::marker($post->ID));
     }
 
     /**
@@ -364,18 +364,13 @@ class Flamingo extends Integration implements Learner
 
         foreach ((array) $query->posts as $postId) {
             $postId = (int) ($postId instanceof \WP_Post ? $postId->ID : $postId);
-            $generation = $this->learnMarked($this->messageText($postId), $category, $this->outcome($postId), (int) get_post_time('U', true, $postId), self::judged($postId));
+            $done = $this->learnItem($this->messageText($postId), $category, $this->outcome($postId), (int) get_post_time('U', true, $postId), self::judged($postId), self::marker($postId));
 
-            if ($generation === false) {
+            if ($done === null) {
                 break;
             }
 
-            update_post_meta($postId, Plugin::META_TRAINED, $generation === null ? Plugin::TRAINED_SKIPPED : $category);
-
-            if ($generation !== null) {
-                update_post_meta($postId, Plugin::META_GENERATION, $generation);
-                $learnt++;
-            }
+            $learnt += (int) $done;
         }
 
         return $learnt;

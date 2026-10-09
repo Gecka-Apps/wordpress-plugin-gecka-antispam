@@ -80,6 +80,12 @@ class Guard
     public const REVIEW = 'review';
 
     /**
+     * The outcomes of a submission that went through: accepted, or held
+     * for review.
+     */
+    public const ACCEPTED = [self::PASSED, self::REVIEW];
+
+    /**
      * Seconds a timestamp may be ahead of the server clock.
      */
     private const CLOCK_SKEW = 60;
@@ -133,7 +139,7 @@ class Guard
      */
     public static function refuses(?string $outcome): bool
     {
-        return $outcome !== null && ! in_array($outcome, [self::PASSED, self::REVIEW, self::FILTER_SPAM], true);
+        return $outcome !== null && ! in_array($outcome, [...self::ACCEPTED, self::FILTER_SPAM], true);
     }
 
     /**

@@ -457,7 +457,7 @@ class StatsView
     {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks what is shown.
         $accepted = sanitize_key($_GET['origins'] ?? '') === 'accepted';
-        $outcomes = $accepted ? Origins::ACCEPTED : Origins::caught();
+        $outcomes = $accepted ? Guard::ACCEPTED : Origins::caught();
         $origins = $this->plugin->origins();
         $located = function_exists('gecka_geolocation');
 
