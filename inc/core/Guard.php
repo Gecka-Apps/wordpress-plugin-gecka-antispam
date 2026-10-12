@@ -254,12 +254,12 @@ class Guard
         if ($message !== null) {
             $words = self::words($message);
 
-            if (count($words) < (int) $this->plugin->settings()->get('min_words')) {
-                return self::SHORT;
-            }
-
             if ($random && count($words) === 1 && self::isRandomName(trim($words[0], '.,;:!?'))) {
                 return self::RANDOM_TEXT;
+            }
+
+            if (count($words) < (int) $this->plugin->settings()->get('min_words')) {
+                return self::SHORT;
             }
         }
 

@@ -234,7 +234,7 @@ class Settings
             'sign_in_min_delay' => 0,
             'max_age' => 192,
             'random_names' => true,
-            'min_words' => 0,
+            'min_words' => 5,
             'filter' => true,
             'filter_reject' => 95,
             'filter_threshold' => 75,

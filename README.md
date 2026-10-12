@@ -128,9 +128,9 @@ A form can point it at its own fields: the additional setting
 ([docs/DEVELOPERS.md](docs/DEVELOPERS.md#what-the-statistical-filter-reads)).
 The same rule reads a **message of a single word**: a bot that types one
 burst of random letters where a message goes is caught even when its name
-reads as one. A **minimum of words** can be set for the message too, none
-by default: a message shorter than that is refused, on comments and contact
-forms alike.
+reads as one. A **minimum of words** applies to the message too, five by
+default, 0 for none: a message shorter than that is refused, on comments and
+contact forms alike.
 
 A user logged in gets no fields in the comment form: the comments of a user
 who cannot moderate them are rated by the statistical filter alone, those of

@@ -42,8 +42,8 @@ it('lets a custom form with its fields through, and catches a random name', func
         ->and(gecka_antispam_check('devis', 'Bonjour', ['qASQAhqkpFGqnKkRROl'])['reason'])->toBe(Guard::RANDOM_NAME)
         ->and(gecka_antispam_check('devis', "Devis\nfWxBIRsgipbaeRuKXpLXpU", ['Marie Dupont'], 'fWxBIRsgipbaeRuKXpLXpU')['reason'])->toBe(Guard::RANDOM_TEXT)
         ->and(gecka_antispam_check('devis', 'fWxBIRsgipbaeRuKXpLXpU', ['Marie Dupont'])['reason'])->toBe(Guard::RANDOM_TEXT)
-        ->and(gecka_antispam_check('devis', "Devis\nfWxBIRsgipbaeRuKXpLXpU", ['Marie Dupont'])['reason'])->toBeNull()
-        ->and(gecka_antispam()->stats()->totals(1)['custom:devis'])->toBe([Guard::PASSED => 2, Guard::RANDOM_NAME => 1, Guard::RANDOM_TEXT => 2]);
+        ->and(gecka_antispam_check('devis', "Devis\nfWxBIRsgipbaeRuKXpLXpU", ['Marie Dupont'])['reason'])->toBe(Guard::SHORT)
+        ->and(gecka_antispam()->stats()->totals(1)['custom:devis'])->toBe([Guard::PASSED => 1, Guard::RANDOM_NAME => 1, Guard::RANDOM_TEXT => 2, Guard::SHORT => 1]);
 });
 
 it('refuses a token signed for another form', function () {

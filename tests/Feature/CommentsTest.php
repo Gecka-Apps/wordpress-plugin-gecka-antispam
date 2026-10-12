@@ -14,6 +14,9 @@ use Mantle\Testing\Exceptions\WP_Die_Exception;
 beforeEach(function () {
     gecka_antispam()->statisticalFilter()->reset();
     gecka_antispam()->stats()->reset();
+    // The comments posted here are short, on purpose: the filter is what
+    // most of these tests exercise.
+    antispam_settings(['min_words' => 0]);
     $this->post = static::factory()->post->create();
 });
 
@@ -120,6 +123,21 @@ it('refuses a comment caught by the honeypot and keeps it with the refused submi
         ->and(gecka_antispam()->journal()->entries(1, 10)[0]->text)->toBe('Buy cheap pills online')
         ->and(gecka_antispam()->statisticalFilter()->counts()['spam'])->toBe(0)
         ->and(gecka_antispam()->stats()->totals(1)['comments'])->toBe([Guard::HONEYPOT => 1]);
+});
+
+it('refuses a comment shorter than the minimum of words, and one of a single random word', function () {
+    gecka_antispam()->journal()->clear();
+    antispam_settings(['min_words' => 5]);
+    post_form('comments');
+
+    expect(fn() => post_comment($this->post, 'Great product'))->toThrow(WP_Die_Exception::class)
+        ->and(fn() => post_comment($this->post, 'fWxBIRsgipbaeRuKXpLXpU'))->toThrow(WP_Die_Exception::class)
+        ->and(comments_of($this->post))->toBe(0)
+        ->and(gecka_antispam()->journal()->count())->toBe(2)
+        ->and(gecka_antispam()->stats()->totals(1)['comments'])->toBe([Guard::RANDOM_TEXT => 1, Guard::SHORT => 1]);
+
+    expect(wp_get_comment_status(post_comment($this->post, 'Merci pour cet article très clair.')))->not->toBe('spam')
+        ->and(comments_of($this->post))->toBe(1);
 });
 
 it('checks a product review as a form of WooCommerce', function () {
