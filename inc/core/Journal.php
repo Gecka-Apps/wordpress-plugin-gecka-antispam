@@ -126,7 +126,7 @@ class Journal
 
         $where = self::learntCondition($learnt);
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table of the plugin, read on the review screen; $where is one of two fixed conditions.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table of the plugin, read on the review screen; $where is one of two fixed conditions.
         $rows = $wpdb->get_results($wpdb->prepare("SELECT id, surface, outcome, text, hits, created, updated, learnt, generation FROM %i WHERE $where ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d", self::table(), $perPage, max(0, $page - 1) * $perPage));
 
         return array_values((array) $rows);
@@ -145,7 +145,7 @@ class Journal
 
         $where = self::learntCondition($learnt);
 
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table of the plugin; $where is one of two fixed conditions.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table of the plugin; $where is one of two fixed conditions.
         return (int) $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM %i WHERE $where", self::table()));
     }
 
