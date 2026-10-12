@@ -89,14 +89,16 @@ it('reads the subject the mail cites and every textarea of a Contact Form 7 form
     $fields = ['text-735' => 'Offre spéciale', 'email-12' => 'bot@example.com', 'textarea-120' => 'Premier message', 'textarea-121' => 'Second message', 'text-9' => 'Gecka SARL'];
 
     expect(ContactForm7::pick($fields, $types, '[_site_title] "[text-735]"', null, ['your-name', 'your-email']))
-        ->toBe("Offre spéciale\nPremier message\nSecond message");
+        ->toBe(['text' => "Offre spéciale\nPremier message\nSecond message", 'message' => "Premier message\nSecond message"])
+        ->and(ContactForm7::pick(['text-735' => 'Offre spéciale'], ['text-735' => 'text'], '[text-735]', null, []))
+        ->toBe(['text' => 'Offre spéciale', 'message' => null]);
 });
 
 it('never takes the sender, nor a typed field, for the subject of a Contact Form 7 form', function () {
     $types = ['your-name' => 'text', 'your-email' => 'email', 'your-subject' => 'text', 'your-message' => 'textarea'];
     $fields = ['your-name' => 'Jean Dupont', 'your-email' => 'jean@example.com', 'your-subject' => 'Devis', 'your-message' => 'Bonjour'];
 
-    expect(ContactForm7::pick($fields, $types, 'Message de [your-name] <[your-email]> : [your-subject]', null, ['your-name', 'your-email']))
+    expect(ContactForm7::pick($fields, $types, 'Message de [your-name] <[your-email]> : [your-subject]', null, ['your-name', 'your-email'])['text'])
         ->toBe("Devis\nBonjour");
 });
 
@@ -105,7 +107,7 @@ it('reads the fields the settings of a Contact Form 7 form name, several of them
     $fields = ['sujet' => 'Refonte', 'besoin' => 'Un site vitrine', 'details' => 'Trois pages', 'options' => ['SEO', 'Blog'], 'notes' => 'Interne'];
 
     expect(ContactForm7::pick($fields, $types, '[sujet]', '[besoin] [details] [options] [sujet]', []))
-        ->toBe("Refonte\nUn site vitrine\nTrois pages\nSEO Blog");
+        ->toBe(['text' => "Refonte\nUn site vitrine\nTrois pages\nSEO Blog", 'message' => "Refonte\nUn site vitrine\nTrois pages\nSEO Blog"]);
 });
 
 /**

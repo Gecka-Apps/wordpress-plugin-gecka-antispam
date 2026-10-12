@@ -65,6 +65,7 @@ class Settings
         'min_delay' => [0, 60],
         'sign_in_min_delay' => [0, 60],
         'max_age' => [0, 720],
+        'min_words' => [0, 100],
         'filter_reject' => [51, 100],
         'filter_threshold' => [51, 100],
         'filter_review' => [51, 100],
@@ -80,7 +81,7 @@ class Settings
      * as false for the settings of the form, and leaves the others as stored.
      */
     public const SECTIONS = [
-        'general' => ['surfaces', 'honeypot_name', 'min_delay', 'sign_in_min_delay', 'max_age', 'random_names', 'stats_days'],
+        'general' => ['surfaces', 'honeypot_name', 'min_delay', 'sign_in_min_delay', 'max_age', 'random_names', 'min_words', 'stats_days'],
         'filter' => ['filter', 'filter_reject', 'filter_threshold', 'filter_review', 'filter_min_spam', 'filter_min_ham', 'filter_rotation', 'learn_approved'],
         'backgrounds' => ['background_languages'],
     ];
@@ -233,6 +234,7 @@ class Settings
             'sign_in_min_delay' => 0,
             'max_age' => 192,
             'random_names' => true,
+            'min_words' => 0,
             'filter' => true,
             'filter_reject' => 95,
             'filter_threshold' => 75,
@@ -456,6 +458,7 @@ class Settings
             'sign_in_min_delay' => $number('sign_in_min_delay'),
             'max_age' => $number('max_age'),
             'random_names' => $flag('random_names'),
+            'min_words' => $number('min_words'),
             'filter' => $flag('filter'),
             'filter_reject' => $reject,
             'filter_threshold' => $threshold,

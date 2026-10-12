@@ -627,7 +627,8 @@ class SettingsPage extends Base
         $this->numberRow('min_delay', __('Minimum delay', 'gecka-antispam'), (int) $settings['min_delay'], __('seconds', 'gecka-antispam'), __('Time a form must stay on screen before it is sent: comments, contact forms, registration, checkout.', 'gecka-antispam'));
         $this->numberRow('sign_in_min_delay', __('Minimum delay to sign in', 'gecka-antispam'), (int) $settings['sign_in_min_delay'], __('seconds', 'gecka-antispam'), __('Same for the login and lost password forms, which password managers fill and send in a blink.', 'gecka-antispam'));
         $this->numberRow('max_age', __('Maximum age of a form', 'gecka-antispam'), (int) $settings['max_age'], __('hours', 'gecka-antispam'), __('8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0.', 'gecka-antispam'));
-        $this->checkboxRow('random_names', __('Random names', 'gecka-antispam'), (bool) $settings['random_names'], __('Catch names made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl.', 'gecka-antispam'));
+        $this->checkboxRow('random_names', __('Random names', 'gecka-antispam'), (bool) $settings['random_names'], __('Catch names, and messages of a single word, made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl.', 'gecka-antispam'));
+        $this->numberRow('min_words', __('Minimum words in a message', 'gecka-antispam'), (int) $settings['min_words'], __('words', 'gecka-antispam'), __('A message with fewer words is refused: comments, contact forms. 0 accepts any length.', 'gecka-antispam'));
 
         echo '</table>';
 

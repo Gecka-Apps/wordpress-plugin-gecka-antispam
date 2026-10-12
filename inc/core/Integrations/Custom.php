@@ -58,9 +58,10 @@ class Custom extends Integration
      * Checks a submission of a custom form. A form that is not protected
      * goes through unchecked and uncounted.
      *
-     * @param string   $form
-     * @param string   $text  Subject and message.
-     * @param string[] $names Names the sender typed.
+     * @param string      $form
+     * @param string      $text    Subject and message.
+     * @param string[]    $names   Names the sender typed.
+     * @param string|null $message The message alone, when the text also carries a subject; the whole text without it.
      *
      * @return array{refused: bool, spam: bool, review: bool, reason: string|null, score: float|null, message: string}
      *     refused: a check of the form caught it, or the filter rated it past the rejection threshold;
@@ -70,7 +71,7 @@ class Custom extends Integration
      *     score: the rating of the filter, from 0 to 1, null when it did not rate;
      *     message: the error to show for a refusal or a spam, empty otherwise.
      */
-    public function check(string $form, string $text = '', array $names = []): array
+    public function check(string $form, string $text = '', array $names = [], ?string $message = null): array
     {
         $surface = Settings::customSurface($form);
 
@@ -79,7 +80,8 @@ class Custom extends Integration
         }
 
         $text = trim($text);
-        $outcome = $this->verify($surface, array_map('strval', $names), $text !== '' ? $text : null);
+        $message = trim($message ?? $text);
+        $outcome = $this->verify($surface, array_map('strval', $names), $text !== '' ? $text : null, message: $message !== '' ? $message : null);
         $refused = Guard::refuses($outcome);
         $spam = $outcome === Guard::FILTER_SPAM;
 

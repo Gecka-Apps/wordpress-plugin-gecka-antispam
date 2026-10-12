@@ -117,9 +117,9 @@ class Acf extends Integration
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- ACF checked its nonce before submitting the form.
         $posted = (array) map_deep(wp_unslash($_POST['acf'] ?? []), 'sanitize_textarea_field');
         [$fields, $values] = self::expand(self::shownFields($form, $posted), $posted);
-        $text = self::formText($fields, $values, $form[self::ARGUMENT] ?? null);
+        $content = self::formContent($fields, $values, $form[self::ARGUMENT] ?? null);
 
-        if (Guard::refuses($this->verify('acf', self::formNames($fields, $values, $form[self::ARGUMENT] ?? null), $text !== '' ? $text : null))) {
+        if (Guard::refuses($this->verify('acf', self::formNames($fields, $values, $form[self::ARGUMENT] ?? null), $content['text'] !== '' ? $content['text'] : null, message: $content['message']))) {
             wp_die(esc_html($this->message()), esc_html__('Submission refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);
         }
 
@@ -142,6 +142,21 @@ class Acf extends Integration
      */
     public static function formText(array $fields, array $posted, mixed $marker): string
     {
+        return self::formContent($fields, $posted, $marker)['text'];
+    }
+
+    /**
+     * What the statistical filter reads of a form, the subject then the
+     * message, and the message alone, for the checks of the message
+     *
+     * @param array<string, array{name: string, type: string}> $fields The fields the form shows, by key.
+     * @param array<mixed>                                     $posted Values by field key.
+     * @param mixed                                            $marker The gecka_antispam argument of the form.
+     *
+     * @return array{text: string, message: string|null} The message is null for a form without message field.
+     */
+    public static function formContent(array $fields, array $posted, mixed $marker): array
+    {
         $marker = is_array($marker) ? $marker : [];
         $subjects = self::named($fields, $marker['subject'] ?? null)
             ?? (isset($fields['_post_title']) ? ['_post_title'] : []);
@@ -149,16 +164,23 @@ class Acf extends Integration
             ?? array_keys(array_filter($fields, static fn(array $field, string $key): bool => $key !== '_post_title' && in_array($field['type'], self::MESSAGE_TYPES, true), ARRAY_FILTER_USE_BOTH));
         $subjects = array_filter($subjects, static fn(string $key): bool => in_array($fields[$key]['type'], self::SUBJECT_TYPES, true));
         $lines = [];
+        $typed = [];
 
         foreach (array_unique([...$subjects, ...$messages]) as $key) {
             $value = trim(wp_strip_all_tags(self::flatten($posted[$key] ?? '')));
 
-            if ($value !== '') {
-                $lines[] = $value;
+            if ($value === '') {
+                continue;
+            }
+
+            $lines[] = $value;
+
+            if (in_array($key, $messages, true)) {
+                $typed[] = $value;
             }
         }
 
-        return implode("\n", $lines);
+        return ['text' => implode("\n", $lines), 'message' => $messages === [] ? null : implode("\n", $typed)];
     }
 
     /**

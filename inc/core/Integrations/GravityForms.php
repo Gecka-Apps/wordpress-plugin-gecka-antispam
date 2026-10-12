@@ -302,7 +302,8 @@ class GravityForms extends Integration implements Learner
 
         $lead = \GFFormsModel::get_current_lead($form);
         $entry = is_array($lead) ? $lead : [];
-        $outcome = $this->verify('gravity_forms', self::names($form, $entry), self::entryText($entry, $form), ! $rest);
+        $content = self::entryContent($entry, $form);
+        $outcome = $this->verify('gravity_forms', self::names($form, $entry), $content['text'], ! $rest, message: $content['message']);
         $this->checked = (int) $form['id'];
         $this->outcome = $this->review ? Guard::REVIEW : $outcome;
         $this->note = $this->review ? $this->reason(Guard::REVIEW) : '';
@@ -567,6 +568,20 @@ class GravityForms extends Integration implements Learner
      */
     public static function entryText(array $entry, ?array $form = null): string
     {
+        return self::entryContent($entry, $form)['text'];
+    }
+
+    /**
+     * What the statistical filter reads of an entry, the subject then the
+     * message, and the message alone, for the checks of the message
+     *
+     * @param array<string, mixed>      $entry
+     * @param array<string, mixed>|null $form  The form of the entry, read when not given.
+     *
+     * @return array{text: string, message: string|null} The message is null for a form without message field.
+     */
+    public static function entryContent(array $entry, ?array $form = null): array
+    {
         if ($form === null && class_exists('GFAPI')) {
             $form = \GFAPI::get_form((int) ($entry['form_id'] ?? 0)) ?: null;
         }
@@ -589,16 +604,23 @@ class GravityForms extends Integration implements Learner
         $messages = self::marked($fields, self::MESSAGE_CLASS)
             ?: array_keys(array_filter($fields, static fn(object $field): bool => in_array(self::type($field), self::MESSAGE_TYPES, true)));
         $lines = [];
+        $typed = [];
 
         foreach (array_unique([...$subjects, ...$messages]) as $id) {
             $value = self::value($fields[$id], $entry);
 
-            if ($value !== '') {
-                $lines[] = $value;
+            if ($value === '') {
+                continue;
+            }
+
+            $lines[] = $value;
+
+            if (in_array($id, $messages, true)) {
+                $typed[] = $value;
             }
         }
 
-        return implode("\n", $lines);
+        return ['text' => implode("\n", $lines), 'message' => $messages === [] ? null : implode("\n", $typed)];
     }
 
     /**

@@ -29,6 +29,7 @@ it('keeps the settings within bounds', function () {
             'form' => 'general',
             'surfaces' => ['comments' => '1'],
             'min_delay' => 500,
+            'min_words' => -3,
             'filter_threshold' => 10,
             'filter_review' => 80,
             'filter_reject' => 40,
@@ -38,6 +39,7 @@ it('keeps the settings within bounds', function () {
     expect($settings['surfaces']['comments'])->toBeTrue()
         ->and($settings['surfaces']['login'])->toBeFalse()
         ->and($settings['min_delay'])->toBe(60)
+        ->and($settings['min_words'])->toBe(0)
         ->and($settings['filter_threshold'])->toBe(51)
         ->and($settings['filter_review'])->toBe(51)
         ->and($settings['filter_reject'])->toBe(51)

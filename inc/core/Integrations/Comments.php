@@ -175,7 +175,7 @@ class Comments extends Integration implements Learner
         // A user logged in gets no fields in the form: only the text is rated.
         // A comment let through is counted once saved: the flood and
         // duplicate checks of WordPress come after this filter.
-        $outcome = $this->verify($surface, [(string) ($comment['comment_author'] ?? '')], $text, ! is_user_logged_in(), true);
+        $outcome = $this->verify($surface, [(string) ($comment['comment_author'] ?? '')], $text, ! is_user_logged_in(), true, $text);
 
         if (Guard::refuses($outcome)) {
             wp_die(esc_html($this->message()), esc_html__('Comment refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);

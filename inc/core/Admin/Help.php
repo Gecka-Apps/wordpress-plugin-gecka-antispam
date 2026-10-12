@@ -99,7 +99,7 @@ class Help
     {
         return self::paragraphs(
             [
-                __('The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender.', 'gecka-antispam'),
+                __('The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender, and a message of a single word; the minimum of words, the message.', 'gecka-antispam'),
                 __('The statistical filter reads the subject and the message of a submission, and nothing of the sender: no name, email address, phone number nor address. Each integration finds them by the structure of its forms, never by the names of the fields; the tabs beside give its rules, the first that applies winning. A field found twice is read once, the subject first.', 'gecka-antispam'),
             ],
         );

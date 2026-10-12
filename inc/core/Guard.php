@@ -64,6 +64,16 @@ class Guard
     public const RANDOM_NAME = 'random_name';
 
     /**
+     * The message is a single word of random letters.
+     */
+    public const RANDOM_TEXT = 'random_text';
+
+    /**
+     * The message holds fewer words than the minimum set.
+     */
+    public const SHORT = 'short';
+
+    /**
      * The statistical filter rated the text as spam.
      */
     public const FILTER_SPAM = 'filter_spam';
@@ -123,6 +133,8 @@ class Guard
             self::TOO_FAST => __('Sent too fast', 'gecka-antispam'),
             self::EXPIRED => __('Timestamp expired', 'gecka-antispam'),
             self::RANDOM_NAME => __('Random name', 'gecka-antispam'),
+            self::RANDOM_TEXT => __('Message of random letters', 'gecka-antispam'),
+            self::SHORT => __('Message too short', 'gecka-antispam'),
             self::FILTER_SPAM => __('Statistical filter: spam', 'gecka-antispam'),
             self::FILTER_REJECT => __('Statistical filter: refused', 'gecka-antispam'),
         ];
@@ -201,12 +213,13 @@ class Guard
     /**
      * Runs the checks on the submission of a form.
      *
-     * @param string   $surface The form being sent.
-     * @param string[] $names   Names typed in the form, checked for random letters.
+     * @param string      $surface The form being sent.
+     * @param string[]    $names   Names typed in the form, checked for random letters.
+     * @param string|null $message The message typed, null for a form without one.
      *
      * @return string|null What caught the submission, null when it went through.
      */
-    public function check(string $surface, array $names = []): ?string
+    public function check(string $surface, array $names = [], ?string $message = null): ?string
     {
         if ($this->honeypotFilled()) {
             return self::HONEYPOT;
@@ -228,7 +241,9 @@ class Guard
             return self::EXPIRED;
         }
 
-        if ($this->plugin->settings()->get('random_names')) {
+        $random = (bool) $this->plugin->settings()->get('random_names');
+
+        if ($random) {
             foreach ($names as $name) {
                 if (self::isRandomName($name)) {
                     return self::RANDOM_NAME;
@@ -236,7 +251,31 @@ class Guard
             }
         }
 
+        if ($message !== null) {
+            $words = self::words($message);
+
+            if (count($words) < (int) $this->plugin->settings()->get('min_words')) {
+                return self::SHORT;
+            }
+
+            if ($random && count($words) === 1 && self::isRandomName(trim($words[0], '.,;:!?'))) {
+                return self::RANDOM_TEXT;
+            }
+        }
+
         return null;
+    }
+
+    /**
+     * The words of a text: what its blanks separate
+     *
+     * @param string $text
+     *
+     * @return string[]
+     */
+    public static function words(string $text): array
+    {
+        return preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY) ?: [];
     }
 
     /**

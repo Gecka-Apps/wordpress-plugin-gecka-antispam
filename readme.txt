@@ -12,7 +12,7 @@ Stops spam on comments, login, registration, WooCommerce, Contact Form 7, Gravit
 
 == Description ==
 
-Every protected form gets a signed timestamp and a honeypot, a field people never see and bots fill in. A submission without the timestamp, sent faster than anybody types, with the honeypot filled in, or with a name made of random letters, like qASQAhqkpFGqnKkRROl, is refused with an error, which lets a person send it again.
+Every protected form gets a signed timestamp and a honeypot, a field people never see and bots fill in. A submission without the timestamp, sent faster than anybody types, with the honeypot filled in, or with a name, or a message of a single word, made of random letters, like qASQAhqkpFGqnKkRROl, is refused with an error, which lets a person send it again. A minimum of words can be set for the message.
 
 Protected forms:
 

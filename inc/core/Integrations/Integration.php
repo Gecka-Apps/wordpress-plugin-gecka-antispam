@@ -81,14 +81,15 @@ abstract class Integration extends Base
      * @param string|null $text      What the statistical filter reads, null for a form it does not rate.
      * @param bool        $guarded   Whether the form carries the fields; without them only the text is rated.
      * @param bool        $countLater Whether a submission let through is counted by the caller, once saved.
+     * @param string|null $message    The message typed, for the checks of the message; null for a form without one.
      *
      * @return string|null What caught the submission, null when it went through.
      */
-    protected function verify(string $surface, array $names = [], ?string $text = null, bool $guarded = true, bool $countLater = false): ?string
+    protected function verify(string $surface, array $names = [], ?string $text = null, bool $guarded = true, bool $countLater = false, ?string $message = null): ?string
     {
         $this->score = null;
         $this->review = false;
-        $outcome = $guarded ? $this->plugin->guard()->check($surface, $names) : null;
+        $outcome = $guarded ? $this->plugin->guard()->check($surface, $names, $message) : null;
 
         if (! $outcome && $text !== null && $this->plugin->filterReady()) {
             $this->score = $this->plugin->statisticalFilter()->classify($text);

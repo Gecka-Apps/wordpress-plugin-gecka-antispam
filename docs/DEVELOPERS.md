@@ -67,26 +67,30 @@ The honeypot is hidden by a style sheet the plugin prints in the head of
 every page of the site and of the login screen; a form printed where no head
 is, an Ajax response for one, carries the rule itself.
 
-### `gecka_antispam_check( string $form, string $text = '', array $names = [] ): array`
+### `gecka_antispam_check( string $form, string $text = '', array $names = [], ?string $message = null ): array`
 
 Runs the checks on what the form posted: the honeypot, the timestamp, the
 minimum delay (5 seconds by default), the maximum age (8 days by default),
-the random names check on `$names`, then the statistical filter on `$text`,
-once it has learnt enough to rate. The submission is counted in the
-statistics; one refused that carries a text goes to Security > Journal,
-where a moderator can learn it.
+the random names check on `$names`, the checks of the message on
+`$message`, then the statistical filter on `$text`, once it has learnt
+enough to rate. The submission is counted in the statistics; one refused
+that carries a text goes to Security > Journal, where a moderator can learn
+it.
 
 Pass the subject and the message as `$text`, nothing of the sender: the
 filter rates the words of a message, and a name or an address only blurs
 its rating and keeps personal data in its counters. With no text, only the
-checks of the form run.
+checks of the form run. Pass the message alone as `$message` when the text
+also carries a subject: a message of a single word of random letters is
+refused, and one shorter than the minimum of words set; without it, the
+whole text is read as the message.
 
 | Key | Value |
 |---|---|
 | `refused` | True when a check of the form caught the submission, or the filter rated it past the rejection threshold (95 % by default). Refuse it with an error the sender sees: a person refused by mistake can send again. |
 | `spam` | True when the filter rated it spam, from the spam threshold (75 %) to the rejection one. Keep it where the form keeps spam, or refuse it as well. |
 | `review` | True when the filter finds it doubtful (55 % to 75 %): let it through and have a person look at it. |
-| `reason` | What caught it: `honeypot`, `token`, `too_fast`, `expired`, `random_name`, `filter_spam`, `filter_reject`, or `review`; null when it went through. |
+| `reason` | What caught it: `honeypot`, `token`, `too_fast`, `expired`, `random_name`, `random_text`, `short`, `filter_spam`, `filter_reject`, or `review`; null when it went through. |
 | `score` | The rating of the filter, from 0 to 1; null when the filter did not rate. |
 | `message` | The error the plugin shows for a refusal or a spam, translated; empty otherwise. |
 
@@ -267,8 +271,9 @@ username of a registration.
 
 ### Your own forms
 
-The `$text` passed to `gecka_antispam_check()`, and the random names check
-on `$names`.
+The `$text` passed to `gecka_antispam_check()`, the random names check on
+`$names`, and the checks of the message on `$message`, or on the text
+without it.
 
 ## Filters and actions
 

@@ -72,15 +72,16 @@ function gecka_antispam_fields(string $form, bool $carry = false): string
  * statistical filter on the text. The submission is counted in the
  * statistics, and one refused that carries a text goes to the Refused list.
  *
- * @param string   $form  Name given to gecka_antispam_fields().
- * @param string   $text  What the filter reads: the subject and the message, nothing of the sender.
- * @param string[] $names Names the sender typed, for the random names check.
+ * @param string      $form    Name given to gecka_antispam_fields().
+ * @param string      $text    What the filter reads: the subject and the message, nothing of the sender.
+ * @param string[]    $names   Names the sender typed, for the random names check.
+ * @param string|null $message The message alone, for the checks of the message, when the text also carries a subject.
  *
  * @return array{refused: bool, spam: bool, review: bool, reason: string|null, score: float|null, message: string}
  */
-function gecka_antispam_check(string $form, string $text = '', array $names = []): array
+function gecka_antispam_check(string $form, string $text = '', array $names = [], ?string $message = null): array
 {
-    return gecka_antispam()->custom()->check($form, $text, $names);
+    return gecka_antispam()->custom()->check($form, $text, $names, $message);
 }
 
 add_action(

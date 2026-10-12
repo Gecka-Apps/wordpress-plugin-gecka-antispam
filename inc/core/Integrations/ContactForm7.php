@@ -230,8 +230,8 @@ class ContactForm7 extends Integration
         }
 
         $posted = (array) $submission->get_posted_data();
-        $text = self::formText($form, $posted);
-        $outcome = $this->verify('contact_form_7', $this->names($form, $posted), $text);
+        $content = self::formContent($form, $posted);
+        $outcome = $this->verify('contact_form_7', $this->names($form, $posted), $content['text'], message: $content['message']);
         $this->refused = Guard::refuses($outcome);
 
         if (! $outcome) {
@@ -254,6 +254,21 @@ class ContactForm7 extends Integration
      */
     public static function formText(\WPCF7_ContactForm $form, array $fields): string
     {
+        return self::formContent($form, $fields)['text'];
+    }
+
+    /**
+     * What the statistical filter reads of a submission of a form, the
+     * subject then the message, and the message alone, for the checks of
+     * the message
+     *
+     * @param \WPCF7_ContactForm   $form
+     * @param array<string, mixed> $fields Posted or kept values, by field name.
+     *
+     * @return array{text: string, message: string|null} The message is null for a form without message field.
+     */
+    public static function formContent(\WPCF7_ContactForm $form, array $fields): array
+    {
         $mail = (array) $form->prop('mail');
 
         return self::pick(
@@ -267,7 +282,7 @@ class ContactForm7 extends Integration
 
     /**
      * The values of the subject and of the message, one per line, the
-     * subject first, each field once
+     * subject first, each field once; and those of the message alone
      *
      * @param array<string, mixed>  $fields  Values by field name.
      * @param array<string, string> $types   Base type of each form tag, by name.
@@ -275,9 +290,9 @@ class ContactForm7 extends Integration
      * @param string|null           $message Template citing the message fields, null for every textarea.
      * @param string[]              $sender  Fields that hold the sender, never the subject.
      *
-     * @return string
+     * @return array{text: string, message: string|null} The message is null for a form without message field.
      */
-    public static function pick(array $fields, array $types, string $subject, ?string $message, array $sender): string
+    public static function pick(array $fields, array $types, string $subject, ?string $message, array $sender): array
     {
         $subjects = array_filter(
             self::cited($subject),
@@ -287,16 +302,23 @@ class ContactForm7 extends Integration
             ? array_keys(array_filter($types, static fn(string $type): bool => $type === 'textarea'))
             : self::cited($message);
         $lines = [];
+        $typed = [];
 
         foreach (array_unique([...$subjects, ...$messages]) as $name) {
             $value = self::flatten($fields[$name] ?? '');
 
-            if ($value !== '') {
-                $lines[] = $value;
+            if ($value === '') {
+                continue;
+            }
+
+            $lines[] = $value;
+
+            if (in_array($name, $messages, true)) {
+                $typed[] = $value;
             }
         }
 
-        return implode("\n", $lines);
+        return ['text' => implode("\n", $lines), 'message' => $messages === [] ? null : implode("\n", $typed)];
     }
 
     /**

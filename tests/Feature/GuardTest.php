@@ -113,3 +113,34 @@ it('catches a random name only when the check is on', function () {
     expect(gecka_antispam()->guard()->check('comments', ['qASQAhqkpFGqnKkRROl']))->toBeNull();
     antispam_settings(['random_names' => true]);
 });
+
+it('catches a message of a single word of random letters', function () {
+    post_form('comments');
+    $guard = gecka_antispam()->guard();
+
+    expect($guard->check('comments', [], 'fWxBIRsgipbaeRuKXpLXpU'))->toBe(Guard::RANDOM_TEXT)
+        ->and($guard->check('comments', [], " fWxBIRsgipbaeRuKXpLXpU.\n"))->toBe(Guard::RANDOM_TEXT)
+        ->and($guard->check('comments', [], 'fWxBIRsgipbaeRuKXpLXpU encore'))->toBeNull()
+        ->and($guard->check('comments', [], 'Merci'))->toBeNull()
+        ->and($guard->check('comments', [], ''))->toBeNull()
+        ->and($guard->check('comments', []))->toBeNull();
+
+    antispam_settings(['random_names' => false]);
+    expect($guard->check('comments', [], 'fWxBIRsgipbaeRuKXpLXpU'))->toBeNull();
+    antispam_settings(['random_names' => true]);
+});
+
+it('refuses a message shorter than the minimum of words, when one is set', function () {
+    post_form('comments');
+    $guard = gecka_antispam()->guard();
+
+    antispam_settings(['min_words' => 3]);
+    expect($guard->check('comments', [], 'Merci beaucoup'))->toBe(Guard::SHORT)
+        ->and($guard->check('comments', [], ''))->toBe(Guard::SHORT)
+        ->and($guard->check('comments', [], "Merci\nbeaucoup à vous"))->toBeNull()
+        ->and($guard->check('comments', []))->toBeNull();
+    antispam_settings(['min_words' => 0]);
+
+    expect($guard->check('comments', [], ''))->toBeNull()
+        ->and(Guard::words("  Un  deux\tтри\nquatre. "))->toBe(['Un', 'deux', 'три', 'quatre.']);
+});
