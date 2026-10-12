@@ -28,6 +28,8 @@ const NO_BACKGROUND = __DIR__ . '/../.tests/no-background';
 
 uses(TestCase::class)
     ->beforeEach(function () {
+        // The checks refuse a submission sent with no user agent.
+        $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
         gecka_antispam()->settings()->flush();
         gecka_antispam()->statisticalFilter()->flushTally();
         add_filter('gecka_antispam_background_directory', static fn(): string => NO_BACKGROUND);

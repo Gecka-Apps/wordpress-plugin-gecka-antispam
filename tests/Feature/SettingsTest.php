@@ -100,6 +100,8 @@ it('leaves the boxes of the other tab alone', function () {
     expect($general['filter'])->toBeTrue()
         ->and($general['learn_approved'])->toBeTrue()
         ->and($general['random_names'])->toBeFalse()
+        ->and($general['bad_browsers'])->toBeFalse()
+        ->and($filter['bad_browsers'])->toBeTrue()
         ->and($filter['filter'])->toBeFalse()
         ->and($filter['learn_approved'])->toBeFalse()
         ->and($filter['filter_reject'])->toBe(90)

@@ -57,7 +57,7 @@ msgstr "Envois contrôlés"
 
 #: inc/core/Admin/DashboardWidget.php:66
 #: inc/core/Admin/StatsView.php:170
-#: inc/core/Guard.php:130
+#: inc/core/Guard.php:135
 #: inc/core/Integrations/Flamingo.php:474
 msgid "To review"
 msgstr "À vérifier"
@@ -467,7 +467,7 @@ msgstr[0] "%s envoi a été appris avant l’avant-dernière rotation des compte
 msgstr[1] "%s envois ont été appris avant l’avant-dernière rotation des compteurs et leur poids a été divisé depuis : ils ne peuvent pas être désappris exactement et restent appris. Apprenez-les dans l’autre sens pour les corriger."
 
 #: inc/core/Admin/SettingsPage.php:154
-#: inc/core/Admin/SettingsPage.php:635
+#: inc/core/Admin/SettingsPage.php:636
 msgid "Statistics"
 msgstr "Statistiques"
 
@@ -538,52 +538,52 @@ msgstr "heures"
 msgid "Random names"
 msgstr "Noms aléatoires"
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:638
 msgid "Keep the statistics"
 msgstr "Conserver les statistiques"
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:638
 msgid "days"
 msgstr "jours"
 
-#: inc/core/Admin/SettingsPage.php:647
+#: inc/core/Admin/SettingsPage.php:648
 msgid "Put every setting back to its default? The name of the honeypot field is kept."
 msgstr "Remettre tous les réglages à leur valeur par défaut ? Le nom du champ pot de miel est conservé."
 
-#: inc/core/Admin/SettingsPage.php:648
+#: inc/core/Admin/SettingsPage.php:649
 msgid "Restore the default settings"
 msgstr "Rétablir les réglages par défaut"
 
-#: inc/core/Admin/SettingsPage.php:672
+#: inc/core/Admin/SettingsPage.php:673
 msgid "Off"
 msgstr "Désactivé"
 
-#: inc/core/Admin/SettingsPage.php:673
+#: inc/core/Admin/SettingsPage.php:674
 msgid "Every form"
 msgstr "Tous les formulaires"
 
-#: inc/core/Admin/SettingsPage.php:674
+#: inc/core/Admin/SettingsPage.php:675
 msgid "Only the forms holding the marker"
 msgstr "Seulement les formulaires qui portent le marqueur"
 
 #. translators: %s: the form tag
-#: inc/core/Admin/SettingsPage.php:698
+#: inc/core/Admin/SettingsPage.php:699
 #, php-format
 msgid "Marker: the %s form tag, placed in the form where the fields go."
 msgstr "Marqueur : la balise %s, placée dans le formulaire là où vont les champs."
 
-#: inc/core/Admin/SettingsPage.php:699
+#: inc/core/Admin/SettingsPage.php:700
 msgid "Marker: the Antispam field, among the advanced fields of the form editor."
 msgstr "Marqueur : le champ Antispam, parmi les champs avancés de l’éditeur de formulaire."
 
 #. translators: 1: the argument, 2: function, 3: function
-#: inc/core/Admin/SettingsPage.php:701
+#: inc/core/Admin/SettingsPage.php:702
 #, php-format
 msgid "Marker: %1$s in the arguments of %2$s or %3$s."
 msgstr "Marqueur : %1$s dans les arguments de %2$s ou de %3$s."
 
 #: inc/core/Admin/RefusedView.php:214
-#: inc/core/Admin/SettingsPage.php:718
+#: inc/core/Admin/SettingsPage.php:719
 msgid "Sorry, you are not allowed to do that."
 msgstr "Désolé, vous n’avez pas l’autorisation de faire cela."
 
@@ -819,7 +819,7 @@ msgstr "%s %%"
 #: inc/core/Admin/StatsView.php:225
 #: inc/core/Admin/StatsView.php:285
 #: inc/core/Admin/StatsView.php:468
-#: inc/core/Guard.php:129
+#: inc/core/Guard.php:134
 msgid "Accepted"
 msgstr "Acceptés"
 
@@ -939,35 +939,35 @@ msgstr "Impossible de télécharger %1$s : HTTP %2$d."
 msgid "%s is larger than announced."
 msgstr "%s est plus gros qu’annoncé."
 
-#: inc/core/Guard.php:131
+#: inc/core/Guard.php:136
 msgid "Honeypot filled in"
 msgstr "Pot de miel rempli"
 
-#: inc/core/Guard.php:132
+#: inc/core/Guard.php:137
 msgid "Timestamp missing or forged"
 msgstr "Horodatage absent ou falsifié"
 
-#: inc/core/Guard.php:133
+#: inc/core/Guard.php:138
 msgid "Sent too fast"
 msgstr "Envoi trop rapide"
 
-#: inc/core/Guard.php:134
+#: inc/core/Guard.php:139
 msgid "Timestamp expired"
 msgstr "Horodatage expiré"
 
-#: inc/core/Guard.php:135
+#: inc/core/Guard.php:140
 msgid "Random name"
 msgstr "Nom aléatoire"
 
-#: inc/core/Guard.php:138
+#: inc/core/Guard.php:144
 msgid "Statistical filter: spam"
 msgstr "Filtre statistique : spam"
 
-#: inc/core/Guard.php:139
+#: inc/core/Guard.php:145
 msgid "Statistical filter: refused"
 msgstr "Filtre statistique : refusé"
 
-#: inc/core/Guard.php:194
+#: inc/core/Guard.php:200
 msgid "Leave this field empty"
 msgstr "Laissez ce champ vide"
 
@@ -1099,7 +1099,7 @@ msgstr "Formulaires frontaux"
 msgid "%1$s: %2$s"
 msgstr "%1$s : %2$s"
 
-#: inc/core/Settings.php:442
+#: inc/core/Settings.php:443
 msgid "The honeypot field name must start with a letter, hold 3 to 40 lowercase letters, digits or underscores, and not be a name a form already uses. The previous name is kept."
 msgstr "Le nom du champ pot de miel doit commencer par une lettre, compter de 3 à 40 lettres minuscules, chiffres ou tirets bas, et ne pas être un nom déjà utilisé par un formulaire. Le nom précédent est conservé."
 
@@ -1576,7 +1576,7 @@ msgstr "Ces formulaires créent ou modifient du contenu et n’ont pas de file d
 msgid "Random names: the text fields the %1$s argument names under name, for instance %2$s; none without it."
 msgstr "Noms aléatoires : les champs texte que l’argument %1$s nomme sous name, par exemple %2$s ; aucun sans lui."
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:638
 msgid "Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content."
 msgstr "Seuls des comptes journaliers sont gardés, par formulaire et par résultat, et par pays, réseau et système : aucune adresse, aucun contenu."
 
@@ -1695,10 +1695,6 @@ msgstr "%1$s : %2$s."
 msgid "A query on the spam filter tables failed: %s"
 msgstr "Une requête sur les tables du filtre antispam a échoué : %s"
 
-#: inc/core/Admin/Help.php:102
-msgid "The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender, and a message of a single word; the minimum of words, the message."
-msgstr "Les contrôles des formulaires, le pot de miel, l’horodatage signé et les délais, ne lisent aucun champ. Le contrôle des noms aléatoires lit les noms de l’expéditeur, et un message d’un seul mot ; le minimum de mots, le message."
-
 #: inc/core/Admin/SettingsPage.php:630
 msgid "Catch names, and messages of a single word, made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl."
 msgstr "Intercepter les noms, et les messages d’un seul mot, dont la casse change au hasard, comme qASQAhqkpFGqnKkRROl."
@@ -1715,10 +1711,26 @@ msgstr "mots"
 msgid "A message with fewer words is refused: comments, contact forms. 0 accepts any length."
 msgstr "Un message qui en compte moins est refusé : commentaires, formulaires de contact. 0 accepte toute longueur."
 
-#: inc/core/Guard.php:136
+#: inc/core/Guard.php:141
 msgid "Message of random letters"
 msgstr "Message de lettres aléatoires"
 
-#: inc/core/Guard.php:137
+#: inc/core/Guard.php:142
 msgid "Message too short"
 msgstr "Message trop court"
+
+#: inc/core/Admin/Help.php:102
+msgid "The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender, and a message of a single word; the minimum of words, the message; the bad browsers check, the user agent."
+msgstr "Les contrôles des formulaires, le pot de miel, l’horodatage signé et les délais, ne lisent aucun champ. Le contrôle des noms aléatoires lit les noms de l’expéditeur, et un message d’un seul mot ; le minimum de mots, le message ; le contrôle des mauvais navigateurs, l’user agent."
+
+#: inc/core/Admin/SettingsPage.php:632
+msgid "Bad browsers"
+msgstr "Mauvais navigateurs"
+
+#: inc/core/Admin/SettingsPage.php:632
+msgid "Refuse a submission sent with no user agent, or with one wrapped in quotes: scripts send those, no browser does."
+msgstr "Refuser un envoi sans user agent, ou dont l’user agent est entre guillemets : des scripts en envoient, aucun navigateur."
+
+#: inc/core/Guard.php:143
+msgid "Bad browser"
+msgstr "Mauvais navigateur"

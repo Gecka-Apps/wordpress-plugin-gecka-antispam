@@ -132,6 +132,10 @@ reads as one. A **minimum of words** applies to the message too, five by
 default, 0 for none: a message shorter than that is refused, on comments and
 contact forms alike.
 
+A last check reads the **user agent**: a submission sent with none, or with
+one wrapped in quotes, is refused. No browser sends either; a script whose
+setting was copied with its quotes does, by the thousand.
+
 A user logged in gets no fields in the comment form: the comments of a user
 who cannot moderate them are rated by the statistical filter alone, those of
 a moderator are not checked. A Gravity Forms submission made by code, through

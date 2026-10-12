@@ -81,7 +81,7 @@ class Settings
      * as false for the settings of the form, and leaves the others as stored.
      */
     public const SECTIONS = [
-        'general' => ['surfaces', 'honeypot_name', 'min_delay', 'sign_in_min_delay', 'max_age', 'random_names', 'min_words', 'stats_days'],
+        'general' => ['surfaces', 'honeypot_name', 'min_delay', 'sign_in_min_delay', 'max_age', 'random_names', 'min_words', 'bad_browsers', 'stats_days'],
         'filter' => ['filter', 'filter_reject', 'filter_threshold', 'filter_review', 'filter_min_spam', 'filter_min_ham', 'filter_rotation', 'learn_approved'],
         'backgrounds' => ['background_languages'],
     ];
@@ -235,6 +235,7 @@ class Settings
             'max_age' => 192,
             'random_names' => true,
             'min_words' => 5,
+            'bad_browsers' => true,
             'filter' => true,
             'filter_reject' => 95,
             'filter_threshold' => 75,
@@ -459,6 +460,7 @@ class Settings
             'max_age' => $number('max_age'),
             'random_names' => $flag('random_names'),
             'min_words' => $number('min_words'),
+            'bad_browsers' => $flag('bad_browsers'),
             'filter' => $flag('filter'),
             'filter_reject' => $reject,
             'filter_threshold' => $threshold,

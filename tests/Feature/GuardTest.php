@@ -134,6 +134,32 @@ it('catches a message of a single word of random letters, before its length', fu
     antispam_settings(['random_names' => true, 'min_words' => 5]);
 });
 
+it('refuses a user agent no browser sends, unless the check is off', function (string $agent, bool $bad) {
+    post_form('comments');
+    $_SERVER['HTTP_USER_AGENT'] = $agent;
+
+    expect(Guard::isBadBrowser($agent))->toBe($bad)
+        ->and(gecka_antispam()->guard()->check('comments'))->toBe($bad ? Guard::BAD_BROWSER : null);
+
+    antispam_settings(['bad_browsers' => false]);
+    expect(gecka_antispam()->guard()->check('comments'))->toBeNull();
+    antispam_settings(['bad_browsers' => true]);
+})->with([
+    ['"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"', true],
+    ["'Mozilla/5.0'", true],
+    ['', true],
+    ['   ', true],
+    ['Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', false],
+    ['curl/8.5.0', false],
+]);
+
+it('refuses a submission sent with no user agent at all', function () {
+    post_form('comments');
+    unset($_SERVER['HTTP_USER_AGENT']);
+
+    expect(gecka_antispam()->guard()->check('comments'))->toBe(Guard::BAD_BROWSER);
+});
+
 it('refuses a message shorter than the minimum of words, five by default', function () {
     post_form('comments');
     $guard = gecka_antispam()->guard();

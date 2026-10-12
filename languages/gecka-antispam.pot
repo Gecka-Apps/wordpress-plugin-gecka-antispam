@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-13T08:45:38+11:00\n"
+"POT-Creation-Date: 2026-10-13T09:12:30+11:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: gecka-antispam\n"
@@ -62,7 +62,7 @@ msgstr ""
 
 #: inc/core/Admin/DashboardWidget.php:66
 #: inc/core/Admin/StatsView.php:170
-#: inc/core/Guard.php:130
+#: inc/core/Guard.php:135
 #: inc/core/Integrations/Flamingo.php:474
 msgid "To review"
 msgstr ""
@@ -510,7 +510,7 @@ msgid "Learn more"
 msgstr ""
 
 #: inc/core/Admin/Help.php:102
-msgid "The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender, and a message of a single word; the minimum of words, the message."
+msgid "The checks of the forms, the honeypot, the signed timestamp and the delays, read no field. The random names check reads the names of the sender, and a message of a single word; the minimum of words, the message; the bad browsers check, the user agent."
 msgstr ""
 
 #: inc/core/Admin/Help.php:103
@@ -817,7 +817,7 @@ msgid "Delete everything"
 msgstr ""
 
 #: inc/core/Admin/RefusedView.php:214
-#: inc/core/Admin/SettingsPage.php:718
+#: inc/core/Admin/SettingsPage.php:719
 msgid "Sorry, you are not allowed to do that."
 msgstr ""
 
@@ -876,7 +876,7 @@ msgid "Security"
 msgstr ""
 
 #: inc/core/Admin/SettingsPage.php:154
-#: inc/core/Admin/SettingsPage.php:635
+#: inc/core/Admin/SettingsPage.php:636
 msgid "Statistics"
 msgstr ""
 
@@ -981,50 +981,58 @@ msgstr ""
 msgid "A message with fewer words is refused: comments, contact forms. 0 accepts any length."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:632
+msgid "Bad browsers"
+msgstr ""
+
+#: inc/core/Admin/SettingsPage.php:632
+msgid "Refuse a submission sent with no user agent, or with one wrapped in quotes: scripts send those, no browser does."
+msgstr ""
+
+#: inc/core/Admin/SettingsPage.php:638
 msgid "Keep the statistics"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:638
 msgid "days"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:637
+#: inc/core/Admin/SettingsPage.php:638
 msgid "Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:647
+#: inc/core/Admin/SettingsPage.php:648
 msgid "Put every setting back to its default? The name of the honeypot field is kept."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:648
+#: inc/core/Admin/SettingsPage.php:649
 msgid "Restore the default settings"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:672
+#: inc/core/Admin/SettingsPage.php:673
 msgid "Off"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:673
+#: inc/core/Admin/SettingsPage.php:674
 msgid "Every form"
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:674
+#: inc/core/Admin/SettingsPage.php:675
 msgid "Only the forms holding the marker"
 msgstr ""
 
 #. translators: %s: the form tag
-#: inc/core/Admin/SettingsPage.php:698
+#: inc/core/Admin/SettingsPage.php:699
 #, php-format
 msgid "Marker: the %s form tag, placed in the form where the fields go."
 msgstr ""
 
-#: inc/core/Admin/SettingsPage.php:699
+#: inc/core/Admin/SettingsPage.php:700
 msgid "Marker: the Antispam field, among the advanced fields of the form editor."
 msgstr ""
 
 #. translators: 1: the argument, 2: function, 3: function
-#: inc/core/Admin/SettingsPage.php:701
+#: inc/core/Admin/SettingsPage.php:702
 #, php-format
 msgid "Marker: %1$s in the arguments of %2$s or %3$s."
 msgstr ""
@@ -1317,7 +1325,7 @@ msgstr ""
 #: inc/core/Admin/StatsView.php:225
 #: inc/core/Admin/StatsView.php:285
 #: inc/core/Admin/StatsView.php:468
-#: inc/core/Guard.php:129
+#: inc/core/Guard.php:134
 msgid "Accepted"
 msgstr ""
 
@@ -1498,43 +1506,47 @@ msgstr ""
 msgid "%s is larger than announced."
 msgstr ""
 
-#: inc/core/Guard.php:131
+#: inc/core/Guard.php:136
 msgid "Honeypot filled in"
 msgstr ""
 
-#: inc/core/Guard.php:132
+#: inc/core/Guard.php:137
 msgid "Timestamp missing or forged"
 msgstr ""
 
-#: inc/core/Guard.php:133
+#: inc/core/Guard.php:138
 msgid "Sent too fast"
 msgstr ""
 
-#: inc/core/Guard.php:134
+#: inc/core/Guard.php:139
 msgid "Timestamp expired"
 msgstr ""
 
-#: inc/core/Guard.php:135
+#: inc/core/Guard.php:140
 msgid "Random name"
 msgstr ""
 
-#: inc/core/Guard.php:136
+#: inc/core/Guard.php:141
 msgid "Message of random letters"
 msgstr ""
 
-#: inc/core/Guard.php:137
+#: inc/core/Guard.php:142
 msgid "Message too short"
 msgstr ""
 
-#: inc/core/Guard.php:138
+#: inc/core/Guard.php:143
+msgid "Bad browser"
+msgstr ""
+
+#: inc/core/Guard.php:144
 msgid "Statistical filter: spam"
 msgstr ""
 
-#: inc/core/Guard.php:139
+#: inc/core/Guard.php:145
 msgid "Statistical filter: refused"
 msgstr ""
 
-#: inc/core/Guard.php:194
+#: inc/core/Guard.php:200
 msgid "Leave this field empty"
 msgstr ""
 
@@ -1672,7 +1684,7 @@ msgstr ""
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: inc/core/Settings.php:442
+#: inc/core/Settings.php:443
 msgid "The honeypot field name must start with a letter, hold 3 to 40 lowercase letters, digits or underscores, and not be a name a form already uses. The previous name is kept."
 msgstr ""
 

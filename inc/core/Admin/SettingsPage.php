@@ -629,6 +629,7 @@ class SettingsPage extends Base
         $this->numberRow('max_age', __('Maximum age of a form', 'gecka-antispam'), (int) $settings['max_age'], __('hours', 'gecka-antispam'), __('8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0.', 'gecka-antispam'));
         $this->checkboxRow('random_names', __('Random names', 'gecka-antispam'), (bool) $settings['random_names'], __('Catch names, and messages of a single word, made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl.', 'gecka-antispam'));
         $this->numberRow('min_words', __('Minimum words in a message', 'gecka-antispam'), (int) $settings['min_words'], __('words', 'gecka-antispam'), __('A message with fewer words is refused: comments, contact forms. 0 accepts any length.', 'gecka-antispam'));
+        $this->checkboxRow('bad_browsers', __('Bad browsers', 'gecka-antispam'), (bool) $settings['bad_browsers'], __('Refuse a submission sent with no user agent, or with one wrapped in quotes: scripts send those, no browser does.', 'gecka-antispam'));
 
         echo '</table>';
 

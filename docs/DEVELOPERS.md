@@ -90,7 +90,7 @@ whole text is read as the message.
 | `refused` | True when a check of the form caught the submission, or the filter rated it past the rejection threshold (95 % by default). Refuse it with an error the sender sees: a person refused by mistake can send again. |
 | `spam` | True when the filter rated it spam, from the spam threshold (75 %) to the rejection one. Keep it where the form keeps spam, or refuse it as well. |
 | `review` | True when the filter finds it doubtful (55 % to 75 %): let it through and have a person look at it. |
-| `reason` | What caught it: `honeypot`, `token`, `too_fast`, `expired`, `random_name`, `random_text`, `short`, `filter_spam`, `filter_reject`, or `review`; null when it went through. |
+| `reason` | What caught it: `honeypot`, `token`, `too_fast`, `expired`, `bad_browser`, `random_name`, `random_text`, `short`, `filter_spam`, `filter_reject`, or `review`; null when it went through. |
 | `score` | The rating of the filter, from 0 to 1; null when the filter did not rate. |
 | `message` | The error the plugin shows for a refusal or a spam, translated; empty otherwise. |
 

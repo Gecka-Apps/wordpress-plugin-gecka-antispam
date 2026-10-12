@@ -74,6 +74,11 @@ class Guard
     public const SHORT = 'short';
 
     /**
+     * The user agent is one no browser sends.
+     */
+    public const BAD_BROWSER = 'bad_browser';
+
+    /**
      * The statistical filter rated the text as spam.
      */
     public const FILTER_SPAM = 'filter_spam';
@@ -135,6 +140,7 @@ class Guard
             self::RANDOM_NAME => __('Random name', 'gecka-antispam'),
             self::RANDOM_TEXT => __('Message of random letters', 'gecka-antispam'),
             self::SHORT => __('Message too short', 'gecka-antispam'),
+            self::BAD_BROWSER => __('Bad browser', 'gecka-antispam'),
             self::FILTER_SPAM => __('Statistical filter: spam', 'gecka-antispam'),
             self::FILTER_REJECT => __('Statistical filter: refused', 'gecka-antispam'),
         ];
@@ -225,6 +231,11 @@ class Guard
             return self::HONEYPOT;
         }
 
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only tested for its shape, never stored nor printed.
+        if ($this->plugin->settings()->get('bad_browsers') && self::isBadBrowser(wp_unslash((string) ($_SERVER['HTTP_USER_AGENT'] ?? '')))) {
+            return self::BAD_BROWSER;
+        }
+
         $age = $this->tokenAge($surface);
 
         if ($age === null) {
@@ -264,6 +275,22 @@ class Guard
         }
 
         return null;
+    }
+
+    /**
+     * Whether a user agent is one no browser sends: none at all, or one
+     * wrapped in quotes, as a script sends when its setting is copied with
+     * its quotes
+     *
+     * @param string $agent
+     *
+     * @return bool
+     */
+    public static function isBadBrowser(string $agent): bool
+    {
+        $agent = trim($agent);
+
+        return $agent === '' || $agent[0] === '"' || $agent[0] === "'";
     }
 
     /**
