@@ -96,12 +96,21 @@ it('passes on what another filter made of the approval, whatever its type', func
     $comments->annotate(null, $approved);
 })->with([[null], [false], [1], ['trash']]);
 
-it('prints the fields in the comment form of visitors', function () {
-    ob_start();
-    comment_form([], $this->post);
-    $html = ob_get_clean();
+it('prints the fields in the comment form of everybody but a moderator', function () {
+    $form = function (): string {
+        ob_start();
+        comment_form([], $this->post);
 
-    expect($html)->toContain('name="' . Guard::TOKEN_FIELD . '"');
+        return (string) ob_get_clean();
+    };
+
+    expect($form())->toContain('name="' . Guard::TOKEN_FIELD . '"');
+
+    wp_set_current_user(static::factory()->user->create(['role' => 'subscriber']));
+    expect($form())->toContain('name="' . Guard::TOKEN_FIELD . '"');
+
+    as_moderator();
+    expect($form())->not->toContain('name="' . Guard::TOKEN_FIELD . '"');
 });
 
 it('lets a comment of a person through', function () {
@@ -351,21 +360,26 @@ it('refuses a comment the trained filter rates past the rejection threshold', fu
         ->and(gecka_antispam()->journal()->entries(1, 10)[0]->outcome)->toBe(Guard::FILTER_REJECT);
 });
 
-it('rates the comment of a user logged in without the fields, and leaves a moderator alone', function () {
+it('checks the comment of a user logged in like one of a visitor, and leaves a moderator alone', function () {
     antispam_settings(['filter_min_spam' => 3, 'filter_min_ham' => 3, 'filter_threshold' => 55, 'filter_reject' => 100]);
     teach_comments();
 
     wp_set_current_user(static::factory()->user->create(['role' => 'subscriber']));
     $_POST = ['comment_post_ID' => $this->post];
+
+    expect(fn() => post_comment($this->post, 'casino bonus viagra'))->toThrow(WP_Die_Exception::class);
+
+    post_form('comments');
     $member = post_comment($this->post, 'casino bonus viagra');
 
     as_moderator();
+    $_POST = ['comment_post_ID' => $this->post];
     $moderator = post_comment($this->post, 'casino bonus viagra pills');
 
     expect(wp_get_comment_status($member))->toBe('spam')
         ->and(get_comment_meta($member, Plugin::META_REASON, true))->toBe(Guard::FILTER_SPAM)
         ->and(wp_get_comment_status($moderator))->not->toBe('spam')
-        ->and(gecka_antispam()->stats()->totals(1)['comments'])->toBe([Guard::FILTER_SPAM => 1]);
+        ->and(gecka_antispam()->stats()->totals(1)['comments'])->toEqual([Guard::TOKEN => 1, Guard::FILTER_SPAM => 1]);
 });
 
 it('reads the most recent comments first, a batch at a time', function () {

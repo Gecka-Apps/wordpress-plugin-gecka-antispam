@@ -16,9 +16,9 @@ use Gecka\WP\Plugin\Antispam\StatisticalFilter;
  * The comment form, the review form of WooCommerce products, which is a
  * comment form too, and the spam queue.
  *
- * Visitors not logged in get the fields and all the checks; users logged in
- * who cannot moderate comments get their text rated only; moderators are not
- * checked. A comment refused gets an error page and lands in the journal; one
+ * Everybody gets the fields and all the checks, logged in or not, but those
+ * who can moderate comments, who are not checked at all. A comment refused
+ * gets an error page and lands in the journal; one
  * the statistical filter marks as spam lands in the spam queue; one it finds
  * doubtful waits for moderation. A moderator marking a comment as spam, or as
  * not spam, or approving one held for moderation, teaches the statistical
@@ -142,7 +142,7 @@ class Comments extends Integration implements Learner
      */
     public function render(mixed $postId = null): void
     {
-        if (! is_user_logged_in()) {
+        if (! current_user_can('moderate_comments')) {
             echo $this->fields(get_post_type(is_numeric($postId) ? (int) $postId : null) === 'product' ? 'woocommerce_reviews' : 'comments'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by Guard::fields().
         }
     }
@@ -172,10 +172,9 @@ class Comments extends Integration implements Learner
         $comment = wp_unslash($data);
         $text = self::commentText($comment);
 
-        // A user logged in gets no fields in the form: only the text is rated.
         // A comment let through is counted once saved: the flood and
         // duplicate checks of WordPress come after this filter.
-        $outcome = $this->verify($surface, [(string) ($comment['comment_author'] ?? '')], $text, ! is_user_logged_in(), true, $text);
+        $outcome = $this->verify($surface, [(string) ($comment['comment_author'] ?? '')], $text, true, true, $text);
 
         if (Guard::refuses($outcome)) {
             wp_die(esc_html($this->message()), esc_html__('Comment refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);

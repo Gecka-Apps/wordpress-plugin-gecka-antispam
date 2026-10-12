@@ -22,8 +22,8 @@ it all in [docs/DEVELOPERS.md](docs/DEVELOPERS.md).
 
 | Plugin | Forms |
 |---|---|
-| WordPress | Comments (visitors not logged in), login, registration, lost password, network registration (`wp-signup.php`) |
-| WooCommerce | Classic checkout, product reviews (visitors not logged in), My account login, registration and lost password |
+| WordPress | Comments, login, registration, lost password, network registration (`wp-signup.php`) |
+| WooCommerce | Classic checkout, product reviews, My account login, registration and lost password |
 | Contact Form 7 | Every form, or the forms holding the marker |
 | Gravity Forms | Every form, or the forms holding the marker |
 | ACF, ACF Pro, Secure Custom Fields | Every front-end form (`acf_form()`), or the forms holding the marker |
@@ -136,11 +136,11 @@ A last check reads the **user agent**: a submission sent with none, or with
 one wrapped in quotes, is refused. No browser sends either; a script whose
 setting was copied with its quotes does, by the thousand.
 
-A user logged in gets no fields in the comment form: the comments of a user
-who cannot moderate them are rated by the statistical filter alone, those of
-a moderator are not checked. A Gravity Forms submission made by code, through
-the submissions route of its REST API or `GFAPI::submit_form()`, is rated by
-the filter alone too.
+A comment, or a product review, gets the fields and every check whoever
+posts it, logged in or not, unless the author can moderate comments: a
+moderator is not checked at all. A Gravity Forms submission made by code,
+through the submissions route of its REST API or `GFAPI::submit_form()`,
+carries no fields and no browser: it is rated by the filter alone.
 
 That route answers anyone, with no login, once the REST API is enabled in the
 settings of Gravity Forms: a bot posting there skips the honeypot, the
