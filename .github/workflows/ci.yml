@@ -94,6 +94,8 @@ jobs:
       - name: Package
         run: bin/package build/gecka-antispam
 
+      # A warning fails the job too: the package carries no remark.
       - uses: wordpress/plugin-check-action@v1
         with:
           build-dir: build/gecka-antispam
+          strict: true
