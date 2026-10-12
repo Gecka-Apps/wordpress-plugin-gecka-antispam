@@ -9,8 +9,10 @@ namespace Gecka\WP\Plugin\Antispam\Admin;
 
 use Gecka\WP\Plugin\Antispam\Backgrounds;
 use Gecka\WP\Plugin\Antispam\Plugin;
+use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\Settings;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The statistical filter tab: what the filter learnt and whether it rates,
@@ -60,11 +62,11 @@ class FilterView
     private function notices(): void
     {
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Only picks a notice.
-        if (sanitize_key($_GET['reset'] ?? '') === 'filter') {
+        if (sanitize_key(Request::query('reset')) === 'filter') {
             wp_admin_notice(__('The statistical filter forgot everything it learnt. The comments and messages already marked can be learnt again with the button below.', 'gecka-antispam'), ['type' => 'success', 'dismissible' => true]);
         }
 
-        $backgrounds = sanitize_key($_GET['backgrounds'] ?? '');
+        $backgrounds = sanitize_key(Request::query('backgrounds'));
 
         if ($backgrounds === 'updated') {
             $languages = $this->plugin->backgrounds()->state()['tables'];
@@ -82,8 +84,8 @@ class FilterView
                 sprintf(
                     /* translators: 1: spam texts learnt, 2: legitimate texts learnt */
                     __('Learnt: spam texts %1$s, legitimate texts %2$s.', 'gecka-antispam'),
-                    number_format_i18n(absint($_GET['learnt_spam'])),
-                    number_format_i18n(absint($_GET['learnt_ham'])),
+                    number_format_i18n(absint(Request::query('learnt_spam'))),
+                    number_format_i18n(absint(Request::query('learnt_ham'))),
                 ),
                 ['type' => 'success', 'dismissible' => true],
             );
@@ -120,16 +122,16 @@ class FilterView
             $state = sprintf(
                 /* translators: 1: rejection threshold, 2: spam threshold, 3: acceptance threshold, in percent */
                 __('Active. Refused from %1$d %% spam, marked as spam from %2$d %%, flagged for review from %3$d %%, accepted below.', 'gecka-antispam'),
-                (int) $settings->get('filter_reject'),
-                (int) $settings->get('filter_threshold'),
-                (int) $settings->get('filter_review'),
+                $settings->int('filter_reject'),
+                $settings->int('filter_threshold'),
+                $settings->int('filter_review'),
             );
         } else {
             $state = sprintf(
                 /* translators: 1: spam texts still to learn, 2: legitimate texts still to learn */
                 __('Learning: it rates nothing yet. Still to learn: spam texts %1$s, legitimate texts %2$s.', 'gecka-antispam'),
-                number_format_i18n(max(0, (int) $settings->get('filter_min_spam') - $counts['spam'])),
-                number_format_i18n(max(0, (int) $settings->get('filter_min_ham') - $counts['ham'])),
+                number_format_i18n(max(0, $settings->int('filter_min_spam') - $counts['spam'])),
+                number_format_i18n(max(0, $settings->int('filter_min_ham') - $counts['ham'])),
             );
         }
 
@@ -153,7 +155,7 @@ class FilterView
         printf('<tr><th scope="row">%s</th><td class="num">%s</td></tr>', esc_html__('Legitimate texts learnt', 'gecka-antispam'), esc_html(number_format_i18n($counts['ham'])));
         printf('<tr><th scope="row">%s</th><td class="num">%s</td></tr>', esc_html__('Counters in use', 'gecka-antispam'), esc_html(number_format_i18n($counts['features'])));
 
-        $format = (string) get_option('date_format');
+        $format = Value::string(get_option('date_format'));
 
         $rotated = Plugin::rotated();
         $tally = $this->plugin->statisticalFilter()->tally();
@@ -174,7 +176,7 @@ class FilterView
 
         echo '</tbody></table>';
 
-        $months = (int) $settings->get('filter_rotation');
+        $months = $settings->int('filter_rotation');
 
         printf(
             '<p>%s</p>',
@@ -206,7 +208,7 @@ class FilterView
                     sprintf(
                         /* translators: %d: months */
                         __('Those older than %d months are left out: they would have halved since. The most recent are learnt first.', 'gecka-antispam'),
-                        2 * (int) $settings->get('filter_rotation'),
+                        2 * $settings->int('filter_rotation'),
                     ),
                 ),
                 esc_html__('A spam is learnt only when a person or Akismet marked it: one this filter or a check for bots caught is left out, as it would only teach the filter what it already believes.', 'gecka-antispam'),
@@ -218,7 +220,7 @@ class FilterView
                     sprintf(
                         /* translators: %d: months */
                         __('Every comment and message of the last %d months already marked as spam or as legitimate has been read, and learnt unless left out.', 'gecka-antispam'),
-                        2 * (int) $settings->get('filter_rotation'),
+                        2 * $settings->int('filter_rotation'),
                     ),
                 ),
             );
@@ -269,12 +271,12 @@ class FilterView
 
         // The rest serves the filter only: hidden while it is switched off.
         printf('</tbody><tbody data-gecka-antispam-shown-by="gecka-antispam-filter"%s>', $settings['filter'] ? '' : ' hidden');
-        $this->numberRow('filter_reject', __('Rejection threshold', 'gecka-antispam'), (int) $settings['filter_reject'], '%', __('From this rating, a text is refused with an error, as by the checks of the forms, and kept in the Antispam tab of Security > Journal. 100 refuses none.', 'gecka-antispam'));
-        $this->numberRow('filter_threshold', __('Spam threshold', 'gecka-antispam'), (int) $settings['filter_threshold'], '%', __('From this rating, a text is marked as spam: a comment goes to the spam queue, a Contact Form 7 message to the spam of Flamingo, a Gravity Forms entry to its spam, where it can be marked as not spam.', 'gecka-antispam'));
-        $this->numberRow('filter_review', __('Acceptance threshold', 'gecka-antispam'), (int) $settings['filter_review'], '%', __('Below this rating, a text goes through. From it up to the spam threshold, it goes through but is flagged for review: a comment waits for moderation, a Gravity Forms entry gets a note, Flamingo shows it in its Antispam column. The same value as the spam threshold flags none.', 'gecka-antispam'));
-        $this->numberRow('filter_min_spam', __('Spam texts to learn first', 'gecka-antispam'), (int) $settings['filter_min_spam'], __('texts', 'gecka-antispam'), __('The filter rates nothing until it has learnt this many spam texts, and the legitimate texts below.', 'gecka-antispam'));
-        $this->numberRow('filter_min_ham', __('Legitimate texts to learn first', 'gecka-antispam'), (int) $settings['filter_min_ham'], __('texts', 'gecka-antispam'), __('The filter rates nothing until it has learnt this many legitimate texts, and the spam texts above.', 'gecka-antispam'));
-        $this->numberRow('filter_rotation', __('Rotation period', 'gecka-antispam'), (int) $settings['filter_rotation'], __('months', 'gecka-antispam'), __('At each rotation, the archived counters halve and the counters learnt since the previous rotation join them. Shorter, the filter follows new spam sooner and forgets sooner; a site receiving few legitimate messages is better off with a longer period.', 'gecka-antispam'));
+        $this->numberRow('filter_reject', __('Rejection threshold', 'gecka-antispam'), Value::int($settings['filter_reject']), '%', __('From this rating, a text is refused with an error, as by the checks of the forms, and kept in the Antispam tab of Security > Journal. 100 refuses none.', 'gecka-antispam'));
+        $this->numberRow('filter_threshold', __('Spam threshold', 'gecka-antispam'), Value::int($settings['filter_threshold']), '%', __('From this rating, a text is marked as spam: a comment goes to the spam queue, a Contact Form 7 message to the spam of Flamingo, a Gravity Forms entry to its spam, where it can be marked as not spam.', 'gecka-antispam'));
+        $this->numberRow('filter_review', __('Acceptance threshold', 'gecka-antispam'), Value::int($settings['filter_review']), '%', __('Below this rating, a text goes through. From it up to the spam threshold, it goes through but is flagged for review: a comment waits for moderation, a Gravity Forms entry gets a note, Flamingo shows it in its Antispam column. The same value as the spam threshold flags none.', 'gecka-antispam'));
+        $this->numberRow('filter_min_spam', __('Spam texts to learn first', 'gecka-antispam'), Value::int($settings['filter_min_spam']), __('texts', 'gecka-antispam'), __('The filter rates nothing until it has learnt this many spam texts, and the legitimate texts below.', 'gecka-antispam'));
+        $this->numberRow('filter_min_ham', __('Legitimate texts to learn first', 'gecka-antispam'), Value::int($settings['filter_min_ham']), __('texts', 'gecka-antispam'), __('The filter rates nothing until it has learnt this many legitimate texts, and the spam texts above.', 'gecka-antispam'));
+        $this->numberRow('filter_rotation', __('Rotation period', 'gecka-antispam'), Value::int($settings['filter_rotation']), __('months', 'gecka-antispam'), __('At each rotation, the archived counters halve and the counters learnt since the previous rotation join them. Shorter, the filter follows new spam sooner and forgets sooner; a site receiving few legitimate messages is better off with a longer period.', 'gecka-antispam'));
 
         $this->checkboxRow('learn_approved', __('Learn from approved comments', 'gecka-antispam'), (bool) $settings['learn_approved'], __('Learn as legitimate a comment approved from the moderation queue.', 'gecka-antispam'));
 
@@ -370,7 +372,7 @@ class FilterView
                         /* translators: 1: release, 2: date */
                         __('Release %1$s of the tables, checked on %2$s. The tables chosen are checked again every week.', 'gecka-antispam'),
                         $state['release'] ?: __('unknown', 'gecka-antispam'),
-                        (string) wp_date((string) get_option('date_format'), $state['checked']),
+                        (string) wp_date(Value::string(get_option('date_format')), $state['checked']),
                     ),
                 ),
             );
@@ -421,9 +423,9 @@ class FilterView
      * State of a table: its error, to download, copied by hand, update
      * available, or up to date
      *
-     * @param string               $code
-     * @param bool                 $read  Whether the filter reads it.
-     * @param array<string, mixed> $state What the plugin knows of the tables.
+     * @param string                                                                                                                  $code
+     * @param bool                                                                                                                    $read  Whether the filter reads it.
+     * @param array{tables: array<string, string>, languages: array<string, array{sha256: string}>, errors: array<string, string>} $state What the plugin knows of the tables.
      *
      * @return string
      */

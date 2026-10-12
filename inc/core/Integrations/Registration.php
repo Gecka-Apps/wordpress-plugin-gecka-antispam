@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Gecka\WP\Plugin\Antispam\Integrations;
 
 use Gecka\WP\Plugin\Antispam\Request;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The registration form of wp-login.php, and that of a network,
@@ -88,7 +89,7 @@ class Registration extends Integration
             return $result;
         }
 
-        if ($this->verify('registration', [(string) ($result['user_name'] ?? '')])) {
+        if ($this->verify('registration', [Value::string($result['user_name'] ?? null)])) {
             $result['errors']->add('generic', esc_html($this->message()));
         }
 

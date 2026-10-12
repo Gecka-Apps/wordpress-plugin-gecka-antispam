@@ -174,8 +174,8 @@ class Plugin
         add_action(
             Setup::PURGE_EVENT,
             function (): void {
-                $this->stats->purge((int) $this->settings->get('stats_days'));
-                $this->origins->purge((int) $this->settings->get('stats_days'));
+                $this->stats->purge($this->settings->int('stats_days'));
+                $this->origins->purge($this->settings->int('stats_days'));
                 $this->journal->purge();
                 $this->rotateFilter();
                 $this->backgrounds->refresh();
@@ -403,7 +403,7 @@ class Plugin
      */
     public function rotationPeriod(): int
     {
-        return (int) $this->settings->get('filter_rotation') * MONTH_IN_SECONDS;
+        return $this->settings->int('filter_rotation') * MONTH_IN_SECONDS;
     }
 
     /**
@@ -414,7 +414,7 @@ class Plugin
      */
     public static function rotated(): int
     {
-        return (int) get_option(self::ROTATED_OPTION, 0);
+        return Value::int(get_option(self::ROTATED_OPTION, 0));
     }
 
     /**
@@ -488,7 +488,7 @@ class Plugin
      */
     public function filterReady(): bool
     {
-        return $this->settings->get('filter') && $this->statisticalFilter->ready((int) $this->settings->get('filter_min_spam'), (int) $this->settings->get('filter_min_ham'));
+        return $this->settings->bool('filter') && $this->statisticalFilter->ready($this->settings->int('filter_min_spam'), $this->settings->int('filter_min_ham'));
     }
 
     /**
@@ -509,7 +509,7 @@ class Plugin
         ];
 
         foreach ($thresholds as $outcome => $setting) {
-            if ($rating >= (int) $this->settings->get($setting)) {
+            if ($rating >= $this->settings->int($setting)) {
                 return $outcome;
             }
         }

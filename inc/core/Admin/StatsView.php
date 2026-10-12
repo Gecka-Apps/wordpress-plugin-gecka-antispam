@@ -10,7 +10,9 @@ namespace Gecka\WP\Plugin\Antispam\Admin;
 use Gecka\WP\Plugin\Antispam\Guard;
 use Gecka\WP\Plugin\Antispam\Origins;
 use Gecka\WP\Plugin\Antispam\Plugin;
+use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\Settings;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The statistics tab: totals of the period, submissions accepted and caught
@@ -70,8 +72,7 @@ class StatsView
      */
     public function render(): void
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks the period.
-        $days = absint($_GET['days'] ?? 30);
+        $days = absint(Request::query('days') ?: '30');
         $days = in_array($days, SettingsPage::PERIODS, true) ? $days : 30;
 
         $this->notices();
@@ -146,8 +147,7 @@ class StatsView
      */
     private function notices(): void
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks a notice.
-        if (sanitize_key($_GET['reset'] ?? '') === 'stats') {
+        if (sanitize_key(Request::query('reset')) === 'stats') {
             wp_admin_notice(__('The statistics were reset.', 'gecka-antispam'), ['type' => 'success', 'dismissible' => true]);
         }
     }
@@ -198,7 +198,7 @@ class StatsView
         foreach (array_chunk($daily, $size, true) as $chunk) {
             $day = (string) array_key_first($chunk);
             $time = (new \DateTimeImmutable($day . ' 12:00', wp_timezone()))->getTimestamp();
-            $period = (string) wp_date((string) get_option('date_format'), $time);
+            $period = (string) wp_date(Value::string(get_option('date_format')), $time);
 
             $buckets[$day] = [
                 'passed' => array_sum(array_column($chunk, 'passed')),
@@ -455,8 +455,7 @@ class StatsView
      */
     private function origins(int $days): void
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks what is shown.
-        $accepted = sanitize_key($_GET['origins'] ?? '') === 'accepted';
+        $accepted = sanitize_key(Request::query('origins')) === 'accepted';
         $outcomes = $accepted ? Guard::ACCEPTED : Origins::caught();
         $origins = $this->plugin->origins();
         $located = function_exists('gecka_geolocation');

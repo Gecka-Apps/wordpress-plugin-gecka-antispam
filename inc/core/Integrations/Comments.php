@@ -11,6 +11,7 @@ use Gecka\WP\Plugin\Antispam\Guard;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The comment form, the review form of WooCommerce products, which is a
@@ -111,8 +112,8 @@ class Comments extends Integration implements Learner
 
         $commentId = (int) $commentId;
         $score = get_comment_meta($commentId, Plugin::META_SCORE, true);
-        $reason = (string) get_comment_meta($commentId, Plugin::META_REASON, true);
-        $trained = (string) get_comment_meta($commentId, Plugin::META_TRAINED, true);
+        $reason = Value::string(get_comment_meta($commentId, Plugin::META_REASON, true));
+        $trained = Value::string(get_comment_meta($commentId, Plugin::META_TRAINED, true));
         $lines = [];
 
         if (is_numeric($score)) {
@@ -157,7 +158,7 @@ class Comments extends Integration implements Learner
     public function check(array $data): array
     {
         $this->pending = null;
-        $surface = self::TYPES[(string) ($data['comment_type'] ?? '')] ?? null;
+        $surface = self::TYPES[Value::string($data['comment_type'] ?? null)] ?? null;
 
         if (current_user_can('moderate_comments')
             || ! $surface
@@ -174,7 +175,7 @@ class Comments extends Integration implements Learner
 
         // A comment let through is counted once saved: the flood and
         // duplicate checks of WordPress come after this filter.
-        $outcome = $this->verify($surface, [(string) ($comment['comment_author'] ?? '')], $text, true, true, $text);
+        $outcome = $this->verify($surface, [Value::string($comment['comment_author'] ?? null)], $text, true, true, $text);
 
         if (Guard::refuses($outcome)) {
             wp_die(esc_html($this->message()), esc_html__('Comment refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);
@@ -349,13 +350,9 @@ class Comments extends Integration implements Learner
             ),
         );
 
-        foreach ((array) $comments as $comment) {
-            if (! $comment instanceof \WP_Comment) {
-                continue;
-            }
-
+        foreach ($comments as $comment) {
             $id = (int) $comment->comment_ID;
-            $outcome = (string) get_comment_meta($id, Plugin::META_REASON, true);
+            $outcome = Value::string(get_comment_meta($id, Plugin::META_REASON, true));
             $done = $this->learnItem(self::commentText((array) $comment), $category, $outcome ?: null, (int) strtotime($comment->comment_date_gmt . ' UTC'), self::judged($id), self::marker($id));
 
             if ($done === null) {
@@ -374,7 +371,7 @@ class Comments extends Integration implements Learner
      *
      * @param string $category
      *
-     * @return array<string, mixed>
+     * @return array{status: string, type: string[], date_query: array<int, array{column: string, after: string, inclusive: bool}>, meta_query: array<int, array{key: string, compare: string}>}
      */
     private function existingQuery(string $category): array
     {
@@ -406,6 +403,6 @@ class Comments extends Integration implements Learner
      */
     private static function commentText(array $comment): string
     {
-        return trim((string) ($comment['comment_content'] ?? ''));
+        return trim(Value::string($comment['comment_content'] ?? null));
     }
 }

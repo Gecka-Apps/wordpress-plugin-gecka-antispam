@@ -59,7 +59,7 @@ class Origins
     public function count(string $outcome): void
     {
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only matched against fixed patterns.
-        $this->record(self::SYSTEM, self::system(wp_unslash((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''))), $outcome);
+        $this->record(self::SYSTEM, self::system(Value::string(wp_unslash($_SERVER['HTTP_USER_AGENT'] ?? ''))), $outcome);
 
         $record = function_exists('gecka_geolocation') ? gecka_geolocation() : null;
 

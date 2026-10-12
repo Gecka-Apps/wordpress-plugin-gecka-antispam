@@ -286,8 +286,8 @@ class Settings
         $defaults = $this->defaults();
 
         $settings = array_merge($defaults, array_intersect_key($saved, $defaults));
-        $settings['surfaces'] = array_merge($defaults['surfaces'], (array) ($saved['surfaces'] ?? []));
-        $settings['modes'] = array_merge($defaults['modes'], (array) ($saved['modes'] ?? []));
+        $settings['surfaces'] = array_merge(Value::list($defaults['surfaces']), Value::list($saved['surfaces'] ?? null));
+        $settings['modes'] = array_merge(Value::list($defaults['modes']), Value::list($saved['modes'] ?? null));
 
         return $settings;
     }
@@ -305,6 +305,54 @@ class Settings
     }
 
     /**
+     * A setting that is a flag
+     *
+     * @param string $key
+     *
+     * @return bool
+     */
+    public function bool(string $key): bool
+    {
+        return Value::bool($this->get($key));
+    }
+
+    /**
+     * A setting that is a number
+     *
+     * @param string $key
+     *
+     * @return int
+     */
+    public function int(string $key): int
+    {
+        return Value::int($this->get($key));
+    }
+
+    /**
+     * A setting that is a text
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    public function string(string $key): string
+    {
+        return Value::string($this->get($key));
+    }
+
+    /**
+     * A setting that is a map: the forms protected, the modes
+     *
+     * @param string $key
+     *
+     * @return array<mixed>
+     */
+    public function map(string $key): array
+    {
+        return Value::list($this->get($key));
+    }
+
+    /**
      * Whether a form is protected
      *
      * @param string $surface
@@ -313,7 +361,7 @@ class Settings
      */
     public function enabled(string $surface): bool
     {
-        $enabled = str_starts_with($surface, self::CUSTOM_PREFIX) || ! empty($this->all()['surfaces'][$surface]);
+        $enabled = str_starts_with($surface, self::CUSTOM_PREFIX) || ! empty($this->map('surfaces')[$surface]);
 
         /**
          * Filters whether a form is protected.
@@ -346,7 +394,7 @@ class Settings
      */
     public function mode(string $surface): string
     {
-        return ($this->all()['modes'][$surface] ?? '') === self::MODE_MARKED ? self::MODE_MARKED : self::MODE_ALL;
+        return ($this->map('modes')[$surface] ?? '') === self::MODE_MARKED ? self::MODE_MARKED : self::MODE_ALL;
     }
 
     /**
@@ -358,9 +406,7 @@ class Settings
      */
     public function minDelay(string $surface): int
     {
-        $key = in_array($surface, self::SIGN_IN_SURFACES, true) ? 'sign_in_min_delay' : 'min_delay';
-
-        return (int) $this->get($key);
+        return $this->int(in_array($surface, self::SIGN_IN_SURFACES, true) ? 'sign_in_min_delay' : 'min_delay');
     }
 
     /**
@@ -371,7 +417,7 @@ class Settings
      */
     public function reset(): void
     {
-        $name = (string) $this->get('honeypot_name');
+        $name = $this->string('honeypot_name');
 
         delete_option(self::OPTION);
         $this->flush();
@@ -404,9 +450,13 @@ class Settings
     public function sanitize(mixed $input): array
     {
         $input = is_array($input) ? $input : [];
-        $posted = self::SECTIONS[(string) ($input['form'] ?? '')] ?? [];
+        $posted = self::SECTIONS[Value::string($input['form'] ?? null)] ?? [];
         $surfacesPosted = in_array('surfaces', $posted, true);
         $current = $this->stored();
+        $inputSurfaces = Value::list($input['surfaces'] ?? null);
+        $currentSurfaces = Value::list($current['surfaces']);
+        $inputModes = Value::list($input['modes'] ?? null);
+        $currentModes = Value::list($current['modes']);
 
         $flag = static fn(string $key): bool => in_array($key, $posted, true) ? ! empty($input[$key]) : (bool) ($input[$key] ?? $current[$key]);
         $number = static fn(string $key): int => self::clamp($input[$key] ?? $current[$key], ...self::BOUNDS[$key]);
@@ -415,8 +465,8 @@ class Settings
 
         foreach (self::surfaces() as $surface) {
             $surfaces[$surface] = $surfacesPosted
-                ? ! empty($input['surfaces'][$surface])
-                : (bool) ($input['surfaces'][$surface] ?? $current['surfaces'][$surface]);
+                ? ! empty($inputSurfaces[$surface])
+                : (bool) ($inputSurfaces[$surface] ?? $currentSurfaces[$surface] ?? false);
         }
 
         $modes = [];
@@ -424,16 +474,16 @@ class Settings
         // The settings page posts one choice per plugin with a marker: off,
         // every form, or the marked ones.
         foreach (self::MARKED_SURFACES as $surface) {
-            $choice = (string) ($input['modes'][$surface] ?? $current['modes'][$surface]);
+            $choice = Value::string($inputModes[$surface] ?? $currentModes[$surface] ?? null);
 
             if ($surfacesPosted) {
                 $surfaces[$surface] = $choice !== self::MODE_OFF;
             }
 
-            $modes[$surface] = $choice === self::MODE_MARKED ? self::MODE_MARKED : ($choice === self::MODE_OFF ? (string) $current['modes'][$surface] : self::MODE_ALL);
+            $modes[$surface] = $choice === self::MODE_MARKED ? self::MODE_MARKED : ($choice === self::MODE_OFF ? Value::string($currentModes[$surface] ?? null) : self::MODE_ALL);
         }
 
-        $name = strtolower(trim((string) ($input['honeypot_name'] ?? '')));
+        $name = strtolower(trim(Value::string($input['honeypot_name'] ?? null)));
 
         if (! self::isValidFieldName($name)) {
             if ($name !== '') {
@@ -444,7 +494,7 @@ class Settings
                 );
             }
 
-            $name = (string) $current['honeypot_name'];
+            $name = Value::string($current['honeypot_name']);
         }
 
         $reject = $number('filter_reject');
@@ -486,8 +536,8 @@ class Settings
      */
     public static function languageCodes(mixed $value): array
     {
-        $codes = is_array($value) ? $value : preg_split('/[\s,;]+/', (string) $value);
-        $codes = array_map(static fn(mixed $code): string => strtolower(trim((string) $code)), $codes ?: []);
+        $codes = is_array($value) ? $value : preg_split('/[\s,;]+/', Value::string($value));
+        $codes = array_map(static fn(mixed $code): string => strtolower(trim(Value::string($code))), $codes ?: []);
         $codes = array_filter($codes, static fn(string $code): bool => (bool) preg_match(StatisticalFilter::LANGUAGE_CODE, $code));
 
         return array_slice(array_values(array_unique($codes)), 0, StatisticalFilter::MAX_LANGUAGES);
@@ -528,6 +578,6 @@ class Settings
      */
     private static function clamp(mixed $value, int $min, int $max): int
     {
-        return max($min, min($max, (int) $value));
+        return max($min, min($max, Value::int($value)));
     }
 }

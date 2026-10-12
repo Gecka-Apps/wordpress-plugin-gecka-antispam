@@ -9,7 +9,9 @@ namespace Gecka\WP\Plugin\Antispam\Admin;
 
 use Gecka\WP\Plugin\Antispam\Journal;
 use Gecka\WP\Plugin\Antispam\Plugin;
+use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The Antispam tab of the Journal: the list of the submissions refused, its
@@ -74,8 +76,7 @@ class RefusedView
      */
     public static function learntView(): bool
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks a view.
-        return sanitize_key($_GET['view'] ?? '') === 'learnt';
+        return sanitize_key(Request::query('view')) === 'learnt';
     }
 
     /**
@@ -92,8 +93,8 @@ class RefusedView
         add_screen_option('per_page', ['default' => self::PER_PAGE, 'option' => self::PER_PAGE_OPTION]);
         add_filter('screen_settings', [$this, 'modeSettings']);
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- set_screen_options() checked the nonce before redirecting with the mode.
-        $mode = sanitize_key($_GET['mode'] ?? '');
+        // set_screen_options() checked the nonce before redirecting with the mode.
+        $mode = sanitize_key(Request::query('mode'));
 
         if (in_array($mode, ['list', 'excerpt'], true)) {
             set_user_setting(self::MODE_SETTING, $mode);
@@ -118,7 +119,7 @@ class RefusedView
 
         add_filter('screen_options_show_submit', '__return_true');
 
-        return (string) $settings . sprintf(
+        return Value::string($settings) . sprintf(
             '<fieldset class="metabox-prefs view-mode"><legend>%1$s</legend><label for="list-view-mode"><input id="list-view-mode" type="radio" name="mode" value="list"%2$s> %3$s</label><label for="excerpt-view-mode"><input id="excerpt-view-mode" type="radio" name="mode" value="excerpt"%4$s> %5$s</label></fieldset>',
             esc_html__('Display mode', 'gecka-antispam'),
             checked($mode, 'list', false),
@@ -203,7 +204,7 @@ class RefusedView
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only drops the arguments of a form submitted without an action.
             if (! empty($_GET['_wp_http_referer'])) {
                 // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Passed to remove_query_arg() and wp_safe_redirect().
-                wp_safe_redirect(remove_query_arg(['_wp_http_referer', '_wpnonce', 'action', 'action2', 'bulk_action', 'ids'], wp_unslash((string) ($_SERVER['REQUEST_URI'] ?? ''))));
+                wp_safe_redirect(remove_query_arg(['_wp_http_referer', '_wpnonce', 'action', 'action2', 'bulk_action', 'ids'], Value::string(wp_unslash($_SERVER['REQUEST_URI'] ?? ''))));
                 exit;
             }
 
@@ -216,7 +217,8 @@ class RefusedView
 
         check_admin_referer('bulk-refused-entries');
 
-        $ids = array_filter(array_map('absint', (array) wp_unslash($_GET['ids'] ?? [])));
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each id is read as an integer.
+        $ids = array_filter(array_map(static fn(mixed $id): int => abs(Value::int($id)), Value::list(wp_unslash($_GET['ids'] ?? []))));
 
         if (! $ids) {
             wp_safe_redirect(SettingsPage::url('refused', $view));
@@ -252,9 +254,9 @@ class RefusedView
             return;
         }
 
-        $count = absint($_GET['done']);
-        $op = sanitize_key($_GET['op']);
-        $old = absint($_GET['old'] ?? 0);
+        $count = absint(Request::query('done'));
+        $op = sanitize_key(Request::query('op'));
+        $old = absint(Request::query('old'));
         // phpcs:enable
 
         $messages = [

@@ -232,7 +232,7 @@ class Guard
         }
 
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only tested for its shape, never stored nor printed.
-        if ($this->plugin->settings()->get('bad_browsers') && self::isBadBrowser(wp_unslash((string) ($_SERVER['HTTP_USER_AGENT'] ?? '')))) {
+        if ($this->plugin->settings()->bool('bad_browsers') && self::isBadBrowser(Value::string(wp_unslash($_SERVER['HTTP_USER_AGENT'] ?? '')))) {
             return self::BAD_BROWSER;
         }
 
@@ -246,13 +246,13 @@ class Guard
             return self::TOO_FAST;
         }
 
-        $maxAge = (int) $this->plugin->settings()->get('max_age') * HOUR_IN_SECONDS;
+        $maxAge = $this->plugin->settings()->int('max_age') * HOUR_IN_SECONDS;
 
         if ($maxAge && $age > $maxAge) {
             return self::EXPIRED;
         }
 
-        $random = (bool) $this->plugin->settings()->get('random_names');
+        $random = $this->plugin->settings()->bool('random_names');
 
         if ($random) {
             foreach ($names as $name) {
@@ -269,7 +269,7 @@ class Guard
                 return self::RANDOM_TEXT;
             }
 
-            if (count($words) < (int) $this->plugin->settings()->get('min_words')) {
+            if (count($words) < $this->plugin->settings()->int('min_words')) {
                 return self::SHORT;
             }
         }
@@ -315,7 +315,7 @@ class Guard
         // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Only tested for emptiness, never stored nor printed.
         $value = $_POST[$this->honeypotName()] ?? '';
 
-        return is_array($value) ? $value !== [] : trim((string) $value) !== '';
+        return is_array($value) ? $value !== [] : trim(Value::string($value)) !== '';
     }
 
     /**
@@ -325,7 +325,7 @@ class Guard
      */
     public function honeypotName(): string
     {
-        return (string) $this->plugin->settings()->get('honeypot_name');
+        return $this->plugin->settings()->string('honeypot_name');
     }
 
     /**

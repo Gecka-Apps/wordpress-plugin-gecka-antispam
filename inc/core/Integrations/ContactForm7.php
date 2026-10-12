@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Gecka\WP\Plugin\Antispam\Integrations;
 
 use Gecka\WP\Plugin\Antispam\Guard;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * Contact Form 7 forms: every form, or the forms holding the [gecka_antispam]
@@ -121,7 +122,7 @@ class ContactForm7 extends Integration
      */
     public function flamingoStatuses(mixed $statuses): mixed
     {
-        return $this->refused && is_array($statuses) ? array_values(array_diff($statuses, ['spam'])) : $statuses;
+        return $this->refused && is_array($statuses) ? array_values(array_diff(array_filter($statuses, 'is_string'), ['spam'])) : $statuses;
     }
 
     /**
@@ -190,7 +191,7 @@ class ContactForm7 extends Integration
             return $codes;
         }
 
-        return array_values(array_diff($codes, [self::UNSAFE_EMAIL]));
+        return array_values(array_diff(array_filter($codes, 'is_string'), [self::UNSAFE_EMAIL]));
     }
 
     /**
@@ -274,7 +275,7 @@ class ContactForm7 extends Integration
         return self::pick(
             self::stored($form, $fields),
             self::types($form),
-            self::setting($form, ['gecka_antispam_subject', 'flamingo_subject']) ?? (string) ($mail['subject'] ?? ''),
+            self::setting($form, ['gecka_antispam_subject', 'flamingo_subject']) ?? Value::string($mail['subject'] ?? null),
             self::setting($form, ['gecka_antispam_message']),
             array_merge(self::cited(self::setting($form, ['flamingo_name']) ?? '[your-name]'), self::cited(self::setting($form, ['flamingo_email']) ?? '[your-email]')),
         );

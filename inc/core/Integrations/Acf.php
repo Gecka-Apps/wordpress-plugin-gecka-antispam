@@ -9,6 +9,7 @@ namespace Gecka\WP\Plugin\Antispam\Integrations;
 
 use Gecka\WP\Plugin\Antispam\Guard;
 use Gecka\WP\Plugin\Antispam\Request;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The front-end forms of ACF, ACF Pro and Secure Custom Fields, printed by
@@ -96,7 +97,7 @@ class Acf extends Integration
             return $args;
         }
 
-        $args['html_after_fields'] = (string) ($args['html_after_fields'] ?? '') . $this->fields('acf');
+        $args['html_after_fields'] = Value::string($args['html_after_fields'] ?? null) . $this->fields('acf');
 
         return $args;
     }
@@ -227,7 +228,8 @@ class Acf extends Integration
         $keys = [];
 
         foreach ((array) $selectors as $selector) {
-            $selector = self::POST_FIELDS[(string) $selector] ?? (string) $selector;
+            $selector = Value::string($selector);
+            $selector = self::POST_FIELDS[$selector] ?? $selector;
 
             foreach ($fields as $key => $field) {
                 if ($key === $selector || $field['name'] === $selector) {
@@ -243,8 +245,8 @@ class Acf extends Integration
      * The fields a form shows, by key, as ACF lists them for the save; with
      * an ACF too old to list them, the fields posted that exist
      *
-     * @param array<string, mixed> $form
-     * @param array<mixed>         $posted
+     * @param array<mixed> $form
+     * @param array<mixed> $posted
      *
      * @return array<string, array{key: string, name: string, type: string, sub_fields: array<mixed>}>
      */
@@ -283,9 +285,9 @@ class Acf extends Integration
         $subFields = in_array($field['type'] ?? '', self::CONTAINER_TYPES, true) && function_exists('acf_get_fields') ? (array) acf_get_fields($field) : [];
 
         return [
-            'key' => (string) ($field['key'] ?? ''),
-            'name' => (string) ($field['name'] ?? $field['key'] ?? ''),
-            'type' => (string) ($field['type'] ?? ''),
+            'key' => Value::string($field['key'] ?? null),
+            'name' => Value::string($field['name'] ?? $field['key'] ?? null),
+            'type' => Value::string($field['type'] ?? null),
             'sub_fields' => array_map([self::class, 'described'], array_filter($subFields, 'is_array')),
         ];
     }
@@ -296,7 +298,7 @@ class Acf extends Integration
      * of every row joined
      *
      * @param array<string, array{name: string, type: string, sub_fields?: array<mixed>}> $fields By key.
-     * @param array<string, mixed>                                                       $posted Values posted, by key.
+     * @param array<mixed>                                                               $posted Values posted, by key.
      *
      * @return array{0: array<string, array{name: string, type: string}>, 1: array<string, mixed>}
      */
@@ -326,7 +328,7 @@ class Acf extends Integration
      */
     private static function gather(string $key, array $field, mixed $value, array &$fields, array &$values): void
     {
-        $subFields = array_filter((array) ($field['sub_fields'] ?? []), static fn(mixed $sub): bool => is_array($sub) && (string) ($sub['key'] ?? '') !== '');
+        $subFields = array_filter((array) ($field['sub_fields'] ?? []), static fn(mixed $sub): bool => is_array($sub) && Value::string($sub['key'] ?? null) !== '');
 
         if (! in_array($field['type'], self::CONTAINER_TYPES, true) || ! $subFields) {
             $fields[$key] = ['name' => $field['name'], 'type' => $field['type']];
@@ -341,8 +343,8 @@ class Acf extends Integration
         $rows = $field['type'] === 'group' ? [$value] : array_values(is_array($value) ? $value : []);
 
         foreach ($subFields as $sub) {
-            $subKey = (string) $sub['key'];
-            $subField = ['name' => (string) ($sub['name'] ?? $subKey), 'type' => (string) ($sub['type'] ?? ''), 'sub_fields' => (array) ($sub['sub_fields'] ?? [])];
+            $subKey = Value::string($sub['key']);
+            $subField = ['name' => Value::string($sub['name'] ?? $subKey), 'type' => Value::string($sub['type'] ?? null), 'sub_fields' => (array) ($sub['sub_fields'] ?? [])];
             self::gather($subKey, $subField, null, $fields, $values);
 
             foreach ($rows as $row) {
@@ -356,7 +358,7 @@ class Acf extends Integration
     /**
      * Whether a form is to be protected
      *
-     * @param array<string, mixed> $form
+     * @param array<mixed> $form
      *
      * @return bool
      */

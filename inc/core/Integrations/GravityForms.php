@@ -12,6 +12,7 @@ use Gecka\WP\Plugin\Antispam\Integrations\GravityForms\AntispamField;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * Gravity Forms forms, and the spam of their entries: every form, or the
@@ -153,10 +154,9 @@ class GravityForms extends Integration implements Learner
      */
     public function bulkActions(mixed $actions, mixed $formId = 0): mixed
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks the view.
-        $filter = sanitize_key($_GET['filter'] ?? '');
+        $filter = sanitize_key(Request::query('filter'));
 
-        if (! is_array($actions) || in_array($filter, ['spam', 'trash'], true) || ! $this->plugin->settings()->get('filter')) {
+        if (! is_array($actions) || in_array($filter, ['spam', 'trash'], true) || ! $this->plugin->settings()->bool('filter')) {
             return $actions;
         }
 
@@ -183,8 +183,8 @@ class GravityForms extends Integration implements Learner
 
         $learnt = 0;
 
-        foreach (array_map('absint', (array) $entries) as $entryId) {
-            $learnt += $this->confirmLegitimate($entryId) !== null ? 1 : 0;
+        foreach (Value::list($entries) as $entryId) {
+            $learnt += $this->confirmLegitimate(abs(Value::int($entryId))) !== null ? 1 : 0;
         }
 
         printf(
@@ -300,11 +300,11 @@ class GravityForms extends Integration implements Learner
             return $result;
         }
 
-        $lead = \GFFormsModel::get_current_lead($form);
+        $lead = \GFFormsModel::get_current_lead($form); // @phpstan-ignore argument.type (a form of Gravity Forms is keyed by property)
         $entry = is_array($lead) ? $lead : [];
         $content = self::entryContent($entry, $form);
         $outcome = $this->verify('gravity_forms', self::names($form, $entry), $content['text'], ! $rest, message: $content['message']);
-        $this->checked = (int) $form['id'];
+        $this->checked = Value::int($form['id'] ?? null);
         $this->outcome = $this->review ? Guard::REVIEW : $outcome;
         $this->note = $this->review ? $this->reason(Guard::REVIEW) : '';
 
@@ -327,7 +327,7 @@ class GravityForms extends Integration implements Learner
      * target page posted, past the pages its conditional logic hides, a page
      * beyond the last one meaning the end.
      *
-     * @param array<string, mixed> $form
+     * @param array<mixed> $form
      *
      * @return bool
      */
@@ -337,7 +337,7 @@ class GravityForms extends Integration implements Learner
             return \GFFormDisplay::is_last_page($form);
         }
 
-        return in_array(Request::post('gform_target_page_number_' . (int) ($form['id'] ?? 0)), ['', '0'], true);
+        return in_array(Request::post('gform_target_page_number_' . Value::int($form['id'] ?? null)), ['', '0'], true);
     }
 
     /**
@@ -352,7 +352,7 @@ class GravityForms extends Integration implements Learner
      */
     public function check(mixed $spam, mixed $form = [], mixed $entry = []): mixed
     {
-        if ($spam || ! is_array($form) || (int) ($form['id'] ?? 0) !== $this->checked || $this->outcome !== Guard::FILTER_SPAM) {
+        if ($spam || ! is_array($form) || Value::int($form['id'] ?? null) !== $this->checked || $this->outcome !== Guard::FILTER_SPAM) {
             return $spam;
         }
 
@@ -374,11 +374,13 @@ class GravityForms extends Integration implements Learner
      */
     public function annotate(array $entry): void
     {
-        if ($this->outcome && (int) ($entry['form_id'] ?? 0) === $this->checked && ! empty($entry['id']) && function_exists('gform_update_meta')) {
-            gform_update_meta((int) $entry['id'], self::META_REASON, $this->outcome);
+        $id = Value::int($entry['id'] ?? null);
+
+        if ($this->outcome && Value::int($entry['form_id'] ?? null) === $this->checked && $id > 0 && function_exists('gform_update_meta')) {
+            gform_update_meta($id, self::META_REASON, $this->outcome);
 
             if ($this->note && method_exists('GFAPI', 'add_note')) { // @phpstan-ignore function.alreadyNarrowedType
-                \GFAPI::add_note((int) $entry['id'], 0, __('Antispam', 'gecka-antispam'), __('To review.', 'gecka-antispam') . ' ' . $this->note, 'gecka-antispam', 'warning');
+                \GFAPI::add_note($id, 0, __('Antispam', 'gecka-antispam'), __('To review.', 'gecka-antispam') . ' ' . $this->note, 'gecka-antispam', 'warning');
             }
         }
 
@@ -443,8 +445,8 @@ class GravityForms extends Integration implements Learner
                 continue;
             }
 
-            $outcome = (string) gform_get_meta($id, self::META_REASON);
-            $done = $this->learnItem(self::entryText($entry), $category, $outcome ?: null, (int) strtotime($entry['date_created'] . ' UTC'), self::judged($id), self::marker($id));
+            $outcome = Value::string(gform_get_meta($id, self::META_REASON));
+            $done = $this->learnItem(self::entryText($entry), $category, $outcome ?: null, (int) strtotime(Value::string($entry['date_created'] ?? null) . ' UTC'), self::judged($id), self::marker($id));
 
             if ($done === null) {
                 break;
@@ -562,7 +564,7 @@ class GravityForms extends Integration implements Learner
      * notification takes its sender or its recipient from.
      *
      * @param array<string, mixed>      $entry
-     * @param array<string, mixed>|null $form  The form of the entry, read when not given.
+     * @param array<mixed>|null         $form  The form of the entry, read when not given.
      *
      * @return string
      */
@@ -576,14 +578,14 @@ class GravityForms extends Integration implements Learner
      * message, and the message alone, for the checks of the message
      *
      * @param array<string, mixed>      $entry
-     * @param array<string, mixed>|null $form  The form of the entry, read when not given.
+     * @param array<mixed>|null         $form  The form of the entry, read when not given.
      *
      * @return array{text: string, message: string|null} The message is null for a form without message field.
      */
     public static function entryContent(array $entry, ?array $form = null): array
     {
         if ($form === null && class_exists('GFAPI')) {
-            $form = \GFAPI::get_form((int) ($entry['form_id'] ?? 0)) ?: null;
+            $form = \GFAPI::get_form(Value::int($entry['form_id'] ?? null)) ?: null;
         }
 
         $fields = [];
@@ -641,11 +643,11 @@ class GravityForms extends Integration implements Learner
                 continue;
             }
 
-            $subject = [...$subject, ...self::cited((string) ($notification['subject'] ?? ''))];
-            $sender = [...$sender, ...self::cited(implode(' ', array_map(static fn(string $key): string => (string) ($notification[$key] ?? ''), ['fromName', 'from', 'replyTo', 'to', 'bcc'])))];
+            $subject = [...$subject, ...self::cited(Value::string($notification['subject'] ?? null))];
+            $sender = [...$sender, ...self::cited(implode(' ', array_map(static fn(string $key): string => Value::string($notification[$key] ?? null), ['fromName', 'from', 'replyTo', 'to', 'bcc'])))];
 
             if (($notification['toType'] ?? '') === 'field') {
-                $sender[] = (int) ($notification['toField'] ?? 0);
+                $sender[] = Value::int($notification['toField'] ?? null);
             }
         }
 
@@ -718,7 +720,7 @@ class GravityForms extends Integration implements Learner
             return self::flatten($value);
         }
 
-        return self::flatten(array_map(static fn(mixed $input): mixed => $entry[(string) (is_array($input) ? ($input['id'] ?? '') : '')] ?? '', $inputs));
+        return self::flatten(array_map(static fn(mixed $input): mixed => $entry[Value::string(is_array($input) ? ($input['id'] ?? null) : null)] ?? '', $inputs));
     }
 
     /**
@@ -737,7 +739,7 @@ class GravityForms extends Integration implements Learner
     /**
      * Whether a form holds the Antispam field
      *
-     * @param array<string, mixed> $form
+     * @param array<mixed> $form
      *
      * @return bool
      */
@@ -757,7 +759,7 @@ class GravityForms extends Integration implements Learner
      * text and Name fields carrying NAME_CLASS, or without any, the Name
      * fields; the first and last names of a Name field
      *
-     * @param array<string, mixed> $form
+     * @param array<mixed>         $form
      * @param array<string, mixed> $entry
      *
      * @return string[]

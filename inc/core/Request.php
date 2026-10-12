@@ -68,7 +68,7 @@ class Request
     public static function isLoginScreenPost(): bool
     {
         return ($GLOBALS['pagenow'] ?? '') === 'wp-login.php'
-            && strtoupper(sanitize_key($_SERVER['REQUEST_METHOD'] ?? '')) === 'POST';
+            && self::method() === 'POST';
     }
 
     /**
@@ -80,7 +80,7 @@ class Request
     public static function isSignupPost(): bool
     {
         return ($GLOBALS['pagenow'] ?? '') === 'wp-signup.php'
-            && strtoupper(sanitize_key($_SERVER['REQUEST_METHOD'] ?? '')) === 'POST';
+            && self::method() === 'POST';
     }
 
     /**
@@ -96,12 +96,26 @@ class Request
     public static function isClassicCheckout(): bool
     {
         // phpcs:disable WordPress.Security.NonceVerification -- Only tells which route is placing the order, WooCommerce checks its nonce.
-        $ajax = sanitize_key(wp_unslash($_GET['wc-ajax'] ?? ''));
-        $action = wp_doing_ajax() ? sanitize_key(wp_unslash($_REQUEST['action'] ?? '')) : '';
+        $ajax = sanitize_key(self::query('wc-ajax'));
+        $action = wp_doing_ajax() ? sanitize_key(self::requested('action')) : '';
 
         return ! self::isNonInteractive()
             && ($ajax === 'checkout' || $action === 'woocommerce_checkout' || isset($_POST['woocommerce_checkout_place_order']));
         // phpcs:enable
+    }
+
+    /**
+     * The HTTP method of the request, in upper case
+     *
+     * @return string
+     */
+    public static function method(): string
+    {
+        if (! isset($_SERVER['REQUEST_METHOD']) || ! is_scalar($_SERVER['REQUEST_METHOD'])) {
+            return '';
+        }
+
+        return strtoupper(sanitize_key(wp_unslash((string) $_SERVER['REQUEST_METHOD'])));
     }
 
     /**
@@ -119,6 +133,42 @@ class Request
         }
 
         return sanitize_textarea_field(wp_unslash((string) $_POST[$name]));
+        // phpcs:enable
+    }
+
+    /**
+     * A value of the query string, unslashed, as a single line.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public static function query(string $name): string
+    {
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Picks a view, a notice or a period; an action checks its nonce itself.
+        if (! isset($_GET[$name]) || ! is_scalar($_GET[$name])) {
+            return '';
+        }
+
+        return sanitize_text_field(wp_unslash((string) $_GET[$name]));
+        // phpcs:enable
+    }
+
+    /**
+     * A value posted or in the query string, unslashed, as a single line.
+     *
+     * @param string $name
+     *
+     * @return string
+     */
+    public static function requested(string $name): string
+    {
+        // phpcs:disable WordPress.Security.NonceVerification -- Picks the action; the action checks its nonce itself.
+        if (! isset($_REQUEST[$name]) || ! is_scalar($_REQUEST[$name])) {
+            return '';
+        }
+
+        return sanitize_text_field(wp_unslash((string) $_REQUEST[$name]));
         // phpcs:enable
     }
 }

@@ -12,9 +12,11 @@ use Gecka\WP\AdminMenu\Tab;
 use Gecka\WP\Plugin\Antispam\Base;
 use Gecka\WP\Plugin\Antispam\Journal;
 use Gecka\WP\Plugin\Antispam\Plugin;
+use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\Settings;
 use Gecka\WP\Plugin\Antispam\Setup;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The screens of the plugin: its statistics and its refused submissions as
@@ -106,7 +108,7 @@ class SettingsPage extends Base
         add_action('admin_post_gecka_antispam_reset_stats', [$this, 'resetStats']);
         add_action('admin_post_gecka_antispam_learn_existing', [$this, 'learnExisting']);
         add_action('rest_api_init', [$this, 'registerRoutes']);
-        add_filter('set_screen_option_' . RefusedView::PER_PAGE_OPTION, static fn(mixed $keep, mixed $option, mixed $value): int => min(999, max(1, (int) $value)), 10, 3);
+        add_filter('set_screen_option_' . RefusedView::PER_PAGE_OPTION, static fn(mixed $keep, mixed $option, mixed $value): int => min(999, max(1, Value::int($value))), 10, 3);
         add_action('admin_post_gecka_antispam_clear_refused', [$this, 'clearRefused']);
         add_action('admin_post_gecka_antispam_reset_settings', [$this, 'resetSettings']);
         add_filter('plugin_action_links_' . plugin_basename($this->plugin->file()), [$this, 'actionLinks']);
@@ -558,12 +560,12 @@ class SettingsPage extends Base
     private function renderSettings(): void
     {
         $settings = $this->plugin->settings()->all();
+        $surfaces = $this->plugin->settings()->map('surfaces');
         $name = Settings::OPTION;
 
         settings_errors($name);
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks a notice.
-        if (sanitize_key($_GET['reset'] ?? '') === 'settings') {
+        if (sanitize_key(Request::query('reset')) === 'settings') {
             wp_admin_notice(__('Every setting is back to its default.', 'gecka-antispam'), ['type' => 'success', 'dismissible' => true]);
         }
 
@@ -590,13 +592,13 @@ class SettingsPage extends Base
                     '<label class="gecka-admin-toggle-label"><input type="checkbox" class="gecka-admin-toggle" name="%s[surfaces][%s]" value="1" %s %s> %s</label>',
                     esc_attr($name),
                     esc_attr($surface),
-                    checked(! empty($settings['surfaces'][$surface]), true, false),
+                    checked(! empty($surfaces[$surface]), true, false),
                     disabled($available, false, false),
                     esc_html($label),
                 );
 
                 // A form of a plugin switched off keeps its setting.
-                if (! $available && ! empty($settings['surfaces'][$surface])) {
+                if (! $available && ! empty($surfaces[$surface])) {
                     printf('<input type="hidden" name="%s[surfaces][%s]" value="1">', esc_attr($name), esc_attr($surface));
                 }
             }
@@ -621,21 +623,21 @@ class SettingsPage extends Base
         $this->textRow(
             'honeypot_name',
             __('Honeypot field name', 'gecka-antispam'),
-            (string) $settings['honeypot_name'],
+            Value::string($settings['honeypot_name']),
             __('A field people never see, which bots fill in. Drawn at random on each site; a name a bot would fill in, and that no browser autofills.', 'gecka-antispam'),
         );
-        $this->numberRow('min_delay', __('Minimum delay', 'gecka-antispam'), (int) $settings['min_delay'], __('seconds', 'gecka-antispam'), __('Time a form must stay on screen before it is sent: comments, contact forms, registration, checkout.', 'gecka-antispam'));
-        $this->numberRow('sign_in_min_delay', __('Minimum delay to sign in', 'gecka-antispam'), (int) $settings['sign_in_min_delay'], __('seconds', 'gecka-antispam'), __('Same for the login and lost password forms, which password managers fill and send in a blink.', 'gecka-antispam'));
-        $this->numberRow('max_age', __('Maximum age of a form', 'gecka-antispam'), (int) $settings['max_age'], __('hours', 'gecka-antispam'), __('8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0.', 'gecka-antispam'));
+        $this->numberRow('min_delay', __('Minimum delay', 'gecka-antispam'), Value::int($settings['min_delay']), __('seconds', 'gecka-antispam'), __('Time a form must stay on screen before it is sent: comments, contact forms, registration, checkout.', 'gecka-antispam'));
+        $this->numberRow('sign_in_min_delay', __('Minimum delay to sign in', 'gecka-antispam'), Value::int($settings['sign_in_min_delay']), __('seconds', 'gecka-antispam'), __('Same for the login and lost password forms, which password managers fill and send in a blink.', 'gecka-antispam'));
+        $this->numberRow('max_age', __('Maximum age of a form', 'gecka-antispam'), Value::int($settings['max_age']), __('hours', 'gecka-antispam'), __('8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0.', 'gecka-antispam'));
         $this->checkboxRow('random_names', __('Random names', 'gecka-antispam'), (bool) $settings['random_names'], __('Catch names, and messages of a single word, made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl.', 'gecka-antispam'));
-        $this->numberRow('min_words', __('Minimum words in a message', 'gecka-antispam'), (int) $settings['min_words'], __('words', 'gecka-antispam'), __('A message with fewer words is refused: comments, contact forms. 0 accepts any length.', 'gecka-antispam'));
+        $this->numberRow('min_words', __('Minimum words in a message', 'gecka-antispam'), Value::int($settings['min_words']), __('words', 'gecka-antispam'), __('A message with fewer words is refused: comments, contact forms. 0 accepts any length.', 'gecka-antispam'));
         $this->checkboxRow('bad_browsers', __('Bad browsers', 'gecka-antispam'), (bool) $settings['bad_browsers'], __('Refuse a submission sent with no user agent, or with one wrapped in quotes: scripts send those, no browser does.', 'gecka-antispam'));
 
         echo '</table>';
 
         printf('<h2>%s</h2>', esc_html__('Statistics', 'gecka-antispam'));
         echo '<table class="form-table" role="presentation">';
-        $this->numberRow('stats_days', __('Keep the statistics', 'gecka-antispam'), (int) $settings['stats_days'], __('days', 'gecka-antispam'), __('Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content.', 'gecka-antispam'));
+        $this->numberRow('stats_days', __('Keep the statistics', 'gecka-antispam'), Value::int($settings['stats_days']), __('days', 'gecka-antispam'), __('Only daily counts are kept, by form and by outcome, and by country, network and system: no address, no content.', 'gecka-antispam'));
         echo '</table>';
 
         // The reset button belongs to the form printed after this one, through
@@ -668,7 +670,7 @@ class SettingsPage extends Base
      */
     private function modeChoice(string $surface, array $settings, bool $available): void
     {
-        $current = empty($settings['surfaces'][$surface]) ? Settings::MODE_OFF : (string) $settings['modes'][$surface];
+        $current = empty(Value::list($settings['surfaces'])[$surface]) ? Settings::MODE_OFF : Value::string(Value::list($settings['modes'])[$surface] ?? null);
         $choices = [
             Settings::MODE_OFF => __('Off', 'gecka-antispam'),
             Settings::MODE_ALL => __('Every form', 'gecka-antispam'),

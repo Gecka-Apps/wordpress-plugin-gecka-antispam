@@ -9,7 +9,9 @@ namespace Gecka\WP\Plugin\Antispam\Integrations;
 
 use Gecka\WP\Plugin\Antispam\Guard;
 use Gecka\WP\Plugin\Antispam\Plugin;
+use Gecka\WP\Plugin\Antispam\Request;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The inbox of Flamingo, where the messages of Contact Form 7 are kept.
@@ -111,10 +113,9 @@ class Flamingo extends Integration implements Learner
      */
     public function bulkActions(mixed $actions): mixed
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks the view.
-        $status = sanitize_key($_GET['post_status'] ?? '');
+        $status = sanitize_key(Request::query('post_status'));
 
-        if (! is_array($actions) || in_array($status, ['spam', 'trash'], true) || ! $this->plugin->settings()->get('filter')) {
+        if (! is_array($actions) || in_array($status, ['spam', 'trash'], true) || ! $this->plugin->settings()->bool('filter')) {
             return $actions;
         }
 
@@ -174,8 +175,7 @@ class Flamingo extends Integration implements Learner
             return;
         }
 
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks a notice.
-        $count = absint($_GET[self::HAM_DONE]);
+        $count = absint(Request::query(self::HAM_DONE));
 
         wp_admin_notice(
             /* translators: %s: number of messages */
@@ -192,11 +192,10 @@ class Flamingo extends Integration implements Learner
      */
     private function confirmRequested(): void
     {
-        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Checked below, once the action is known.
-        $action = sanitize_key(wp_unslash($_REQUEST['action'] ?? '-1'));
-        $action = $action === '-1' ? sanitize_key(wp_unslash($_REQUEST['action2'] ?? '')) : $action;
+        $action = sanitize_key(Request::requested('action') ?: '-1');
+        $action = $action === '-1' ? sanitize_key(Request::requested('action2')) : $action;
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked below, once the action is known.
         $posts = map_deep(wp_unslash($_REQUEST['post'] ?? []), 'absint');
-        // phpcs:enable
 
         if ($action !== self::HAM_ACTION) {
             return;
@@ -205,13 +204,13 @@ class Flamingo extends Integration implements Learner
         if (is_array($posts)) {
             check_admin_referer('bulk-posts');
         } else {
-            check_admin_referer(self::HAM_ACTION . '_' . $posts);
+            check_admin_referer(self::HAM_ACTION . '_' . Value::int($posts));
         }
 
         $learnt = 0;
 
-        foreach ((array) $posts as $postId) {
-            $learnt += $this->confirmLegitimate($postId) !== null ? 1 : 0;
+        foreach (Value::list(is_array($posts) ? $posts : [$posts]) as $postId) {
+            $learnt += $this->confirmLegitimate(Value::int($postId)) !== null ? 1 : 0;
         }
 
         $back = wp_get_referer() ?: menu_page_url('flamingo_inbound', false);
@@ -306,8 +305,7 @@ class Flamingo extends Integration implements Learner
      */
     public function addMetaBox(): void
     {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks the screen.
-        $postId = absint($_GET['post'] ?? 0);
+        $postId = absint(Request::query('post'));
 
         if (! $postId || get_post_type($postId) !== self::POST_TYPE) {
             return;
@@ -444,7 +442,7 @@ class Flamingo extends Integration implements Learner
     {
         foreach ((array) get_post_meta($postId, '_spam_log', true) as $entry) {
             if (is_array($entry) && ($entry['agent'] ?? '') === ContactForm7::AGENT && ! empty($entry['outcome'])) {
-                return (string) $entry['outcome'];
+                return Value::string($entry['outcome']);
             }
         }
 
@@ -545,7 +543,7 @@ class Flamingo extends Integration implements Learner
 
             foreach (get_posts(['post_type' => 'wpcf7_contact_form', 'numberposts' => -1, 'fields' => 'ids', 'post_status' => 'any']) as $formId) {
                 $meta = get_post_meta((int) $formId, '_flamingo', true);
-                $term = is_array($meta) && isset($meta['channel']) ? get_term((int) $meta['channel'], \Flamingo_Inbound_Message::channel_taxonomy) : null;
+                $term = is_array($meta) && isset($meta['channel']) ? get_term(Value::int($meta['channel']), \Flamingo_Inbound_Message::channel_taxonomy) : null;
 
                 if ($term instanceof \WP_Term) {
                     $forms[$term->slug] = (int) $formId;

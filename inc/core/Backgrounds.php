@@ -540,7 +540,7 @@ class Backgrounds
 
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- The public API of WPML.
         foreach ((array) apply_filters('wpml_active_languages', null, 'skip_missing=0') as $language) {
-            $locales[] = is_array($language) ? (string) ($language['default_locale'] ?? '') : '';
+            $locales[] = is_array($language) ? Value::string($language['default_locale'] ?? null) : '';
         }
 
         if (function_exists('pll_languages_list')) {
@@ -603,23 +603,24 @@ class Backgrounds
             return $this->state;
         }
 
-        $saved = (array) get_option(self::OPTION, []);
+        $saved = Value::list(get_option(self::OPTION, []));
         $languages = [];
+        $strings = static fn(mixed $values): array => array_map(static fn(mixed $value): string => Value::string($value), Value::list($values));
 
-        foreach ((array) ($saved['languages'] ?? []) as $code => $entry) {
+        foreach (Value::list($saved['languages'] ?? null) as $code => $entry) {
             if (is_array($entry) && count($languages) < self::MAX_LANGUAGES) {
                 $languages[(string) $code] = self::entry((string) $code, $entry);
             }
         }
 
         return $this->state = [
-            'tables' => array_filter(array_map('strval', (array) ($saved['tables'] ?? []))),
-            'release' => (string) ($saved['release'] ?? ''),
+            'tables' => array_filter($strings($saved['tables'] ?? null)),
+            'release' => Value::string($saved['release'] ?? null),
             'languages' => $languages,
-            'pending' => array_values(array_map('strval', (array) ($saved['pending'] ?? []))),
-            'checked' => (int) ($saved['checked'] ?? 0),
-            'error' => (string) ($saved['error'] ?? ''),
-            'errors' => array_map('strval', (array) ($saved['errors'] ?? [])),
+            'pending' => array_values($strings($saved['pending'] ?? null)),
+            'checked' => Value::int($saved['checked'] ?? null),
+            'error' => Value::string($saved['error'] ?? null),
+            'errors' => $strings($saved['errors'] ?? null),
         ];
     }
 
@@ -627,23 +628,23 @@ class Backgrounds
      * What is kept of a language a release offers, the texts cut to
      * MAX_TEXT characters
      *
-     * @param string               $code
-     * @param array<string, mixed> $entry As the release or the saved state gives it.
+     * @param string       $code
+     * @param array<mixed> $entry As the release or the saved state gives it.
      *
      * @return array{name: string, sentences: int, words: int, sources: string[], sha256: string, url: string, bytes: int}
      */
     private static function entry(string $code, array $entry): array
     {
-        $text = static fn(mixed $value): string => mb_substr(trim((string) (is_scalar($value) ? $value : '')), 0, self::MAX_TEXT);
+        $text = static fn(mixed $value): string => mb_substr(trim(Value::string($value)), 0, self::MAX_TEXT);
 
         return [
             'name' => $text($entry['name'] ?? $code) ?: $code,
-            'sentences' => (int) ($entry['sentences'] ?? 0),
-            'words' => (int) ($entry['words'] ?? 0),
-            'sources' => array_values(array_filter(array_map($text, array_slice((array) ($entry['sources'] ?? []), 0, 10)))),
-            'sha256' => (string) ($entry['sha256'] ?? ''),
-            'url' => (string) ($entry['url'] ?? ''),
-            'bytes' => (int) ($entry['bytes'] ?? 0),
+            'sentences' => Value::int($entry['sentences'] ?? null),
+            'words' => Value::int($entry['words'] ?? null),
+            'sources' => array_values(array_filter(array_map($text, array_slice(Value::list($entry['sources'] ?? null), 0, 10)))),
+            'sha256' => Value::string($entry['sha256'] ?? null),
+            'url' => Value::string($entry['url'] ?? null),
+            'bytes' => Value::int($entry['bytes'] ?? null),
         ];
     }
 

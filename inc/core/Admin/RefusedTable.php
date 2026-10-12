@@ -11,6 +11,7 @@ use Gecka\WP\Plugin\Antispam\Guard;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Settings;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * The list of the submissions refused, the most recent first, in two views:
@@ -208,7 +209,7 @@ class RefusedTable extends \WP_List_Table
      */
     protected function column_cb(mixed $item): string
     {
-        $id = (int) ($item->id ?? 0);
+        $id = is_object($item) ? Value::int($item->id ?? null) : 0;
 
         return sprintf(
             '<input type="checkbox" name="ids[]" value="%1$d" id="gecka-antispam-refused-%1$d"><label for="gecka-antispam-refused-%1$d"><span class="screen-reader-text">%2$s</span></label>',
@@ -228,7 +229,7 @@ class RefusedTable extends \WP_List_Table
     {
         $date = (string) ($item->updated ?? '');
         $hits = (int) ($item->hits ?? 1);
-        $shown = wp_date(get_option('date_format') . ' ' . get_option('time_format'), (int) strtotime($date . ' UTC')) ?: $date;
+        $shown = wp_date(Value::string(get_option('date_format')) . ' ' . Value::string(get_option('time_format')), (int) strtotime($date . ' UTC')) ?: $date;
 
         return esc_html($shown) . ($hits > 1
             /* translators: %s: number of times the same text was sent */
@@ -293,11 +294,11 @@ class RefusedTable extends \WP_List_Table
      */
     protected function handle_row_actions(mixed $item, mixed $column_name, mixed $primary): string
     {
-        if ($column_name !== $primary) {
+        if ($column_name !== $primary || ! is_object($item)) {
             return '';
         }
 
-        $learnt = ($item->learnt ?? '') ?: null;
+        $learnt = Value::string($item->learnt ?? null) ?: null;
         $labels = [];
 
         if ($this->plugin->settings()->get('filter')) {
@@ -315,7 +316,7 @@ class RefusedTable extends \WP_List_Table
         }
 
         $labels['delete'] = __('Delete', 'gecka-antispam');
-        $args = ($this->learntView ? ['view' => 'learnt'] : []) + ['ids' => [(int) ($item->id ?? 0)], '_wpnonce' => wp_create_nonce('bulk-' . $this->_args['plural'])];
+        $args = ($this->learntView ? ['view' => 'learnt'] : []) + ['ids' => [Value::int($item->id ?? null)], '_wpnonce' => wp_create_nonce('bulk-' . Value::string($this->_args['plural'] ?? null))];
         $actions = [];
 
         foreach ($labels as $op => $label) {

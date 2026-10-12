@@ -15,6 +15,7 @@ use Gecka\WP\Plugin\Antispam\Schema;
 use Gecka\WP\Plugin\Antispam\Settings;
 use Gecka\WP\Plugin\Antispam\Setup;
 use Gecka\WP\Plugin\Antispam\StatisticalFilter;
+use Gecka\WP\Plugin\Antispam\Value;
 
 /**
  * Tools > Site Health: tests telling what keeps the plugin from working as
@@ -58,14 +59,17 @@ class SiteHealth extends Base
             return $tests;
         }
 
-        $tests['direct']['gecka_antispam_tables'] = ['label' => __('The tables of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testTables']];
-        $tests['direct']['gecka_antispam_schedule'] = ['label' => __('The daily task of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testSchedule']];
+        $direct = Value::list($tests['direct'] ?? null);
+        $direct['gecka_antispam_tables'] = ['label' => __('The tables of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testTables']];
+        $direct['gecka_antispam_schedule'] = ['label' => __('The daily task of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testSchedule']];
 
-        if ($this->plugin->settings()->get('filter')) {
-            $tests['direct']['gecka_antispam_filter'] = ['label' => __('The statistical filter of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testFilter']];
-            $tests['direct']['gecka_antispam_background'] = ['label' => __('The background tables of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testBackground']];
-            $tests['direct']['gecka_antispam_snapshot'] = ['label' => __('The snapshot of the counters of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testSnapshot']];
+        if ($this->plugin->settings()->bool('filter')) {
+            $direct['gecka_antispam_filter'] = ['label' => __('The statistical filter of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testFilter']];
+            $direct['gecka_antispam_background'] = ['label' => __('The background tables of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testBackground']];
+            $direct['gecka_antispam_snapshot'] = ['label' => __('The snapshot of the counters of Gecka Antispam', 'gecka-antispam'), 'test' => [$this, 'testSnapshot']];
         }
+
+        $tests['direct'] = $direct;
 
         return $tests;
     }
@@ -272,7 +276,7 @@ class SiteHealth extends Base
                 sprintf(
                     /* translators: %s: date */
                     __('It was due on %s. The scheduled tasks of WordPress do not run on this site: without them, the statistics and the refused submissions are never purged, and the counters of the statistical filter never rotate.', 'gecka-antispam'),
-                    (string) wp_date((string) get_option('date_format') . ' ' . (string) get_option('time_format'), $next),
+                    (string) wp_date(Value::string(get_option('date_format')) . ' ' . Value::string(get_option('time_format')), $next),
                 ),
             );
         }
@@ -300,10 +304,10 @@ class SiteHealth extends Base
 
         $settings = $this->plugin->settings();
         $statisticalFilter = $this->plugin->statisticalFilter();
-        $on = (bool) $settings->get('filter');
+        $on = $settings->bool('filter');
         $tally = $on ? $statisticalFilter->tally() : null;
         $rotated = Plugin::rotated();
-        $format = (string) get_option('date_format');
+        $format = Value::string(get_option('date_format'));
         $fields = [
             'version' => ['label' => __('Version', 'gecka-antispam'), 'value' => Plugin::VERSION . ' / ' . Schema::VERSION],
             'forms' => ['label' => __('Protected forms', 'gecka-antispam'), 'value' => $this->forms()],
@@ -315,13 +319,13 @@ class SiteHealth extends Base
                 'thresholds' => [
                     'label' => __('Thresholds', 'gecka-antispam'),
                     /* translators: 1: rejection, 2: spam, 3: acceptance threshold, in percent */
-                    'value' => sprintf(__('rejection %1$d %%, spam %2$d %%, acceptance %3$d %%', 'gecka-antispam'), (int) $settings->get('filter_reject'), (int) $settings->get('filter_threshold'), (int) $settings->get('filter_review')),
-                    'debug' => sprintf('%d/%d/%d', (int) $settings->get('filter_reject'), (int) $settings->get('filter_threshold'), (int) $settings->get('filter_review')),
+                    'value' => sprintf(__('rejection %1$d %%, spam %2$d %%, acceptance %3$d %%', 'gecka-antispam'), $settings->int('filter_reject'), $settings->int('filter_threshold'), $settings->int('filter_review')),
+                    'debug' => sprintf('%d/%d/%d', $settings->int('filter_reject'), $settings->int('filter_threshold'), $settings->int('filter_review')),
                 ],
                 'minimums' => [
                     'label' => __('Texts to learn first', 'gecka-antispam'),
                     /* translators: 1: spam texts, 2: legitimate texts */
-                    'value' => sprintf(__('spam %1$d, legitimate %2$d', 'gecka-antispam'), (int) $settings->get('filter_min_spam'), (int) $settings->get('filter_min_ham')),
+                    'value' => sprintf(__('spam %1$d, legitimate %2$d', 'gecka-antispam'), $settings->int('filter_min_spam'), $settings->int('filter_min_ham')),
                 ],
                 'learnt' => [
                     'label' => __('Texts learnt', 'gecka-antispam'),
@@ -334,7 +338,7 @@ class SiteHealth extends Base
                     'value' => sprintf(
                         /* translators: 1: period in months, 2: generation number, 3: date of the last rotation */
                         __('every %1$d months; generation %2$d; last rotation: %3$s', 'gecka-antispam'),
-                        (int) $settings->get('filter_rotation'),
+                        $settings->int('filter_rotation'),
                         $tally ? $tally->generation : 0,
                         $tally && $tally->generation > 0 && $rotated ? (string) wp_date($format, $rotated) : __('none yet', 'gecka-antispam'),
                     ),
