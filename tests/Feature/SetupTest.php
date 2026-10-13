@@ -73,12 +73,14 @@ it('leaves nothing behind when uninstalled', function () {
     gecka_antispam()->backgrounds()->lock();
     $user = static::factory()->user->create(['role' => 'administrator']);
     set_transient(Backgrounds::QUEUED . $user, 1, HOUR_IN_SECONDS);
+    set_transient(Setup::FAILED_TRANSIENT, 'Table exists', HOUR_IN_SECONDS);
     update_user_meta($user, RefusedView::PER_PAGE_OPTION, 50);
     update_user_option($user, 'user-settings', 'editor=tinymce&' . RefusedView::MODE_SETTING . '=excerpt&libraryContent=browse');
 
     Setup::uninstall();
 
     expect(table_exists(Schema::stats()))->toBeFalse()
+        ->and(get_transient(Setup::FAILED_TRANSIENT))->toBeFalse()
         ->and(table_exists(Schema::origins()))->toBeFalse()
         ->and(table_exists(Schema::storage()->countsTable()))->toBeFalse()
         ->and(table_exists(Schema::storage()->metaTable()))->toBeFalse()

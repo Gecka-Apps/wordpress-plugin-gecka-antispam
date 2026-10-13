@@ -8,6 +8,7 @@ declare(strict_types=1);
 namespace Gecka\WP\Plugin\Antispam\StatisticalFilter;
 
 use Gecka\WP\Plugin\Antispam\Failure;
+use Gecka\WP\Plugin\Antispam\Schema;
 use Gecka\SpamFilter\Generation;
 use Gecka\SpamFilter\Label;
 use Gecka\SpamFilter\Model\ClassCounts;
@@ -121,6 +122,7 @@ class WpdbStorage implements Storage
             PRIMARY KEY  (feature)
             ) $collate;",
         );
+        Schema::ensure($this->counts);
 
         dbDelta(
             "CREATE TABLE {$this->meta} (
@@ -129,6 +131,7 @@ class WpdbStorage implements Storage
             PRIMARY KEY  (name)
             ) $collate;",
         );
+        Schema::ensure($this->meta);
 
         $rows = array_merge(
             array_fill_keys(self::META, 0),
@@ -498,7 +501,8 @@ class WpdbStorage implements Storage
 
         try {
             $result = $work();
-            $wpdb->query('COMMIT');
+            // SQLite answers null to a COMMIT; only false is a failure.
+            self::ensure($wpdb->query('COMMIT') !== false);
 
             return $result;
         } catch (\Throwable $e) {

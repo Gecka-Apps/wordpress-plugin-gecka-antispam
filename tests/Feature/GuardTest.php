@@ -77,6 +77,49 @@ it('catches a form sent faster than the minimum delay', function () {
     expect(gecka_antispam()->guard()->check('login'))->toBeNull();
 });
 
+it('carries the timestamp of a form shown again, unless it is past the maximum age', function () {
+    $guard = gecka_antispam()->guard();
+
+    post_form('comments', age: 30);
+    $posted = (int) explode('.', $_POST[Guard::TOKEN_FIELD])[0];
+    preg_match('/name="' . Guard::TOKEN_FIELD . '" value="(\d+)\./', $guard->fields('comments', true), $carried);
+
+    expect((int) $carried[1])->toBe($posted);
+
+    post_form('comments', age: 9 * DAY_IN_SECONDS);
+    preg_match('/name="' . Guard::TOKEN_FIELD . '" value="(\d+)\./', $guard->fields('comments', true), $fresh);
+
+    expect((int) $fresh[1])->toBeGreaterThanOrEqual(time() - 2);
+});
+
+it('tells the checks in a fixed order: honeypot, browser, timestamp, names, message', function () {
+    $guard = gecka_antispam()->guard();
+
+    post_form('comments', honeypot: 'https://spam.example');
+    $_SERVER['HTTP_USER_AGENT'] = '';
+    expect($guard->check('comments', ['qASQAhqkpFGqnKkRROl'], 'fWxBIRsgipbaeRuKXpLXpU'))->toBe(Guard::HONEYPOT);
+
+    $_POST = [];
+    expect($guard->check('comments', ['qASQAhqkpFGqnKkRROl'], 'fWxBIRsgipbaeRuKXpLXpU'))->toBe(Guard::BAD_BROWSER);
+
+    $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0';
+    expect($guard->check('comments', ['qASQAhqkpFGqnKkRROl'], 'fWxBIRsgipbaeRuKXpLXpU'))->toBe(Guard::TOKEN);
+
+    post_form('comments');
+    expect($guard->check('comments', ['qASQAhqkpFGqnKkRROl'], 'fWxBIRsgipbaeRuKXpLXpU'))->toBe(Guard::RANDOM_NAME)
+        ->and($guard->check('comments', ['Marie'], 'fWxBIRsgipbaeRuKXpLXpU'))->toBe(Guard::RANDOM_TEXT)
+        ->and($guard->check('comments', ['Marie'], 'Merci'))->toBe(Guard::SHORT);
+});
+
+it('counts each character of a script written without blanks as a word', function () {
+    post_form('comments');
+
+    expect(Guard::wordCount('とても良い記事です'))->toBe(10)
+        ->and(Guard::wordCount('Merci pour cet article'))->toBe(4)
+        ->and(gecka_antispam()->guard()->check('comments', [], 'とても良い記事です'))->toBeNull()
+        ->and(gecka_antispam()->guard()->check('comments', [], '良い'))->toBe(Guard::SHORT);
+});
+
 it('catches a timestamp older than 8 days by default, and none with no maximum age', function () {
     post_form('comments', age: 7 * DAY_IN_SECONDS);
     expect(gecka_antispam()->guard()->check('comments'))->toBeNull();

@@ -34,7 +34,7 @@ function my_quote_request() {
     $subject = sanitize_text_field( wp_unslash( $_POST['subject'] ?? '' ) );
     $message = sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) );
 
-    $check = gecka_antispam_check( 'quote', $subject . "\n" . $message, [ $name ] );
+    $check = gecka_antispam_check( 'quote', $subject . "\n" . $message, [ $name ], $message );
 
     if ( $check['refused'] ) {
         wp_die( esc_html( $check['message'] ), '', [ 'response' => 403, 'back_link' => true ] );
@@ -69,11 +69,14 @@ is, an Ajax response for one, carries the rule itself.
 
 ### `gecka_antispam_check( string $form, string $text = '', array $names = [], ?string $message = null ): array`
 
-Runs the checks on what the form posted: the honeypot, the timestamp, the
-minimum delay (5 seconds by default), the maximum age (8 days by default),
-the random names check on `$names`, the checks of the message on
-`$message`, then the statistical filter on `$text`, once it has learnt
-enough to rate. The submission is counted in the statistics; one refused
+Runs the checks on what the form posted, in this order: the honeypot, the
+user agent (none, or one no browser sends), the timestamp, the minimum
+delay (5 seconds by default), the maximum age (8 days by default, a
+timestamp more than 60 seconds ahead of the clock counting as forged), the
+random names check on `$names`, the checks of the message on `$message`
+(a single word of random letters, then fewer words than the minimum, 5 by
+default), then the statistical filter on `$text`, once it has learnt enough
+to rate. The submission is counted in the statistics; one refused
 that carries a text goes to Security > Journal, where a moderator can learn
 it.
 
@@ -280,7 +283,7 @@ without it.
 | Hook | Description |
 |---|---|
 | `gecka_antispam_protect` | Filter: whether a form is protected. Receives the setting, always true for a custom form, and the form (`comments`, `login`, `contact_form_7`, `custom:quote`...) |
-| `gecka_antispam_checked` | Action: a submission was checked. Receives what caught it, null when it went through, and the form |
+| `gecka_antispam_checked` | Action: a submission was checked. Receives what caught it, null when it went through (a text held for review went through), and the form |
 | `gecka_antispam_background_directory` | Filter: the directory the background tables are read from |
 | `gecka_antispam_background_updates` | Filter: whether the plugin downloads the background tables and keeps them up to date, true by default |
 | `gecka_antispam_background_manifest` | Filter: the URL of the manifest of the background tables, for a mirror; the tables come from its directory |
@@ -302,6 +305,12 @@ add_filter( 'gecka_antispam_capability', function ( $capability, $screen ) {
 The capabilities are read on `init`, when the screens are declared: add the
 filter from a plugin or the `functions.php` of the theme.
 
+The forms the hooks name are `comments`, `login`, `registration` (the
+network signup of a multisite included), `lost_password`,
+`woocommerce_checkout`, `woocommerce_reviews`, `woocommerce_login`,
+`woocommerce_registration`, `woocommerce_lost_password`, `contact_form_7`,
+`gravity_forms`, `acf`, and `custom:{name}` for a form of your own.
+
 ## REST routes
 
 The settings page drives its long tasks through three routes of the
@@ -315,8 +324,9 @@ header of the REST API:
 | `/backgrounds/check` | Reads the release of the background tables and queues the tables to download; answers `busy` while another request updates |
 | `/backgrounds/next` | Downloads the next table of the queue; answers `done` once the queue is empty, `busy` while another request updates |
 
-The background routes answer 403 while the statistical filter is off or the
-`gecka_antispam_background_updates` filter returns false.
+The background routes answer 403 while the statistical filter is off, the
+`gecka_antispam_background_updates` filter returns false, or PHP lacks the
+intl or mbstring extension the filter needs.
 
 ## Data
 
@@ -330,6 +340,7 @@ The background routes answer 403 while the statistical filter is off or the
 | `gecka_antispam_settings`, `gecka_antispam_version`, `gecka_antispam_rotated`, `gecka_antispam_backgrounds` | Options |
 | `gecka_antispam_backgrounds_lock` | Option held while a request checks or downloads the background tables |
 | `gecka_antispam_backgrounds_queued_{user}` | Transient, one hour: the statistical filter tab of that administrator starts the downloads a save queued |
+| `gecka_antispam_install_failed` | Transient, one hour: why the tables could not be set up, shown in a notice and in Site Health; the setup is tried again once it expires |
 | `gecka_antispam_refused_per_page`, `gecka_antispam_refused_mode` | User meta and user setting: the screen options of the Journal tab; its hidden columns belong to the Journal screen, shared with other plugins, and stay |
 | `_gecka_antispam_trained` | Comment and Flamingo message meta: `spam`, `ham`, or `skipped` for an item read in one go and left out |
 | `_gecka_antispam_generation` | Comment and Flamingo message meta: the generation of the counters the item was learnt in |

@@ -144,7 +144,11 @@ class Comments extends Integration implements Learner
     public function render(mixed $postId = null): void
     {
         if (! current_user_can('moderate_comments')) {
-            echo $this->fields(get_post_type(is_numeric($postId) ? (int) $postId : null) === 'product' ? 'woocommerce_reviews' : 'comments'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by Guard::fields().
+            // A comment on a product is a review when WooCommerce is there to
+            // say so; without it the form is signed, and checked, as a comment.
+            $review = $this->plugin->provides('woocommerce') && get_post_type(is_numeric($postId) ? (int) $postId : null) === 'product';
+
+            echo $this->fields($review ? 'woocommerce_reviews' : 'comments'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped by Guard::fields().
         }
     }
 

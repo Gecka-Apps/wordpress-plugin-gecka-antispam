@@ -127,6 +127,14 @@ class StatisticalFilter
     private bool $learningFailed = false;
 
     /**
+     * Whether the last text given to unlearn() could not be forgotten for
+     * want of a working filter or storage, rather than for being too old.
+     *
+     * @var bool
+     */
+    private bool $unlearningFailed = false;
+
+    /**
      * Background tables read in this request.
      *
      * @var array{directory: string, background: LanguageBackground|null, languages: string[], problems: string[]}|null
@@ -214,9 +222,17 @@ class StatisticalFilter
     {
         $text = $this->prepare($text);
         $label = Label::tryFrom($category);
-        $filter = $text === '' || ! $label ? null : $this->filter();
+        $this->unlearningFailed = false;
+
+        if ($text === '' || ! $label) {
+            return false;
+        }
+
+        $filter = $this->filter();
 
         if (! $filter) {
+            $this->unlearningFailed = true;
+
             return false;
         }
 
@@ -229,6 +245,7 @@ class StatisticalFilter
             return false;
         } catch (\RuntimeException $e) {
             $this->failed($e);
+            $this->unlearningFailed = true;
 
             return false;
         }
@@ -251,11 +268,28 @@ class StatisticalFilter
             return $generation ?? 0;
         }
 
+        $forgotten = false;
+
         if ($previous) {
-            $this->unlearn($text, $previous, $generation ?? 0);
+            $forgotten = $this->unlearn($text, $previous, $generation ?? 0);
+
+            if ($this->unlearningFailed) {
+                $this->learningFailed = true;
+
+                return null;
+            }
         }
 
-        return $this->learn($text, $category);
+        $learnt = $this->learn($text, $category);
+
+        // Forgotten and not learnt: the text is in no class, put it back in
+        // the one the caller still records it in.
+        if ($learnt === null && $this->learningFailed && $forgotten) {
+            $this->learn($text, (string) $previous);
+            $this->learningFailed = true;
+        }
+
+        return $learnt;
     }
 
     /**

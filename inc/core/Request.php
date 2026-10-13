@@ -12,9 +12,10 @@ namespace Gecka\WP\Plugin\Antispam;
  * same hook with no form behind it.
  *
  * The comment, login and registration hooks also fire for the REST API,
- * XML-RPC, WP-CLI, the cron and the importers. Those requests carry no
- * honeypot and no timestamp, and checking them would lock out the site rather
- * than the bots.
+ * WP-CLI, the cron and the importers. Those requests carry no honeypot and
+ * no timestamp, and checking them would lock out the site rather than the
+ * bots. An XML-RPC request is not among them: it runs the same hooks as a
+ * page, and a form posted to xmlrpc.php is handled like one posted anywhere.
  *
  * @author Laurent Dinclaux - Gecka <laurent@gecka.nc>
  */
@@ -28,7 +29,6 @@ class Request
     public static function isNonInteractive(): bool
     {
         return (defined('REST_REQUEST') && REST_REQUEST)
-            || (defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)
             || (defined('WP_CLI') && WP_CLI)
             || wp_doing_cron();
     }

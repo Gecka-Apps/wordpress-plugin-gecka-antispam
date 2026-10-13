@@ -86,6 +86,7 @@ class Schema
             PRIMARY KEY  (day,surface,outcome)
             ) $collate;",
         );
+        self::ensure($stats);
 
         $origins = self::origins();
 
@@ -101,6 +102,7 @@ class Schema
             KEY facet (facet,day)
             ) $collate;",
         );
+        self::ensure($origins);
 
         $journal = Journal::table();
 
@@ -122,8 +124,33 @@ class Schema
             KEY learnt (learnt)
             ) $collate;",
         );
+        self::ensure($journal);
 
         self::storage()->install(StatisticalFilter::BITS);
+    }
+
+    /**
+     * Throws when a table dbDelta was just asked for is not there: dbDelta
+     * says nothing of a CREATE that failed, the error of the database is
+     * still in $wpdb when this runs right after it.
+     *
+     * @param string $table
+     *
+     * @return void
+     *
+     * @throws Failure
+     */
+    public static function ensure(string $table): void
+    {
+        global $wpdb;
+
+        $error = (string) $wpdb->last_error;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin, checked once set up.
+        if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s', $wpdb->esc_like($table))) !== $table) {
+            /* translators: 1: table name, 2: the error of the database */
+            throw Failure::because(sprintf(__('The table %1$s could not be created: %2$s', 'gecka-antispam'), $table, $error)); // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Plain text by design, escaped where shown.
+        }
     }
 
     /**

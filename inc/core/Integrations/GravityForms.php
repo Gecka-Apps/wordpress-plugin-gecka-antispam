@@ -622,7 +622,7 @@ class GravityForms extends Integration implements Learner
             }
         }
 
-        return ['text' => implode("\n", $lines), 'message' => $messages === [] ? null : implode("\n", $typed)];
+        return ['text' => implode("\n", $lines), 'message' => $typed === [] ? null : implode("\n", $typed)];
     }
 
     /**

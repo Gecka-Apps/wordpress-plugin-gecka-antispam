@@ -68,8 +68,9 @@ function gecka_antispam_fields(string $form, bool $carry = false): string
 
 /**
  * Checks a submission of a form printed with gecka_antispam_fields(): the
- * honeypot, the timestamp and the delays, the random names, then the
- * statistical filter on the text. The submission is counted in the
+ * honeypot, the user agent, the timestamp and the delays, the random
+ * names, the message (a single word of random letters, the minimum of
+ * words), then the statistical filter on the text. The submission is counted in the
  * statistics, and one refused that carries a text goes to the Refused list.
  *
  * @param string      $form    Name given to gecka_antispam_fields().

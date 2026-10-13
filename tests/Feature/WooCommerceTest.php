@@ -101,6 +101,14 @@ it('leaves the app authorization screen alone when the login form is switched of
     expect((string) ob_get_clean())->toBe('<form method="post" class="wc-auth-login"></form>');
 });
 
+it('checks a form posted to xmlrpc.php, where WooCommerce handles it like anywhere else', function () {
+    defined('XMLRPC_REQUEST') || define('XMLRPC_REQUEST', true);
+    $_POST = ['register' => 'Register', 'email' => 'bot@example.test', 'woocommerce-register-nonce' => 'abc'];
+
+    expect($this->woocommerce->checkRegistration(new WP_Error())->get_error_code())->toBe('gecka_antispam')
+        ->and(gecka_antispam()->stats()->totals(1))->toBe(['woocommerce_registration' => [Guard::TOKEN => 1]]);
+});
+
 it('checks the account forms on the fields WooCommerce processes them on, whatever nonce field is posted', function () {
     $_POST = ['register' => 'Register', 'email' => 'bot@example.test', '_wpnonce' => 'abc'];
 

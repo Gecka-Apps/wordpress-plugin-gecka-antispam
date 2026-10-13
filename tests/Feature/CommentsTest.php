@@ -149,6 +149,19 @@ it('refuses a comment shorter than the minimum of words, and one of a single ran
         ->and(comments_of($this->post))->toBe(1);
 });
 
+it('signs the form of a product as a comment form when WooCommerce is not there', function () {
+    $product = static::factory()->post->create(['post_type' => 'product', 'comment_status' => 'open']);
+    antispam_settings(['min_delay' => 0]);
+
+    ob_start();
+    comment_form([], $product);
+    preg_match('/name="' . Guard::TOKEN_FIELD . '" value="([^"]+)"/', (string) ob_get_clean(), $token);
+    $_POST = [Guard::TOKEN_FIELD => $token[1], gecka_antispam()->guard()->honeypotName() => ''];
+
+    expect(gecka_antispam()->guard()->check('comments'))->toBeNull()
+        ->and(gecka_antispam()->guard()->check('woocommerce_reviews'))->toBe(Guard::TOKEN);
+});
+
 it('checks a product review as a form of WooCommerce', function () {
     $product = static::factory()->post->create(['post_type' => 'product', 'comment_status' => 'open']);
 
@@ -164,7 +177,7 @@ it('checks a product review as a form of WooCommerce', function () {
         ->and(gecka_antispam()->stats()->totals(1))->toBe(['woocommerce_reviews' => [Guard::HONEYPOT => 1]]);
 });
 
-it('signs the review form of a product for the reviews', function () {
+it('lets a comment on a product through with the token its form printed, WooCommerce not being there', function () {
     antispam_settings(['min_delay' => 0]);
     $product = static::factory()->post->create(['post_type' => 'product', 'comment_status' => 'open']);
 
@@ -173,8 +186,8 @@ it('signs the review form of a product for the reviews', function () {
     preg_match('/name="' . Guard::TOKEN_FIELD . '" value="([^"]+)"/', (string) ob_get_clean(), $token);
     $_POST = [Guard::TOKEN_FIELD => $token[1]];
 
-    expect(wp_get_comment_status(post_comment($product, 'Great product', 'review')))->not->toBe('spam')
-        ->and(gecka_antispam()->stats()->totals(1))->toBe(['woocommerce_reviews' => [Guard::PASSED => 1]]);
+    expect(wp_get_comment_status(post_comment($product, 'Great product')))->not->toBe('spam')
+        ->and(gecka_antispam()->stats()->totals(1))->toBe(['comments' => [Guard::PASSED => 1]]);
 });
 
 it('leaves the product reviews alone when their form is switched off', function () {
@@ -384,7 +397,7 @@ it('checks the comment of a user logged in like one of a visitor, and leaves a m
 
 it('reads the most recent comments first, a batch at a time', function () {
     $old = static::factory()->comment->create(['comment_post_ID' => $this->post, 'comment_approved' => 'spam', 'comment_content' => 'old spam text', 'comment_date_gmt' => '2020-01-01 00:00:00']);
-    $new = marked_spam(static::factory()->comment->create(['comment_post_ID' => $this->post, 'comment_approved' => 'spam', 'comment_content' => 'new spam text', 'comment_date_gmt' => '2026-01-01 00:00:00']));
+    $new = marked_spam(static::factory()->comment->create(['comment_post_ID' => $this->post, 'comment_approved' => 'spam', 'comment_content' => 'new spam text', 'comment_date_gmt' => gmdate('Y-m-d H:i:s', time() - 30 * DAY_IN_SECONDS)]));
 
     (new Comments(gecka_antispam()))->learnExisting(StatisticalFilter::SPAM, 1);
 

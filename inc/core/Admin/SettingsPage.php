@@ -312,10 +312,12 @@ class SettingsPage extends Base
         }
 
         wp_admin_notice(
-            sprintf(
-                /* translators: %s: the error */
-                __('Gecka Antispam could not set its tables up, and protects nothing until it can. The setup is tried again every hour. The database said: %s', 'gecka-antispam'),
-                $failure,
+            esc_html(
+                sprintf(
+                    /* translators: %s: the error */
+                    __('Gecka Antispam could not set its tables up, and protects nothing until it can. The setup is tried again every hour. The database said: %s', 'gecka-antispam'),
+                    $failure,
+                ),
             ),
             ['type' => 'error'],
         );
@@ -615,7 +617,7 @@ class SettingsPage extends Base
         echo '</table>';
 
         printf('<h2>%s</h2>', esc_html__('Honeypot and timing', 'gecka-antispam'));
-        printf('<p>%s</p>', esc_html__('A submission these checks catch is refused with an error, which lets a person send it again, and kept in the Antispam tab of Security > Journal.', 'gecka-antispam'));
+        printf('<p>%s</p>', esc_html__('A submission these checks catch is refused with an error, which lets a person send it again, and, when it carries a text, kept in the Antispam tab of Security > Journal.', 'gecka-antispam'));
         echo '<table class="form-table" role="presentation">';
 
         $this->textRow(
@@ -625,10 +627,10 @@ class SettingsPage extends Base
             __('A field people never see, which bots fill in. Drawn at random on each site; a name a bot would fill in, and that no browser autofills.', 'gecka-antispam'),
         );
         $this->numberRow('min_delay', __('Minimum delay', 'gecka-antispam'), Value::int($settings['min_delay']), __('seconds', 'gecka-antispam'), __('Time a form must stay on screen before it is sent: comments, contact forms, registration, checkout.', 'gecka-antispam'));
-        $this->numberRow('sign_in_min_delay', __('Minimum delay to sign in', 'gecka-antispam'), Value::int($settings['sign_in_min_delay']), __('seconds', 'gecka-antispam'), __('Same for the login and lost password forms, which password managers fill and send in a blink.', 'gecka-antispam'));
+        $this->numberRow('sign_in_min_delay', __('Minimum delay to sign in', 'gecka-antispam'), Value::int($settings['sign_in_min_delay']), __('seconds', 'gecka-antispam'), __('Same for the login and lost password forms, of WordPress and of WooCommerce, which password managers fill and send in a blink.', 'gecka-antispam'));
         $this->numberRow('max_age', __('Maximum age of a form', 'gecka-antispam'), Value::int($settings['max_age']), __('hours', 'gecka-antispam'), __('8 days by default, which a page cache keeping its pages a week still fits in; 0 for no limit. A cached form is as old as the cache: when pages are cached longer, raise it or set it to 0.', 'gecka-antispam'));
         $this->checkboxRow('random_names', __('Random names', 'gecka-antispam'), (bool) $settings['random_names'], __('Catch names, and messages of a single word, made of letters whose case changes at random, like qASQAhqkpFGqnKkRROl.', 'gecka-antispam'));
-        $this->numberRow('min_words', __('Minimum words in a message', 'gecka-antispam'), Value::int($settings['min_words']), __('words', 'gecka-antispam'), __('A message with fewer words is refused: comments, contact forms. 0 accepts any length.', 'gecka-antispam'));
+        $this->numberRow('min_words', __('Minimum words in a message', 'gecka-antispam'), Value::int($settings['min_words']), __('words', 'gecka-antispam'), __('A message with fewer words is refused, on every form that has one. 0 accepts any length.', 'gecka-antispam'));
         $this->checkboxRow('bad_browsers', __('Bad browsers', 'gecka-antispam'), (bool) $settings['bad_browsers'], __('Refuse a submission sent with no user agent, or with one wrapped in quotes: scripts send those, no browser does.', 'gecka-antispam'));
 
         echo '</table>';

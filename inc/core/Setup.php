@@ -209,6 +209,7 @@ class Setup
                 delete_option(Backgrounds::OPTION);
                 delete_option(Backgrounds::LOCK);
                 delete_option(self::VERSION_OPTION);
+                delete_transient(self::FAILED_TRANSIENT);
                 self::deleteTransients(Backgrounds::QUEUED);
 
                 self::deleteMeta(

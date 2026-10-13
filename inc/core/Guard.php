@@ -179,12 +179,20 @@ class Guard
      * @param bool   $carry   Keep the time of a valid timestamp the request posts for
      *                        the same form, for a form shown again after a post: the next
      *                        page of a multipage form, or the form back with its errors.
+     *                        A timestamp past the maximum age is not kept: the form shown
+     *                        again gets a fresh one, else it could never be sent.
      *
      * @return string
      */
     public function fields(string $surface, bool $carry = false): string
     {
-        $time = ($carry ? $this->postedTime($surface) : null) ?? time();
+        $time = $carry ? $this->postedTime($surface) : null;
+        $maxAge = $this->plugin->settings()->int('max_age') * HOUR_IN_SECONDS;
+
+        if ($time === null || ($maxAge && time() - $time > $maxAge)) {
+            $time = time();
+        }
+
         $class = $this->hidingClass();
         $html = $this->styleInForm() ? '<style>' . $this->hidingRule() . '</style>' : '';
 
@@ -269,7 +277,7 @@ class Guard
                 return self::RANDOM_TEXT;
             }
 
-            if (count($words) < $this->plugin->settings()->int('min_words')) {
+            if (self::wordCount($message) < $this->plugin->settings()->int('min_words')) {
                 return self::SHORT;
             }
         }
@@ -303,6 +311,20 @@ class Guard
     public static function words(string $text): array
     {
         return preg_split('/\s+/u', trim($text), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+    }
+
+    /**
+     * How many words a text holds, for the minimum: the words its blanks
+     * separate, and each character of a script written without blanks,
+     * Chinese, Japanese or Thai, counting as one on top
+     *
+     * @param string $text
+     *
+     * @return int
+     */
+    public static function wordCount(string $text): int
+    {
+        return count(self::words($text)) + (int) preg_match_all('/[\p{Han}\p{Hiragana}\p{Katakana}\p{Thai}]/u', $text);
     }
 
     /**
