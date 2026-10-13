@@ -242,6 +242,20 @@ it('learns a comment approved from the moderation queue as ham', function () {
     expect(get_comment_meta($id, Plugin::META_TRAINED, true))->toBe(StatisticalFilter::HAM);
 });
 
+it('rates a pingback or a trackback by the filter alone, with no form behind it', function () {
+    antispam_settings(['filter_min_spam' => 3, 'filter_min_ham' => 3, 'filter_threshold' => 55]);
+    teach_comments();
+
+    $spam = post_comment($this->post, 'casino bonus viagra', 'trackback');
+    add_filter('comment_flood_filter', '__return_false');
+    $ham = post_comment($this->post, 'merci pour cet article sur la mairie', 'pingback');
+    remove_filter('comment_flood_filter', '__return_false');
+
+    expect(wp_get_comment_status($spam))->toBe('spam')
+        ->and(get_comment_meta($spam, Plugin::META_REASON, true))->toBe(Guard::FILTER_SPAM)
+        ->and(wp_get_comment_status($ham))->not->toBe('spam');
+});
+
 it('catches a comment the trained filter rates as spam', function () {
     antispam_settings(['filter_min_spam' => 3, 'filter_min_ham' => 3, 'filter_threshold' => 55]);
     teach_comments();

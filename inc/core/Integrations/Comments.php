@@ -32,13 +32,22 @@ class Comments extends Integration implements Learner
 {
     /**
      * Comment types the plugin checks and learns, and the form each comes from.
-     * WooCommerce gives the type review to a comment on a product.
+     * WooCommerce gives the type review to a comment on a product. A pingback
+     * or a trackback comes from another site, with no form: the statistical
+     * filter alone rates it.
      */
     private const TYPES = [
         '' => 'comments',
         'comment' => 'comments',
         'review' => 'woocommerce_reviews',
+        'pingback' => 'comments',
+        'trackback' => 'comments',
     ];
+
+    /**
+     * The comment types another site sends.
+     */
+    private const PINGS = ['pingback', 'trackback'];
 
     /**
      * Column added to the comments list.
@@ -162,11 +171,13 @@ class Comments extends Integration implements Learner
     public function check(array $data): array
     {
         $this->pending = null;
-        $surface = self::TYPES[Value::string($data['comment_type'] ?? null)] ?? null;
+        $type = Value::string($data['comment_type'] ?? null);
+        $surface = self::TYPES[$type] ?? null;
+        $ping = in_array($type, self::PINGS, true);
 
         if (current_user_can('moderate_comments')
             || ! $surface
-            || ! Request::isFormPost('comment_post_ID')
+            || ! ($ping || Request::isFormPost('comment_post_ID'))
             || ! $this->plugin->settings()->enabled($surface)
         ) {
             return $data;
@@ -178,8 +189,9 @@ class Comments extends Integration implements Learner
         $text = self::commentText($comment);
 
         // A comment let through is counted once saved: the flood and
-        // duplicate checks of WordPress come after this filter.
-        $outcome = $this->verify($surface, [Value::string($comment['comment_author'] ?? null)], $text, true, true, $text);
+        // duplicate checks of WordPress come after this filter. A ping has
+        // no form behind it: only its text is rated.
+        $outcome = $this->verify($surface, [Value::string($comment['comment_author'] ?? null)], $text, ! $ping, true, $ping ? null : $text);
 
         if (Guard::refuses($outcome)) {
             wp_die(esc_html($this->message()), esc_html__('Comment refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);

@@ -28,6 +28,12 @@ const NO_BACKGROUND = __DIR__ . '/../.tests/no-background';
 
 uses(TestCase::class)
     ->beforeEach(function () {
+        // The counters are kept by day of the site, UTC here: a test that
+        // writes one and reads it back must not straddle midnight.
+        if (time() % DAY_IN_SECONDS > DAY_IN_SECONDS - 3) {
+            sleep(3);
+        }
+
         // The checks refuse a submission sent with no user agent.
         $_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36';
         gecka_antispam()->settings()->flush();

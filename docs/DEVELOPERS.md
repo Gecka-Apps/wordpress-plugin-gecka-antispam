@@ -263,7 +263,9 @@ Random names: the text fields the `gecka_antispam` argument names under
 
 ### Comments and product reviews
 
-The content, with no subject. Random names: the name of the author.
+The content, with no subject. Random names: the name of the author. A
+pingback or a trackback, which carries no form, is rated by the filter
+alone.
 
 ### Login, registration, lost password, checkout, My account
 

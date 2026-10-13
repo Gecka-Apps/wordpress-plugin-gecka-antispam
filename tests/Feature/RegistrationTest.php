@@ -68,6 +68,22 @@ it('leaves alone a registration made by code, outside wp-login.php', function ()
         ->and(gecka_antispam()->stats()->totals(1))->toBe([]);
 });
 
+it('counts a network signup once, at its user step, and checks its site step too', function () {
+    $GLOBALS['pagenow'] = 'wp-signup.php';
+    post_form('registration', fields: ['stage' => 'validate-user-signup']);
+    $this->registration->checkSignup(['user_name' => 'marie', 'errors' => new WP_Error()]);
+
+    $_POST['stage'] = 'validate-blog-signup';
+    $this->registration->checkSignup(['user_name' => 'marie', 'errors' => new WP_Error()]);
+
+    expect(gecka_antispam()->stats()->totals(1)['registration'])->toBe([Guard::PASSED => 1]);
+
+    $_POST = ['stage' => 'validate-blog-signup'];
+
+    expect($this->registration->checkSignup(['user_name' => 'marie', 'errors' => new WP_Error()])['errors']->get_error_code())->toBe('generic')
+        ->and(gecka_antispam()->stats()->totals(1)['registration'])->toEqual([Guard::PASSED => 1, Guard::TOKEN => 1]);
+});
+
 it('checks the signup form of a network on its own route, and leaves it alone when switched off', function () {
     $GLOBALS['pagenow'] = 'wp-signup.php';
     $result = ['user_name' => 'newcomer', 'errors' => new WP_Error()];

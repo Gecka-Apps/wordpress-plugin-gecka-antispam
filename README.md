@@ -149,7 +149,8 @@ A comment, or a product review, gets the fields and every check whoever
 posts it, logged in or not, unless the author can moderate comments: a
 moderator is not checked at all. A Gravity Forms submission made by code,
 through the submissions route of its REST API or `GFAPI::submit_form()`,
-carries no fields and no browser: it is rated by the filter alone.
+carries no fields and no browser: it is rated by the filter alone. So is a
+pingback or a trackback, which another site sends with no form.
 
 That route answers anyone, with no login, once the REST API is enabled in the
 settings of Gravity Forms: a bot posting there skips the honeypot, the
@@ -175,7 +176,9 @@ the links under its text or in bulk. An entry learnt moves to the Learnt view, m
 what it was learnt as: there it can be learnt the other way, which takes
 back the first learning, or unlearnt back to review, as long as the counters
 did not rotate twice since; deleting an entry leaves what was learnt of it.
-Entries are kept 30 days, 5,000 at most, learnt or not.
+Entries are kept 30 days, 5,000 at most, learnt or not. Whoever moderates
+comments sees the Journal, the refusals of every form included; the
+`gecka_antispam_capability` filter keeps it to administrators.
 
 While the statistical filter is on, a column gives the spam rating of each
 text, for information: what the filter makes of it now, rated as the page

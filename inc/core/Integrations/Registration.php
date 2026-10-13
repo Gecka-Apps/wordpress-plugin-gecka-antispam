@@ -89,7 +89,12 @@ class Registration extends Integration
             return $result;
         }
 
-        if ($this->verify('registration', [Value::string($result['user_name'] ?? null)])) {
+        // wp-signup.php validates the user at its user step, then again at
+        // its site step: the second pass is checked, but a pass through it
+        // is not counted twice.
+        $siteStep = Request::post('stage') === 'validate-blog-signup';
+
+        if ($this->verify('registration', [Value::string($result['user_name'] ?? null)], countLater: $siteStep)) {
             $result['errors']->add('generic', esc_html($this->message()));
         }
 

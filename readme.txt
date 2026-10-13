@@ -81,7 +81,7 @@ No. The login and lost password forms have no minimum delay by default.
 
 = Does it stop every bot? =
 
-No. The honeypot and the timestamp stop the bots that post without loading the form, or fill in every field. A bot that reads the page first can get past them: the statistical filter is there for those. So is a bot posting to the submissions route of the REST API of Gravity Forms, which skips the form, once that API is enabled in the settings of Gravity Forms: leave it off unless something needs it. Comments and logins made through the REST API or XML-RPC, and pingbacks and trackbacks, carry no form either and are not checked.
+No. The honeypot and the timestamp stop the bots that post without loading the form, or fill in every field. A bot that reads the page first can get past them: the statistical filter is there for those. So is a bot posting to the submissions route of the REST API of Gravity Forms, which skips the form, once that API is enabled in the settings of Gravity Forms: leave it off unless something needs it. Comments and logins made through the REST API or XML-RPC carry no form either and are not checked; a pingback or a trackback, sent by another site, is rated by the statistical filter alone.
 
 = Can I protect a form I wrote myself? =
 
