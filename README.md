@@ -1,3 +1,10 @@
+![](.github/banner.svg)
+
+[![CI](https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/actions/workflows/ci.yml/badge.svg)](https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/actions/workflows/ci.yml)
+[![WordPress 6.8+](https://img.shields.io/badge/WordPress-6.8%2B-21759b?logo=wordpress&logoColor=white)](readme.txt)
+[![PHP 8.2+](https://img.shields.io/badge/PHP-8.2%2B-777bb4?logo=php&logoColor=white)](readme.txt)
+[![License](https://img.shields.io/badge/license-GPL--3.0--or--later-blue.svg)](LICENSE)
+
 # Gecka Antispam for WordPress
 
 Stops spam on the forms of WordPress, WooCommerce, Contact Form 7, Gravity
@@ -97,8 +104,8 @@ Every protected form gets two fields:
 
 - a **signed timestamp**, hidden. A submission without it, or with a forged
   one, is caught. So is a form sent faster than the minimum delay: 5 seconds
-  by default, none for the login and lost password forms, which password
-  managers fill and send at once. A timestamp older than 8 days is caught
+  by default, none for the login and lost password forms, of WordPress and
+  of WooCommerce, which password managers fill and send at once. A timestamp older than 8 days is caught
   too, so that one taken from the page cannot serve for ever. A page served
   from a cache carries the timestamp of the moment it was cached: when pages
   stay cached longer than a week, raise the setting, or set it to 0 for no
@@ -129,11 +136,13 @@ A form can point it at its own fields: the additional setting
 The same rule reads a **message of a single word**: a bot that types one
 burst of random letters where a message goes is caught even when its name
 reads as one. A **minimum of words** applies to the message too, five by
-default, 0 for none: a message shorter than that is refused, on comments and
-contact forms alike.
+default, 0 for none: a message shorter than that is refused, on every form
+that has a message, comments included. A message field left empty is not a
+message, and not counted. Chinese, Japanese and Thai are written without
+blanks: each of their characters counts as a word.
 
-A last check reads the **user agent**: a submission sent with none, or with
-one wrapped in quotes, is refused. No browser sends either; a script whose
+A check run right after the honeypot reads the **user agent**: a submission
+sent with none, or with one wrapped in quotes, is refused. No browser sends either; a script whose
 setting was copied with its quotes does, by the thousand.
 
 A comment, or a product review, gets the fields and every check whoever
@@ -343,7 +352,7 @@ one; before, to the archive (until the first rotation, its age decides);
 older than two periods, it is left out, it would have halved since. The
 most recent are learnt first, 50 of each kind and source at a time. The
 button calls a REST route (`POST /wp-json/gecka-antispam/v1/learn-existing`,
-`manage_options`) again and again, each call learning for 5 seconds at
+`manage_options` by default) again and again, each call learning for 5 seconds at
 most, and shows the progress until nothing is left; without JavaScript, it
 posts a form that learns for 20 seconds at most (half the time limit of PHP
 when that is shorter), and a site holding more takes another click. A

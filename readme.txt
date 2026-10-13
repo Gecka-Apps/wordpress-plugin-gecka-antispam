@@ -8,49 +8,54 @@ Stable tag: 1.0.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Stops spam on comments, login, registration, WooCommerce, Contact Form 7, Gravity Forms and ACF forms. No captcha, submissions stay on the site.
+Stops spam on every form without a captcha: honeypot, timing checks and a filter that learns from your moderation. Nothing leaves your server.
 
 == Description ==
 
-Every protected form gets a signed timestamp and a honeypot, a field people never see and bots fill in. A submission without the timestamp, sent faster than anybody types, with the honeypot filled in, or with a name, or a message of a single word, made of random letters, like qASQAhqkpFGqnKkRROl, is refused with an error, which lets a person send it again. A minimum of words can be set for the message, and a submission sent with no user agent, or with one no browser sends, is refused too.
+Gecka Antispam stops spam on comments, login, registration, WooCommerce, Contact Form 7, Gravity Forms, ACF front-end forms and the forms you wrote yourself. There is no captcha: a visitor fills the form and sends it, nothing more. The checks run on your server, and no service outside the site reads what your visitors write.
 
-Protected forms:
+= How it catches bots =
 
-* WordPress: comments, login, registration, lost password
-* WooCommerce: classic checkout (not the checkout block, nor the payment buttons of product and cart pages), product reviews, My account login, registration and lost password, the login of the app authorization screen
-* Contact Form 7: every form, or the forms holding the `[gecka_antispam]` form tag
-* Gravity Forms: every form, or the forms holding the Antispam field
-* ACF, ACF Pro and Secure Custom Fields: every front-end form, or the forms whose `acf_form()` arguments hold `'gecka_antispam' => true`
-* WordPress multisite: the network registration form
-* Your own forms, through `gecka_antispam_fields()` and `gecka_antispam_check()`: see docs/DEVELOPERS.md, in the folder of the plugin
+Most spam bots post without loading the page, fill in every field they find, or type random letters where a name goes. Each protected form carries:
 
-= Statistical filter =
+* a **signed timestamp**: a form sent faster than anybody types, or days after it was shown, is refused
+* a **honeypot**, a field people never see and bots fill in
+* checks on what was typed: a name or a one-word message made of random letters, a message of too few words, a user agent no browser sends
 
-The plugin ships gecka/spamfilter, a statistical filter for short texts. It rates the subject and the message of the comments, the Contact Form 7 messages, the Gravity Forms entries and the ACF front-end forms, from 0 to 100 % spam, against three thresholds:
+A bot caught gets an error page. A person caught by mistake gets the same page, with a link back, and sends again: nothing is lost silently.
 
-* from 95 %, the text is refused, as by the checks of the form
-* from 75 %, it is marked as spam: it goes to the spam queue, the spam of Flamingo or the spam of Gravity Forms, where it can be marked as not spam
-* from 55 %, it goes through flagged for review: a comment waits for moderation, a Gravity Forms entry gets a note, a Contact Form 7 message shows it in the Antispam column of Flamingo
+= A filter that learns from you =
 
-An ACF front-end form has no spam queue: it is refused from 95 % and goes through below.
+Bots that load the page and fill the form like a person get past the checks of the form. For those, the plugin ships [gecka/spamfilter](https://github.com/Gecka-Apps/spamfilter), a statistical filter that rates every message from 0 to 100 % spam, trained on your own site: each time you mark a comment, a Flamingo message or a Gravity Forms entry as spam, or as legitimate, it learns. From 95 % a message is refused, from 75 % it goes to the spam queue, from 55 % it is flagged for review, and below that it passes. The thresholds are yours to set, and one click has it learn, in one go, everything already moderated on the site.
 
-It learns from what a moderator marks as spam or as not spam in the comments, in Flamingo, in Gravity Forms and in Security > Journal, from the comments approved, and from the Flamingo messages and Gravity Forms entries confirmed as legitimate. A button of the statistical filter tab has it learn, in one go and with a progress bar, the comments, messages and entries already marked on the site. Spam is learnt that way only when a person or Akismet marked it, never what the filter caught itself. It rates nothing until it has learnt 20 spam texts and 10 legitimate ones, two settings. Its counters age: a text counts in full for 6 to 12 months, then its weight halves every 6 months, so the spam of today outweighs the campaigns of past years. Flamingo gets an Antispam column showing the rating of each message.
+The filter compares what it learnt with background tables that tell a common word from a rare one, in each language of your site. It needs 20 spam texts and 10 legitimate ones before it rates anything, and its counters age, so the spam of today outweighs the campaigns of past years. It needs the intl and mbstring extensions of PHP, which most hosts provide.
 
-The filter needs the intl and mbstring extensions of PHP. It compares what it learnt with background tables, which tell a common word from a rare one in each language: the plugin downloads those of the languages of the site and English, or of the languages a setting names, with a progress bar, and keeps them up to date. The statistical filter tab shows each table, the sentences it was drawn from and its quality.
+= Everything stays on your site =
 
-= Refused submissions =
+Nothing of the submissions leaves your server, no cookie is set, and no name, email address or IP address of a sender is kept. The only requests the plugin makes download the background tables of the filter, see External services. A paragraph for your privacy policy is offered under Settings > Privacy.
 
-The submissions refused, by a check of the form or by the filter, land in the Antispam tab of Security > Journal, nowhere else: not in the spam queue, nor in Flamingo, nor in Gravity Forms. Each can be learnt as spam, or as legitimate, or deleted, from the links under its text or in bulk; one learnt the wrong way can be learnt the other way or unlearnt. While the filter is on, a column shows, for information, how it rates each text now. They are kept 30 days.
+= See what it does =
 
-= Statistics =
+* Security > Statistics: the submissions checked, accepted and caught over 7, 30, 90 or 365 days, by form and by check; with the Gecka Geolocation plugin, by country and by network, with their flags and logos, the address itself never being read nor kept
+* Security > Journal: every refused submission, to review, learn from or delete, kept 30 days
+* A dashboard widget for the last seven days, an Antispam column in the comments and in Flamingo with the rating of each message, and Site Health tests of the tables, the daily task and the filter
 
-The Antispam tab of Security > Statistics shows the submissions checked, accepted, to review and caught over 7, 30, 90 or 365 days, by form and by check; the statistical filter tab of Settings > Antispam shows what the filter learnt. A dashboard widget sums up the last seven days. The submissions caught or accepted are also counted by operating system and, with the Gecka Geolocation plugin, by country and by network, with their flags and logos: the address itself is never read nor kept. Only daily counts are kept: no address, no content. Site Health tests the tables of the plugin, the daily task, the statistical filter, its background tables and the snapshot of its counters, and its Info tab sums up the plugin for support.
+= Protected forms =
+
+* WordPress: comments, login, registration, lost password, and the network registration of a multisite
+* WooCommerce: classic checkout, product reviews, My account login, registration and lost password, the login of the app authorization screen
+* Contact Form 7: every form, or only the forms holding the `[gecka_antispam]` tag
+* Gravity Forms: every form, or only the forms holding the Antispam field
+* ACF, ACF Pro and Secure Custom Fields: every front-end form, or only the forms whose `acf_form()` arguments hold `'gecka_antispam' => true`
+* Your own forms, with two functions, `gecka_antispam_fields()` and `gecka_antispam_check()`: see the [developer documentation](https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/blob/main/docs/DEVELOPERS.md)
+
+The checkout block and the payment buttons of WooCommerce take other routes and are not covered.
 
 = Privacy =
 
-Nothing of the submissions leaves the site: the only requests the plugin makes download its background tables, see External services. It keeps daily counts of the submissions it checks, counts on hashes of the words of the subject and message of the texts marked as spam or not spam, and the subject and message of the submissions refused, until 30 days after the text was last sent. It keeps no name, no email address and no IP address of a sender, and sets no cookie, though a refused message may hold personal details the sender wrote in it. Words a sender typed in a message, a phone number in a signature for one, enter the counts as hashes and cannot be erased for one person. A paragraph for the privacy policy of the site is offered under Settings > Privacy.
+The plugin keeps daily counts of the submissions it checks, counts on hashes of the words of the subject and message of the texts marked as spam or not spam, and the subject and message of the submissions refused, until 30 days after the text was last sent. A refused message may hold personal details the sender wrote in it, and its subject is what the form cites as its subject: a field of the sender cited there, a phone number for instance, is kept with it. Words a sender typed in a message, a phone number in a signature for one, enter the counts as hashes and cannot be erased for one person.
 
-The statistical filter is gecka/spamfilter, under the AGPL-3.0-or-later.
+The statistical filter is [gecka/spamfilter](https://github.com/Gecka-Apps/spamfilter), under the AGPL-3.0-or-later.
 
 = External services =
 
@@ -76,11 +81,11 @@ No. The login and lost password forms have no minimum delay by default.
 
 = Does it stop every bot? =
 
-No. The honeypot and the timestamp stop the bots that post without loading the form, or fill in every field. A bot that reads the page first can get past them: the statistical filter is there for those. So is a bot posting to the submissions route of the REST API of Gravity Forms, which skips the form, once that API is enabled in the settings of Gravity Forms: leave it off unless something needs it.
+No. The honeypot and the timestamp stop the bots that post without loading the form, or fill in every field. A bot that reads the page first can get past them: the statistical filter is there for those. So is a bot posting to the submissions route of the REST API of Gravity Forms, which skips the form, once that API is enabled in the settings of Gravity Forms: leave it off unless something needs it. Comments and logins made through the REST API or XML-RPC, and pingbacks and trackbacks, carry no form either and are not checked.
 
 = Can I protect a form I wrote myself? =
 
-Yes. `gecka_antispam_fields( 'my-form' )` prints the fields inside the form, `gecka_antispam_check( 'my-form', $text, $names )` checks what it posts and tells whether to refuse it. docs/DEVELOPERS.md, in the folder of the plugin, explains both, the hooks a comment or login form written by hand has to fire, the filters and actions, and what the plugin stores.
+Yes. `gecka_antispam_fields( 'my-form' )` prints the fields inside the form, `gecka_antispam_check( 'my-form', $text, $names )` checks what it posts and tells whether to refuse it. The [developer documentation](https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/blob/main/docs/DEVELOPERS.md) explains both, the hooks a comment or login form written by hand has to fire, the filters and actions, and what the plugin stores.
 
 = Contact Form 7 warns "Unsafe email config is used without sufficient protection". =
 
@@ -105,6 +110,18 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 11. How long the statistics are kept.
 
 == Changelog ==
+
+= 1.1.0 =
+
+* Statistics by country, network and operating system on the Statistics tab, the first two with Gecka Geolocation.
+* Checks on the message: a single word of random letters is refused, and so is a message of fewer than five words, a new setting.
+* A submission sent with no user agent, or with one no browser sends, is refused; a new setting switches the check off.
+* The comments of users logged in are checked like those of visitors; moderators are still never checked.
+* The WooCommerce account forms are checked on the fields WooCommerce reads, whatever nonce field is posted, and a form posted to xmlrpc.php like one posted anywhere.
+* A form shown again after a post gets a fresh timestamp once the old one is past the maximum age.
+* A comment on a product is checked as a comment when WooCommerce is not active.
+* A table the setup could not create is told in a notice and in Site Health, and the setup tried again every hour, instead of failing every request.
+* `gecka_antispam_check()` takes the message alone as a fourth argument.
 
 = 1.0.0 =
 
