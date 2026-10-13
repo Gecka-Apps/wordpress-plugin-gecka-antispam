@@ -164,9 +164,16 @@ class Plugin
             }
         }
 
-        (new SettingsPage($this))->setup();
-        (new DashboardWidget($this))->setup();
+        if (is_admin()) {
+            (new SettingsPage($this))->setup();
+            (new DashboardWidget($this))->setup();
+        }
+
+        // Everywhere: the weekly check of WordPress runs the tests of Site
+        // Health from the cron, or from WP-CLI, outside the admin.
         (new SiteHealth($this))->setup();
+
+        add_action('rest_api_init', fn() => (new SettingsPage($this))->registerRoutes());
 
         add_action('init', static function (): void {
             Setup::upgrade(self::VERSION);

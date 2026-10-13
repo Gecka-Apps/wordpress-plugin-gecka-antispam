@@ -36,7 +36,10 @@ class SiteHealth extends Base
     private const LATE = DAY_IN_SECONDS;
 
     /**
-     * Hooks the tests and the Info section up.
+     * Hooks the tests and the Info section up. The tests run on the Site
+     * Health screen, and from the cron for the weekly check of WordPress,
+     * which keeps their counts only: the addresses their actions carry are
+     * built without the menu there, and thrown away.
      *
      * @return void
      */

@@ -37,6 +37,10 @@ uses(TestCase::class)
     ->afterEach(fn() => remove_tree(NO_BACKGROUND))
     ->in(__DIR__);
 
+// The plugin sets its screens up when WordPress serves the admin; the suite
+// tests them along with the forms.
+define('WP_ADMIN', true);
+
 \Mantle\Testing\manager()
     ->with_sqlite()
     ->loaded(static function (): void {

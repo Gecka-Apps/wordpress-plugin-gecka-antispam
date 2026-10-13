@@ -95,10 +95,8 @@ class SettingsPage extends Base
     public function setup(): void
     {
         // On init and not before: the titles are translated, and WordPress
-        // loads a text domain from init on. Everywhere, not in the admin
-        // only: the REST requests and Site Health build addresses of the
-        // screens. At the default priority: a plugin owning the Security menu
-        // names it first.
+        // loads a text domain from init on. At the default priority: a
+        // plugin owning the Security menu names it first.
         add_action('init', [$this, 'declare']);
         add_action('admin_init', [$this, 'registerSetting']);
         add_action('admin_notices', [$this, 'installFailedNotice']);
@@ -107,7 +105,6 @@ class SettingsPage extends Base
         add_action('admin_post_gecka_antispam_update_backgrounds', [$this, 'updateBackgrounds']);
         add_action('admin_post_gecka_antispam_reset_stats', [$this, 'resetStats']);
         add_action('admin_post_gecka_antispam_learn_existing', [$this, 'learnExisting']);
-        add_action('rest_api_init', [$this, 'registerRoutes']);
         add_filter('set_screen_option_' . RefusedView::PER_PAGE_OPTION, static fn(mixed $keep, mixed $option, mixed $value): int => min(999, max(1, Value::int($value))), 10, 3);
         add_action('admin_post_gecka_antispam_clear_refused', [$this, 'clearRefused']);
         add_action('admin_post_gecka_antispam_reset_settings', [$this, 'resetSettings']);
@@ -392,7 +389,8 @@ class SettingsPage extends Base
 
     /**
      * Registers the route learning what the site holds, one short request
-     * at a time.
+     * at a time. Hooked on rest_api_init by the plugin, outside the admin:
+     * a REST request is not one.
      *
      * @return void
      */
