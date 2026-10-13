@@ -20,6 +20,20 @@ lint:
     - composer lint:php
     - composer analyse
 
+# The translations follow the code: every string in the template, translated
+# in each catalog and compiled into its .l10n.php.
+i18n:
+  stage: test
+  image: stayallive/php:8.5
+  tags:
+    - docker
+  script:
+    # WP-CLI reads the whole plugin in memory, past the 128M of the image.
+    - echo 'memory_limit = 512M' > /usr/local/etc/php/conf.d/memory.ini
+    - curl -sSLo /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    - chmod +x /usr/local/bin/wp
+    - bin/i18n --check
+
 # The oldest PHP the plugin supports: PHPCompatibility reads the code, this
 # job has the parser of that version run it.
 syntax:php8.2:
@@ -62,7 +76,7 @@ package:
 
 # The package of the package job, at the root of the artifact, with the tag
 # as version in composer.json, which a satis artifact repository requires.
-# The job name is what composer.gaiac.io asks the artifact of.
+# Do not rename: the Composer repository fetches the artifact of this job by its name.
 composer:
   stage: check
   image: stayallive/php:8.5

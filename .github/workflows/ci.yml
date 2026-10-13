@@ -27,6 +27,24 @@ jobs:
       - name: Static analysis
         run: composer analyse
 
+  # The translations follow the code: every string in the template,
+  # translated in each catalog and compiled into its .l10n.php.
+  i18n:
+    name: Translations
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.5'
+          tools: wp-cli
+          coverage: none
+
+      - name: Check
+        run: bin/i18n --check
+
   # The oldest PHP the plugin supports: PHPCompatibility reads the code, this
   # job has the parser of that version run it.
   syntax:

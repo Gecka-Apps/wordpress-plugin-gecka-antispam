@@ -58,6 +58,8 @@
             "phpcs"
         ],
         "analyse": "phpstan analyse --no-progress --memory-limit=2G",
-        "test": "pest"
+        "test": "pest",
+        "i18n": "bin/i18n",
+        "i18n:check": "bin/i18n --check"
     }
 }

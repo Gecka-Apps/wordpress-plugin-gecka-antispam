@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 #
-# Builds an installable zip of the plugin into ~/Dev/Wordpress/builds/ (or
-# the directory given as first argument): the package bin/package makes, the
+# Builds an installable zip of the plugin into builds/ of the plugin (or the
+# directory given as first argument): the package bin/package makes, the
 # dependencies installed from Packagist at the versions composer.lock pins.
 # The zip is named after the version of the plugin, the commit, and the
 # version of gecka/spamfilter, or its commit for a dev- branch.
 #
-# Composer runs through the devenv wrappers: the work directory has to be
-# under ~/Dev.
+# The work happens in build/ of the plugin, ignored by git, rather than in
+# the temporary directory of the system: a Composer run in a container sees
+# the tree of the plugin, not always the /tmp of the host.
+#
+# Usage: bin/build [dir]
 
 set -euo pipefail
 
 source=$(cd "$(dirname "$0")/.." && pwd)
-out=${1:-$HOME/Dev/Wordpress/builds}
+out=${1:-$source/builds}
 version=$("$source/bin/check-version")
 commit=$(git -C "$source" rev-parse --short HEAD 2>/dev/null || echo dev)
-library=$(php8.5 -r '
+library=$(php -r '
     foreach (json_decode(file_get_contents($argv[1]), true)["packages"] as $package) {
         if ($package["name"] === "gecka/spamfilter") {
             echo str_starts_with($package["version"], "dev-")
@@ -25,9 +28,9 @@ library=$(php8.5 -r '
     }' "$source/composer.lock")
 [ -n "$library" ] || { echo "gecka/spamfilter not in composer.lock" >&2; exit 1; }
 
-mkdir -p "$HOME/Dev/.local/tmp" "$out"
-work=$(mktemp -d "$HOME/Dev/.local/tmp/gecka-antispam-build.XXXXXX")
-trap 'rm -rf "$work"' EXIT
+mkdir -p "$source/build" "$out"
+work=$(mktemp -d "$source/build/work.XXXXXX")
+trap 'rm -rf "${work:?}"' EXIT
 
 copy="$work/gecka-antispam"
 mkdir -p "$copy"
@@ -38,12 +41,12 @@ git -C "$source" ls-files -z --cached --others --exclude-standard \
 
 (
     cd "$copy"
-    composer85 install --no-dev --no-interaction --no-progress --optimize-autoloader --quiet
+    composer install --no-dev --no-interaction --no-progress --optimize-autoloader --quiet
 )
 
 "$copy/bin/package" "$work/dist/gecka-antispam"
 
 zip="$out/gecka-antispam-$version-$commit-spamfilter-$library.zip"
-php8.5 "$copy/bin/zip" "$work/dist/gecka-antispam" "$zip"
+php "$copy/bin/zip" "$work/dist/gecka-antispam" "$zip"
 
 echo "$zip"

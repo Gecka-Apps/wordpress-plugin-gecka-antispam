@@ -355,10 +355,8 @@ composer test      # Pest
 Translations, with WP-CLI:
 
 ```sh
-wp i18n make-pot . languages/gecka-antispam.pot --slug=gecka-antispam --domain=gecka-antispam --exclude=node_modules,vendor,tests,.tests,bin,build --headers='{"Report-Msgid-Bugs-To":"https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/issues"}'
-wp i18n update-po languages/gecka-antispam.pot languages
-wp i18n make-mo languages languages
-wp i18n make-php languages
+composer i18n            # template, catalogs, .mo and .l10n.php, from the code
+composer i18n:check      # what the CI runs: every string in the template, translated and compiled
 ```
 
 WordPress loads the `.l10n.php` file before the `.mo` one; the `.mo` still
@@ -375,9 +373,9 @@ What ships is what `.distignore` leaves: no tests, CI, tooling nor
 copies it into a directory, from a tree whose `vendor/` was installed with
 `composer install --no-dev`; `bin/zip <dir> <archive>` zips such a
 directory as the top folder of the archive, as WordPress installs a plugin
-from a zip; `bin/build` does both into `~/Dev/Wordpress/builds/`, through
-the devenv wrappers. `bin/changelog <version>` prints the changelog entry of
-a version from `readme.txt`.
+from a zip; `bin/build [dir]` does both, into `builds/` by default.
+`bin/changelog <version>` prints the changelog entry of a version from
+`readme.txt`.
 `bin/check-version [version]` checks that the header of `bootstrap.php`,
 `Plugin::VERSION` and the Stable tag of `readme.txt` agree, and match the
 version given.
