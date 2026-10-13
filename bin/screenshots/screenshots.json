@@ -1,0 +1,59 @@
+{
+    "slug": "gecka-antispam",
+    "title": "Gecka",
+    "requires": ["gecka-geolocation"],
+    "page": "admin.php?page=security-stats&tab=gecka-antispam",
+    "viewport": { "width": 1280, "height": 800 },
+    "shots": [
+        {
+            "caption": "The statistics: submissions checked, accepted and caught over the period, with the share of each check."
+        },
+        {
+            "scroll": ".gecka-antispam-origins",
+            "caption": "Where the spam comes from: countries, networks and systems, with the flags and logos of Gecka Geolocation."
+        },
+        {
+            "url": "admin.php?page=security-journal&tab=gecka-antispam",
+            "caption": "The refused submissions, to review, learn from or delete."
+        },
+        {
+            "url": "index.php",
+            "clip": "#gecka_antispam",
+            "caption": "The dashboard widget: the last seven days at a glance."
+        },
+        {
+            "url": "edit-comments.php",
+            "caption": "The Antispam column of the comments, with the spam rating of each one."
+        },
+        {
+            "url": "options-general.php?page=gecka-antispam&tab=filter",
+            "clip": { "from": ".gecka-antispam > h2:nth-of-type(1)", "until": ".gecka-antispam > h3" },
+            "caption": "The statistical filter: what it learnt, when it rotates, and the comments and messages of the site it can still learn from."
+        },
+        {
+            "url": "options-general.php?page=gecka-antispam&tab=filter",
+            "clip": { "from": ".gecka-antispam > h3", "until": ".gecka-antispam > h2:nth-of-type(2)" },
+            "caption": "The background tables: the word frequencies of each language of the site, downloaded and kept up to date."
+        },
+        {
+            "url": "options-general.php?page=gecka-antispam&tab=filter",
+            "clip": { "from": ".gecka-antispam > h2:nth-of-type(2)", "until": "p.submit" },
+            "caption": "The thresholds of the filter: refused, marked as spam, flagged for review, the texts it needs before it rates anything, and the rotation period."
+        },
+        {
+            "url": "options-general.php?page=gecka-antispam&tab=settings",
+            "clip": { "from": ".gecka-admin-page-body form h2:nth-of-type(1)", "until": ".gecka-admin-page-body form h2:nth-of-type(2)" },
+            "caption": "The forms protected: WordPress, WooCommerce, Contact Form 7, Gravity Forms and ACF, every form or only those holding the marker."
+        },
+        {
+            "url": "options-general.php?page=gecka-antispam&tab=settings",
+            "clip": { "from": ".gecka-admin-page-body form h2:nth-of-type(2)", "until": ".gecka-admin-page-body form h2:nth-of-type(3)" },
+            "caption": "The checks for bots: honeypot, timing, random names and texts, browsers that are none."
+        },
+        {
+            "url": "options-general.php?page=gecka-antispam&tab=settings",
+            "clip": { "from": ".gecka-admin-page-body form h2:nth-of-type(3)", "until": "p.submit" },
+            "caption": "How long the statistics are kept."
+        }
+    ]
+}

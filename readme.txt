@@ -90,6 +90,20 @@ Contact Form 7 shows it for a form whose mail goes to the address the sender typ
 
 Its tables, refused submissions, options, scheduled events, meta and its directory under uploads, background tables included, are removed, on every site of a network. The reason it gave in the spam log of a Flamingo message, or in the spam note of a Gravity Forms entry, belongs to those plugins and stays.
 
+== Screenshots ==
+
+1. The statistics: submissions checked, accepted and caught over the period, with the share of each check.
+2. Where the spam comes from: countries, networks and systems, with the flags and logos of Gecka Geolocation.
+3. The refused submissions, to review, learn from or delete.
+4. The dashboard widget: the last seven days at a glance.
+5. The Antispam column of the comments, with the spam rating of each one.
+6. The statistical filter: what it learnt, when it rotates, and the comments and messages of the site it can still learn from.
+7. The background tables: the word frequencies of each language of the site, downloaded and kept up to date.
+8. The thresholds of the filter: refused, marked as spam, flagged for review, the texts it needs before it rates anything, and the rotation period.
+9. The forms protected: WordPress, WooCommerce, Contact Form 7, Gravity Forms and ACF, every form or only those holding the marker.
+10. The checks for bots: honeypot, timing, random names and texts, browsers that are none.
+11. How long the statistics are kept.
+
 == Changelog ==
 
 = 1.0.0 =
