@@ -27,6 +27,9 @@ i18n:
   image: stayallive/php:8.5
   tags:
     - docker
+  variables:
+    # The image runs as root, which WP-CLI refuses without being told.
+    WP_CLI_ALLOW_ROOT: "1"
   script:
     # WP-CLI reads the whole plugin in memory, past the 128M of the image.
     - echo 'memory_limit = 512M' > /usr/local/etc/php/conf.d/memory.ini
