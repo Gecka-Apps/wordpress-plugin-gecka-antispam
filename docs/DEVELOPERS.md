@@ -4,7 +4,7 @@ What the plugin offers to code: protecting a form of your own, keeping its
 protection on a form of WordPress written by hand, the markers of the form
 plugins, what the statistical filter reads of each form, the hooks, the REST
 routes, what it stores, and how to work on it.
-What a site administrator needs is in [README.md](../README.md).
+What a site administrator needs is in [README.md](../README.md); the forms and their checks are in [FORMS.md](FORMS.md), the statistical filter in [STATISTICAL-FILTER.md](STATISTICAL-FILTER.md).
 
 ## Protecting a form of your own
 
