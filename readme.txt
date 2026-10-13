@@ -4,7 +4,7 @@ Tags: spam, antispam, honeypot, comments, contact form 7
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -122,6 +122,11 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 * A comment on a product is checked as a comment when WooCommerce is not active.
 * A table the setup could not create is told in a notice and in Site Health, and the setup tried again every hour, instead of failing every request.
 * `gecka_antispam_check()` takes the message alone as a fourth argument.
+* Pingbacks and trackbacks are rated by the statistical filter.
+* A network registration is counted once, at its user step.
+* The downloads of the background tables refuse a redirection off HTTPS, and stay off without the extensions the filter needs.
+* The notices and Site Health show apostrophes and ampersands as typed.
+* The statistical filter reads its counters once per request; the Flamingo inbox and the filter tab no longer query them row by row.
 
 = 1.0.0 =
 
