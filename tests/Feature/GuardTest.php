@@ -22,11 +22,17 @@ it('adds a signed timestamp and a hidden honeypot to a form', function () {
         ->and($html)->toContain('display:none');
 });
 
-it('carries the style hiding the honeypot in every form printed without a head', function () {
+it('prints the style hiding the honeypot once, in the first form of a page without it in the head', function () {
+    wp_deregister_style('gecka-antispam');
+    wp_styles()->done = array_values(array_diff(wp_styles()->done, ['gecka-antispam']));
     $guard = new Guard(gecka_antispam());
 
-    expect($guard->fields('comments'))->toContain('<style>')
-        ->and($guard->fields('login'))->toContain('<style>');
+    expect($guard->fields('comments'))->toContain('<style id="gecka-antispam-inline-css"')
+        ->toContain('display:none!important')
+        ->and($guard->fields('login'))->not->toContain('<style');
+
+    wp_deregister_style('gecka-antispam');
+    wp_styles()->done = array_values(array_diff(wp_styles()->done, ['gecka-antispam']));
 });
 
 it('leaves the style hiding the honeypot to the head of the page', function () {

@@ -194,7 +194,14 @@ class Guard
         }
 
         $class = $this->hidingClass();
-        $html = $this->styleInForm() ? '<style>' . $this->hidingRule() . '</style>' : '';
+        $html = '';
+
+        if ($this->styleInForm()) {
+            $this->registerStyle();
+            ob_start();
+            wp_styles()->do_items([self::STYLE]);
+            $html = (string) ob_get_clean();
+        }
 
         $html .= sprintf(
             '<input type="hidden" name="%s" value="%s">',
@@ -219,9 +226,23 @@ class Guard
      */
     public function enqueueStyle(): void
     {
+        $this->registerStyle();
+        wp_enqueue_style(self::STYLE);
+    }
+
+    /**
+     * Registers the rule hiding the honeypot as an inline style, once.
+     *
+     * @return void
+     */
+    private function registerStyle(): void
+    {
+        if (wp_style_is(self::STYLE, 'registered')) {
+            return;
+        }
+
         wp_register_style(self::STYLE, false, [], Plugin::VERSION);
         wp_add_inline_style(self::STYLE, $this->hidingRule());
-        wp_enqueue_style(self::STYLE);
     }
 
     /**
@@ -417,8 +438,8 @@ class Guard
     }
 
     /**
-     * Whether a form carries the rule hiding the honeypot: the head of the
-     * page holds it, or will, unless it was printed without it
+     * Whether a form prints the rule hiding the honeypot: the head of the
+     * page did not hold it and will not, and no form of the page printed it
      *
      * @return bool
      */

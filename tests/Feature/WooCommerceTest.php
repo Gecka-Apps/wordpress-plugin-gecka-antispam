@@ -85,7 +85,7 @@ it('puts the fields in the login form of the app authorization screen', function
     $this->woocommerce->endAuthPage();
     $html = (string) ob_get_clean();
 
-    expect($html)->toMatch('/<form method="post" class="wc-auth-login">(<style>[^<]*<\/style>)?<input type="hidden" name="' . Guard::TOKEN_FIELD . '"/s')
+    expect($html)->toMatch('/<form method="post" class="wc-auth-login">(<style[^>]*>[^<]*<\/style>\s*)?<input type="hidden" name="' . Guard::TOKEN_FIELD . '"/s')
         ->and($html)->toStartWith('<h1>Connect</h1>')
         ->and($html)->toEndWith('<p>login</p></form>');
 });
