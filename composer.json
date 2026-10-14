@@ -30,7 +30,7 @@
         "php": ">=8.2",
         "composer/installers": "^2.0",
         "gecka/spamfilter": "^1.0",
-        "gecka/wp-admin-menu": "^1.0"
+        "gecka/wp-admin-menu": "^1.2.2"
     },
     "config": {
         "allow-plugins": {
