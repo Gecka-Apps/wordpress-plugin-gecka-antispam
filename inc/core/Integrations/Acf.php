@@ -120,8 +120,10 @@ class Acf extends Integration
         [$fields, $values] = self::expand(self::shownFields($form, $posted), $posted);
         $content = self::formContent($fields, $values, $form[self::ARGUMENT] ?? null);
 
-        if (Guard::refuses($this->verify('acf', self::formNames($fields, $values, $form[self::ARGUMENT] ?? null), $content['text'] !== '' ? $content['text'] : null, message: $content['message']))) {
-            wp_die(esc_html($this->message()), esc_html__('Submission refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);
+        $outcome = $this->verify('acf', self::formNames($fields, $values, $form[self::ARGUMENT] ?? null), $content['text'] !== '' ? $content['text'] : null, message: $content['message']);
+
+        if (Guard::refuses($outcome)) {
+            wp_die(esc_html($this->message($outcome)), esc_html__('Submission refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);
         }
 
         return $form;

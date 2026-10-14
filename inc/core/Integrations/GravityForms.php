@@ -309,7 +309,7 @@ class GravityForms extends Integration implements Learner
         $this->note = $this->review ? $this->reason(Guard::REVIEW) : '';
 
         if (Guard::refuses($outcome)) {
-            $message = $this->message();
+            $message = $this->message($outcome);
 
             add_filter(
                 'gform_validation_message_' . $this->checked,

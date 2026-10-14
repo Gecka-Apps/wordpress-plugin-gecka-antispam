@@ -281,12 +281,23 @@ abstract class Integration extends Base
     }
 
     /**
-     * Error shown to someone whose submission was refused
+     * Error shown to someone whose submission was refused. A message too
+     * short is told as such, the one refusal a person can fix; the others
+     * say nothing of what caught them, which would only guide a bot.
+     *
+     * @param string|null $outcome What caught the submission.
      *
      * @return string
      */
-    protected function message(): string
+    protected function message(?string $outcome = null): string
     {
+        if ($outcome === Guard::SHORT) {
+            $words = $this->plugin->settings()->int('min_words');
+
+            /* translators: %d: minimum number of words of a message */
+            return sprintf(_n('Your message is too short: write at least %d word.', 'Your message is too short: write at least %d words.', $words, 'gecka-antispam'), $words);
+        }
+
         return __('Your submission could not be verified. Please reload the page and try again.', 'gecka-antispam');
     }
 

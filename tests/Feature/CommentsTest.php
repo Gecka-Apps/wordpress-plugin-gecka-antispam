@@ -139,8 +139,8 @@ it('refuses a comment shorter than the minimum of words, and one of a single ran
     antispam_settings(['min_words' => 5]);
     post_form('comments');
 
-    expect(fn() => post_comment($this->post, 'Great product'))->toThrow(WP_Die_Exception::class)
-        ->and(fn() => post_comment($this->post, 'fWxBIRsgipbaeRuKXpLXpU'))->toThrow(WP_Die_Exception::class)
+    expect(fn() => post_comment($this->post, 'Great product'))->toThrow(WP_Die_Exception::class, 'Your message is too short: write at least 5 words.')
+        ->and(fn() => post_comment($this->post, 'fWxBIRsgipbaeRuKXpLXpU'))->toThrow(WP_Die_Exception::class, 'Your submission could not be verified.')
         ->and(comments_of($this->post))->toBe(0)
         ->and(gecka_antispam()->journal()->count())->toBe(2)
         ->and(gecka_antispam()->stats()->totals(1)['comments'])->toBe([Guard::RANDOM_TEXT => 1, Guard::SHORT => 1]);

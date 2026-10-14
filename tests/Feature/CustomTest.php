@@ -46,6 +46,17 @@ it('lets a custom form with its fields through, and catches a random name', func
         ->and(gecka_antispam()->stats()->totals(1)['custom:devis'])->toBe([Guard::PASSED => 1, Guard::RANDOM_NAME => 1, Guard::RANDOM_TEXT => 2, Guard::SHORT => 1]);
 });
 
+it('tells a message too short, and nothing of the other checks', function () {
+    post_form('custom:devis');
+    antispam_settings(['min_words' => 2]);
+    $two = gecka_antispam_check('devis', 'Devis', ['Marie Dupont'])['message'];
+    antispam_settings(['min_words' => 5]);
+
+    expect(gecka_antispam_check('devis', 'Un devis svp', ['Marie Dupont'])['message'])->toBe('Your message is too short: write at least 5 words.')
+        ->and($two)->toBe('Your message is too short: write at least 2 words.')
+        ->and(gecka_antispam_check('devis', 'Bonjour, je voudrais un devis.', ['qASQAhqkpFGqnKkRROl'])['message'])->toBe('Your submission could not be verified. Please reload the page and try again.');
+});
+
 it('refuses a token signed for another form', function () {
     post_form('custom:newsletter');
 

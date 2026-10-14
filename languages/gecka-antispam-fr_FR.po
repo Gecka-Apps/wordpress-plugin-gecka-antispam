@@ -967,7 +967,7 @@ msgstr "Filtre statistique : refusé"
 msgid "Leave this field empty"
 msgstr "Laissez ce champ vide"
 
-#: inc/core/Integrations/Acf.php:124
+#: inc/core/Integrations/Acf.php:126
 msgid "Submission refused"
 msgstr "Envoi refusé"
 
@@ -1036,7 +1036,7 @@ msgstr "Pot de miel et horodatage, invisibles pour les visiteurs."
 msgid "Statistical filter: %s %% spam"
 msgstr "Filtre statistique : %s %% de spam"
 
-#: inc/core/Integrations/Integration.php:290
+#: inc/core/Integrations/Integration.php:301
 msgid "Your submission could not be verified. Please reload the page and try again."
 msgstr "Votre envoi n’a pas pu être vérifié. Rechargez la page et réessayez."
 
@@ -1731,10 +1731,6 @@ msgstr "Un envoi que ces contrôles interceptent est refusé avec une erreur, ce
 msgid "Same for the login and lost password forms, of WordPress and of WooCommerce, which password managers fill and send in a blink."
 msgstr "Pareil pour les formulaires de connexion et de mot de passe oublié, de WordPress et de WooCommerce, que les gestionnaires de mots de passe remplissent et envoient en un clin d’œil."
 
-#: inc/core/Admin/SettingsPage.php:695
-msgid "A message with fewer words is refused, on every form that has one. 0 accepts any length."
-msgstr "Un message qui en compte moins est refusé, sur tout formulaire qui en a un. 0 accepte toute longueur."
-
 #. translators: 1: table name, 2: the error of the database
 #: inc/core/Schema.php:152
 #, php-format
@@ -1773,3 +1769,15 @@ msgstr "Gecka Antispam attend ses tables de fond"
 #: inc/core/Admin/SiteHealth.php:183
 msgid "Without them, the statistical filter tells common words from rare ones by what it learnt alone: until it has learnt many legitimate messages, a text in a language it saw in spam only is taken for spam. Nothing is downloaded before an administrator allows it, from the statistical filter tab."
 msgstr "Sans elles, le filtre statistique distingue les mots courants des mots rares par ce qu’il a appris seul : tant qu’il n’a pas appris beaucoup de messages légitimes, un texte dans une langue qu’il n’a vue que dans du spam est pris pour du spam. Rien n’est téléchargé avant qu’un administrateur l’autorise, depuis l’onglet du filtre statistique."
+
+#: inc/core/Admin/SettingsPage.php:695
+msgid "A message with fewer words is refused, on every form that has one, and the sender is told how many words it takes. 0 accepts any length."
+msgstr "Un message qui en compte moins est refusé, sur tout formulaire qui en a un, et l’expéditeur apprend combien de mots il faut. 0 accepte toute longueur."
+
+#. translators: %d: minimum number of words of a message
+#: inc/core/Integrations/Integration.php:298
+#, php-format
+msgid "Your message is too short: write at least %d word."
+msgid_plural "Your message is too short: write at least %d words."
+msgstr[0] "Votre message est trop court : écrivez au moins %d mot."
+msgstr[1] "Votre message est trop court : écrivez au moins %d mots."

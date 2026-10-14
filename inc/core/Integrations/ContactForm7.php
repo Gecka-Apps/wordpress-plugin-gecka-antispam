@@ -63,6 +63,13 @@ class ContactForm7 extends Integration
     private bool $refused = false;
 
     /**
+     * What caught the submission being sent, null when nothing did.
+     *
+     * @var string|null
+     */
+    private ?string $outcome = null;
+
+    /**
      * Names of the fields that hold the name of a person: name, your-name,
      * first-name, lastname, nom, votre-prenom... but not username nor
      * company-name.
@@ -107,8 +114,23 @@ class ContactForm7 extends Integration
         add_filter('wpcf7_form_elements', [$this, 'render']);
         add_filter('wpcf7_posted_data', [$this, 'removeHoneypot']);
         add_filter('wpcf7_spam', [$this, 'check'], self::PRIORITY, 2);
+        add_filter('wpcf7_display_message', [$this, 'displayMessage'], 10, 2);
         add_filter('wpcf7_flamingo_submit_if', [$this, 'flamingoStatuses']);
         add_filter('wpcf7_config_validator_available_error_codes', [$this, 'errorCodes'], 10, 2);
+    }
+
+    /**
+     * Tells a message too short in place of the spam message of the form,
+     * the one refusal a person can fix.
+     *
+     * @param mixed $message Message Contact Form 7 shows.
+     * @param mixed $status  Status it shows it for.
+     *
+     * @return mixed
+     */
+    public function displayMessage(mixed $message, mixed $status): mixed
+    {
+        return $status === 'spam' && $this->outcome === Guard::SHORT ? $this->message(Guard::SHORT) : $message;
     }
 
     /**
@@ -234,6 +256,7 @@ class ContactForm7 extends Integration
         $content = self::formContent($form, $posted);
         $outcome = $this->verify('contact_form_7', $this->names($form, $posted), $content['text'], message: $content['message']);
         $this->refused = Guard::refuses($outcome);
+        $this->outcome = $outcome;
 
         if (! $outcome) {
             return false;

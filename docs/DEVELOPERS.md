@@ -95,7 +95,7 @@ whole text is read as the message.
 | `review` | True when the filter finds it doubtful (55 % to 75 %): let it through and have a person look at it. |
 | `reason` | What caught it: `honeypot`, `token`, `too_fast`, `expired`, `bad_browser`, `random_name`, `random_text`, `short`, `filter_spam`, `filter_reject`, or `review`; null when it went through. |
 | `score` | The rating of the filter, from 0 to 1; null when the filter did not rate. |
-| `message` | The error the plugin shows for a refusal or a spam, translated; empty otherwise. |
+| `message` | The error the plugin shows for a refusal or a spam, translated; empty otherwise. A message too short is told as such, with the number of words it takes; the other refusals say nothing of what caught them. |
 
 The fields have to reach PHP as POST fields: a form posted the usual way, or
 by `fetch()` with a `FormData` body, works; a JSON body does not.

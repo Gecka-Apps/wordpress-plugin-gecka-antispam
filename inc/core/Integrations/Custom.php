@@ -91,7 +91,7 @@ class Custom extends Integration
             'review' => $this->review,
             'reason' => $outcome ?? ($this->review ? Guard::REVIEW : null),
             'score' => $this->score,
-            'message' => $refused || $spam ? $this->message() : '',
+            'message' => $refused || $spam ? $this->message($outcome) : '',
         ];
     }
 }

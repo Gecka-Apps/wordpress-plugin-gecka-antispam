@@ -75,7 +75,8 @@ Every protected form gets two hidden fields, and every submission is read:
   comment, the user name of a registration, the billing names of a checkout
   or the name fields of a form, and a message made of a single such word.
 - **Too few words.** A message of fewer than five words is refused, on every
-  form that has one. The number is a setting, 0 for none.
+  form that has one, and the sender is told how many words it takes. The
+  number is a setting, 0 for none.
 - **Bad browsers.** A submission sent with no user agent, or with one
   wrapped in quotes, is refused: no browser sends either.
 

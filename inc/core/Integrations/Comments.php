@@ -194,7 +194,7 @@ class Comments extends Integration implements Learner
         $outcome = $this->verify($surface, [Value::string($comment['comment_author'] ?? null)], $text, ! $ping, true, $ping ? null : $text);
 
         if (Guard::refuses($outcome)) {
-            wp_die(esc_html($this->message()), esc_html__('Comment refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);
+            wp_die(esc_html($this->message($outcome)), esc_html__('Comment refused', 'gecka-antispam'), ['response' => 403, 'back_link' => true]);
         }
 
         $this->pending = ['outcome' => $outcome, 'score' => $this->score, 'review' => $this->review, 'text' => $text, 'surface' => $surface, 'counted' => $this->counted($outcome)];

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-14T16:11:51+11:00\n"
+"POT-Creation-Date: 2026-10-14T20:02:51+11:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: gecka-antispam\n"
@@ -1003,7 +1003,7 @@ msgid "words"
 msgstr ""
 
 #: inc/core/Admin/SettingsPage.php:695
-msgid "A message with fewer words is refused, on every form that has one. 0 accepts any length."
+msgid "A message with fewer words is refused, on every form that has one, and the sender is told how many words it takes. 0 accepts any length."
 msgstr ""
 
 #: inc/core/Admin/SettingsPage.php:696
@@ -1583,7 +1583,7 @@ msgstr ""
 msgid "Leave this field empty"
 msgstr ""
 
-#: inc/core/Integrations/Acf.php:124
+#: inc/core/Integrations/Acf.php:126
 msgid "Submission refused"
 msgstr ""
 
@@ -1644,7 +1644,15 @@ msgstr ""
 msgid "Statistical filter: %s %% spam"
 msgstr ""
 
-#: inc/core/Integrations/Integration.php:290
+#. translators: %d: minimum number of words of a message
+#: inc/core/Integrations/Integration.php:298
+#, php-format
+msgid "Your message is too short: write at least %d word."
+msgid_plural "Your message is too short: write at least %d words."
+msgstr[0] ""
+msgstr[1] ""
+
+#: inc/core/Integrations/Integration.php:301
 msgid "Your submission could not be verified. Please reload the page and try again."
 msgstr ""
 
