@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Plugin Name: Gecka Antispam
  * Plugin URI: https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam
  * Description: Stops spam on comments, login, registration, WooCommerce, Contact Form 7, Gravity Forms and ACF forms with a honeypot, a signed timestamp and a statistical filter trained by what you mark as spam. No external service.
- * Version: 1.2.0
+ * Version: 1.2.1
  * Author: Gecka
  * Author URI: https://gecka.nc
  * License: GPL-3.0-or-later

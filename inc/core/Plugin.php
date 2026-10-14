@@ -33,7 +33,7 @@ class Plugin
     /**
      * Version of the plugin.
      */
-    public const VERSION = '1.2.0';
+    public const VERSION = '1.2.1';
 
     /**
      * Meta holding what the statistical filter learnt a comment or a message as.

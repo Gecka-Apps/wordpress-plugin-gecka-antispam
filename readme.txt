@@ -4,7 +4,7 @@ Tags: spam, antispam, honeypot, comments, contact form 7
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -110,6 +110,10 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 11. How long the statistics are kept.
 
 == Changelog ==
+
+= 1.2.1 =
+
+* A message refused for being too short tells the sender how many words it takes, instead of asking to reload the page.
 
 = 1.2.0 =
 

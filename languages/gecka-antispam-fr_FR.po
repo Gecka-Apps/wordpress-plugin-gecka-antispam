@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Gecka Antispam 1.2.0\n"
+"Project-Id-Version: Gecka Antispam 1.2.1\n"
 "Report-Msgid-Bugs-To: https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/issues\n"
 "Last-Translator: Laurent Dinclaux <laurent@gecka.nc>\n"
 "Language-Team: Gecka <contact@gecka.nc>\n"
