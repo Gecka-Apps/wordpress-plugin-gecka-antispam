@@ -9,6 +9,7 @@ use Gecka\SpamFilter\Model\Background;
 use Gecka\SpamFilter\Model\BackgroundDownloader;
 use Gecka\SpamFilter\Tokenizer\FeatureHasher;
 use Gecka\WP\Plugin\Antispam\Admin\SiteHealth;
+use Gecka\WP\Plugin\Antispam\Admin\SettingsPage;
 use Gecka\WP\Plugin\Antispam\Backgrounds;
 use Gecka\WP\Plugin\Antispam\Settings;
 use Gecka\WP\Plugin\Antispam\Setup;
@@ -20,7 +21,7 @@ beforeEach(function () {
     add_filter('pre_http_request', fn() => new WP_Error('offline', 'No network in the tests.'));
     add_filter('gecka_antispam_background_directory', fn() => $this->directory);
     delete_option(Backgrounds::OPTION);
-    antispam_settings(['background_languages' => ['fr', 'en']]);
+    antispam_settings(['background_languages' => ['fr', 'en'], 'background_downloads' => true]);
 });
 
 afterEach(function () {
@@ -153,7 +154,7 @@ it('downloads nothing while the languages are saved, but queues them and drops t
     wp_clear_scheduled_hook(Backgrounds::EVENT);
     wp_set_current_user(static::factory()->user->create(['role' => 'administrator']));
 
-    update_option(Settings::OPTION, gecka_antispam()->settings()->sanitize(['form' => 'backgrounds', 'background_languages' => 'de, FR, de']));
+    update_option(Settings::OPTION, gecka_antispam()->settings()->sanitize(['form' => 'backgrounds', 'background_languages' => 'de, FR, de', 'background_downloads' => '1']));
     gecka_antispam()->settings()->flush();
 
     $backgrounds = gecka_antispam()->backgrounds();
@@ -231,13 +232,52 @@ it('takes the languages of the site and English when none is chosen', function (
     remove_all_filters('locale');
 });
 
-it('schedules the first download when the plugin is set up', function () {
+it('schedules no download when the plugin is set up', function () {
     wp_clear_scheduled_hook(Backgrounds::EVENT);
+    antispam_settings(['background_downloads' => false]);
     Setup::install('1.0.0');
 
-    expect(wp_next_scheduled(Backgrounds::EVENT))->not->toBeFalse();
+    expect(wp_next_scheduled(Backgrounds::EVENT))->toBeFalse();
+});
+
+it('reaches GitHub only once an administrator allowed it', function () {
+    serve_release(['fr' => Background::toBinary(french_table()), 'en' => Background::toBinary(french_table())]);
+    antispam_settings(['background_downloads' => false]);
+    $backgrounds = gecka_antispam()->backgrounds();
+    wp_set_current_user(static::factory()->user->create(['role' => 'administrator']));
+
+    expect($backgrounds->awaitsConsent())->toBeTrue()
+        ->and($backgrounds->due())->toBeFalse()
+        ->and(rest_do_request(new WP_REST_Request('POST', '/gecka-antispam/v1/backgrounds/check'))->get_status())->toBe(403);
+
+    $backgrounds->refresh();
+    expect($GLOBALS['gecka_antispam_requests'])->toBe([]);
+
+    add_filter('wp_redirect', static function (string $location): never {
+        throw new RuntimeException('Redirected to ' . $location);
+    });
+    $_REQUEST['_wpnonce'] = wp_create_nonce(SettingsPage::ALLOW_BACKGROUNDS);
+
+    expect(static fn() => do_action('admin_post_' . SettingsPage::ALLOW_BACKGROUNDS))->toThrow(RuntimeException::class, 'tab=filter');
+
+    remove_all_filters('wp_redirect');
+    unset($_REQUEST['_wpnonce']);
+
+    expect(gecka_antispam()->settings()->bool('background_downloads'))->toBeTrue()
+        ->and($backgrounds->awaitsConsent())->toBeFalse()
+        ->and(wp_next_scheduled(Backgrounds::EVENT))->not->toBeFalse()
+        ->and($backgrounds->takeQueued())->toBeTrue();
 
     wp_clear_scheduled_hook(Backgrounds::EVENT);
+    wp_set_current_user(0);
+});
+
+it('stops the downloads when the languages form is saved with its box unticked', function () {
+    update_option(Settings::OPTION, gecka_antispam()->settings()->sanitize(['form' => 'backgrounds', 'background_languages' => 'fr']));
+    gecka_antispam()->settings()->flush();
+
+    expect(gecka_antispam()->settings()->bool('background_downloads'))->toBeFalse()
+        ->and(gecka_antispam()->backgrounds()->active())->toBeFalse();
 });
 
 it('tries a check that failed again the next day', function () {
@@ -379,4 +419,30 @@ it('keeps a bounded account of a release: codes anchored, texts cut', function (
         ->and(strlen($languages['fr']['name']))->toBe(100)
         ->and($languages['fr']['sources'])->toHaveCount(10)
         ->and(strlen($languages['fr']['sources'][0]))->toBe(100);
+});
+
+it('warns on the plugins screen until the downloads are allowed, and nowhere else', function () {
+    require_once ABSPATH . 'wp-admin/includes/screen.php';
+    require_once ABSPATH . 'wp-admin/includes/class-wp-screen.php';
+    antispam_settings(['background_downloads' => false]);
+    wp_set_current_user(static::factory()->user->create(['role' => 'administrator']));
+    $page = new SettingsPage(gecka_antispam());
+    $notice = function (string $screen) use ($page): string {
+        set_current_screen($screen);
+        ob_start();
+        $page->backgroundsNotice();
+
+        return (string) ob_get_clean();
+    };
+
+    expect($notice('plugins'))->toContain('action=' . SettingsPage::ALLOW_BACKGROUNDS)
+        ->and($notice('edit-post'))->toBe('')
+        ->and($notice('dashboard'))->toBe('');
+
+    antispam_settings(['background_downloads' => true]);
+
+    expect($notice('plugins'))->toBe('');
+
+    unset($GLOBALS['current_screen']);
+    wp_set_current_user(0);
 });

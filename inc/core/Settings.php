@@ -83,7 +83,7 @@ class Settings
     public const SECTIONS = [
         'general' => ['surfaces', 'honeypot_name', 'min_delay', 'sign_in_min_delay', 'max_age', 'random_names', 'min_words', 'bad_browsers', 'stats_days'],
         'filter' => ['filter', 'filter_reject', 'filter_threshold', 'filter_review', 'filter_min_spam', 'filter_min_ham', 'filter_rotation', 'learn_approved'],
-        'backgrounds' => ['background_languages'],
+        'backgrounds' => ['background_languages', 'background_downloads'],
     ];
 
     /**
@@ -244,6 +244,7 @@ class Settings
             'filter_min_ham' => 10,
             'filter_rotation' => 6,
             'background_languages' => [],
+            'background_downloads' => false,
 
             'learn_approved' => true,
             'stats_days' => 365,
@@ -519,6 +520,7 @@ class Settings
             'filter_min_ham' => $number('filter_min_ham'),
             'filter_rotation' => $number('filter_rotation'),
             'background_languages' => self::languageCodes($input['background_languages'] ?? $current['background_languages']),
+            'background_downloads' => $flag('background_downloads'),
 
             'learn_approved' => $flag('learn_approved'),
             'stats_days' => $number('stats_days'),

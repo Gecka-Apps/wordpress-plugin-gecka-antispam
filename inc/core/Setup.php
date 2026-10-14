@@ -182,10 +182,6 @@ class Setup
             wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', self::PURGE_EVENT);
         }
 
-        if (! get_option(Backgrounds::OPTION) && ! wp_next_scheduled(Backgrounds::EVENT)) {
-            wp_schedule_single_event(time(), Backgrounds::EVENT);
-        }
-
         update_option(self::VERSION_OPTION, self::installed($version));
     }
 

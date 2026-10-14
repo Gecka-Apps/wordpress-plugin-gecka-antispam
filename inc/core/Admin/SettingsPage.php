@@ -37,6 +37,12 @@ class SettingsPage extends Base
     public const PAGE = 'gecka-antispam';
 
     /**
+     * Action and nonce of the button allowing the downloads of the
+     * background tables.
+     */
+    public const ALLOW_BACKGROUNDS = 'gecka_antispam_allow_backgrounds';
+
+    /**
      * Slug of the shared menu. A plugin declaring the same slug shares it.
      */
     public const MENU = 'security';
@@ -100,9 +106,11 @@ class SettingsPage extends Base
         add_action('init', [$this, 'declare']);
         add_action('admin_init', [$this, 'registerSetting']);
         add_action('admin_notices', [$this, 'installFailedNotice']);
+        add_action('admin_notices', [$this, 'backgroundsNotice']);
         add_filter('option_page_capability_' . self::PAGE, static fn(): string => self::capability('settings'));
         add_action('admin_post_gecka_antispam_reset_filter', [$this, 'resetFilter']);
         add_action('admin_post_gecka_antispam_update_backgrounds', [$this, 'updateBackgrounds']);
+        add_action('admin_post_' . self::ALLOW_BACKGROUNDS, [$this, 'allowBackgrounds']);
         add_action('admin_post_gecka_antispam_reset_stats', [$this, 'resetStats']);
         add_action('admin_post_gecka_antispam_learn_existing', [$this, 'learnExisting']);
         add_filter('set_screen_option_' . RefusedView::PER_PAGE_OPTION, static fn(mixed $keep, mixed $option, mixed $value): int => min(999, max(1, Value::int($value))), 10, 3);
@@ -295,6 +303,60 @@ class SettingsPage extends Base
 
         wp_safe_redirect(self::url('filter', ['backgrounds' => $done === null ? 'busy' : ($done ? 'updated' : 'failed')]));
         exit;
+    }
+
+    /**
+     * Allows the downloads of the background tables, and goes to the
+     * statistical filter tab, which starts them.
+     *
+     * @return void
+     */
+    public function allowBackgrounds(): void
+    {
+        $this->authorize(self::ALLOW_BACKGROUNDS, 'filter');
+        update_option(Settings::OPTION, array_merge($this->plugin->settings()->all(), ['background_downloads' => true]));
+
+        wp_safe_redirect(self::url('filter'));
+        exit;
+    }
+
+    /**
+     * Address of the button allowing the downloads of the background tables
+     *
+     * @return string
+     */
+    public static function allowBackgroundsUrl(): string
+    {
+        return wp_nonce_url(admin_url('admin-post.php?action=' . self::ALLOW_BACKGROUNDS), self::ALLOW_BACKGROUNDS);
+    }
+
+    /**
+     * Warns the administrators while the statistical filter has no
+     * background table because nobody allowed their download, on the
+     * plugins screen and on the settings of the plugin, the statistical
+     * filter tab aside, which says it in its own block.
+     *
+     * @return void
+     */
+    public function backgroundsNotice(): void
+    {
+        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+        $here = $screen && ($screen->id === 'plugins' || (Menus::current()?->slug() === self::PAGE && Request::query('tab') !== 'filter'));
+
+        if (! $here || ! current_user_can(self::capability('filter')) || ! $this->plugin->backgrounds()->awaitsConsent() || $this->plugin->statisticalFilter()->backgroundTables()) {
+            return;
+        }
+
+        wp_admin_notice(
+            sprintf(
+                '<p><strong>%s</strong> %s</p><p><a href="%s" class="button button-primary">%s</a></p>',
+                esc_html__('Gecka Antispam needs its background tables.', 'gecka-antispam'),
+                esc_html__('Without them, the statistical filter tells common words from rare ones by what it learnt alone, and takes a text in a language it saw in spam only for spam. The tables are downloaded from GitHub, then checked again every week.', 'gecka-antispam'),
+                esc_url(self::allowBackgroundsUrl()),
+                esc_html__('Download the background tables', 'gecka-antispam'),
+            ),
+            ['type' => 'warning', 'paragraph_wrap' => false],
+        );
     }
 
     /**

@@ -181,13 +181,26 @@ class Backgrounds
 
     /**
      * Whether the tables are to be downloaded now: the filter is on and can
-     * read them, and the plugin keeps the tables
+     * read them, the plugin keeps the tables, and an administrator allowed
+     * the downloads. Nothing reaches GitHub before that consent.
      *
      * @return bool
      */
     public function active(): bool
     {
-        return (bool) $this->settings->get('filter') && StatisticalFilter::supported() && self::enabled();
+        return (bool) $this->settings->get('filter') && StatisticalFilter::supported() && self::enabled() && $this->settings->bool('background_downloads');
+    }
+
+    /**
+     * Whether the downloads wait for an administrator to allow them: the
+     * filter is on and can read tables, the plugin keeps them, and nobody
+     * allowed the plugin to reach GitHub yet
+     *
+     * @return bool
+     */
+    public function awaitsConsent(): bool
+    {
+        return (bool) $this->settings->get('filter') && StatisticalFilter::supported() && self::enabled() && ! $this->settings->bool('background_downloads');
     }
 
     /**
@@ -278,7 +291,7 @@ class Backgrounds
 
     /**
      * When the settings saved change the languages wanted, or switch the
-     * filter on: deletes the tables no longer wanted, and queues the
+     * filter or the downloads on: deletes the tables no longer wanted, and queues the
      * download of the others for the scheduled event and for the statistical
      * filter tab, which starts it when it opens. Nothing is downloaded while
      * the settings are saved.
@@ -293,7 +306,11 @@ class Backgrounds
         $old = is_array($old) ? $old : [];
         $new = is_array($new) ? $new : [];
 
-        if (empty($new['filter']) || ! self::enabled() || (($old['background_languages'] ?? []) === ($new['background_languages'] ?? []) && ! empty($old['filter']))) {
+        if (empty($new['filter']) || empty($new['background_downloads']) || ! self::enabled()) {
+            return;
+        }
+
+        if (($old['background_languages'] ?? []) === ($new['background_languages'] ?? []) && ! empty($old['filter']) && ! empty($old['background_downloads'])) {
             return;
         }
 

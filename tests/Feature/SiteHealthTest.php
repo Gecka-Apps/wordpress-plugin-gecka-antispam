@@ -33,8 +33,19 @@ it('tests the filter only while it is switched on, and the daily task always', f
     expect(array_keys($this->health->tests(['direct' => []])['direct']))->toBe(['gecka_antispam_tables', 'gecka_antispam_schedule']);
 });
 
-it('recommends background tables when there is none', function () {
+it('calls for the background tables while nobody allowed their download', function () {
+    $result = $this->health->testBackground();
+
+    expect($result['status'])->toBe('critical')
+        ->and($result['actions'])->toContain('tab=filter');
+});
+
+it('recommends background tables when there is none, the downloads allowed', function () {
+    antispam_settings(['background_downloads' => true]);
+
     expect($this->health->testBackground()['status'])->toBe('recommended');
+
+    antispam_settings(['background_downloads' => false]);
 });
 
 it('is content with a background table', function () {

@@ -61,11 +61,19 @@ Health name the files left out and why.
 
 ### Downloads
 
+Nothing reaches GitHub before an administrator allows it: the setting
+`background_downloads` is off by default, and the "Download the background
+tables" button (`admin_post_gecka_antispam_allow_backgrounds`) switches it on.
+Until then a warning stands on the plugins screen and the settings of the
+plugin, the statistical filter tab shows the button instead of the
+languages, and Site Health reports a critical issue. The box under the
+languages switches the downloads off again, the tables in place kept.
+
 Saving the languages downloads nothing: the tables no longer wanted go at
 once, and the tab, back from the save, downloads the others through the REST
 API, one table per request with its progress; the "Update the background
 tables" button does the same. The scheduled event does it outside a visit,
-once the plugin is activated, after a save, and every week from the daily
+once the downloads are allowed, after a save, and every week from the daily
 task, which reads the manifest of the latest release again, or the next day
 while a table is missing or the release could not be read, starting tables
 for 20 seconds per run. Two requests never download at once.

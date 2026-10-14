@@ -104,7 +104,8 @@ own forms, from 0 to 100 % spam.
   downloaded from the releases of
   [spamfilter-backgrounds](https://github.com/Gecka-Apps/spamfilter-backgrounds),
   tell a common word from a rare one before the site has learnt much. This
-  is the only external request the plugin makes, and a filter turns it off.
+  is the only external request the plugin makes, and it waits for an
+  administrator to allow it.
 - **Counters that age.** Every six months the counters rotate and the older
   ones halve, so the spam of today outweighs the campaigns of past years.
 - **A learning period.** It rates nothing before it has learnt 20 spam

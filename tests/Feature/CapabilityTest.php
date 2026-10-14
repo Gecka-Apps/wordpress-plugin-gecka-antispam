@@ -130,6 +130,7 @@ it('refuses each button to whoever lacks the capability of its screen, and chang
         gecka_antispam()->journal()->count(),
         gecka_antispam()->settings()->get('min_delay'),
         get_option(Backgrounds::OPTION),
+        gecka_antispam()->settings()->get('background_downloads'),
     ];
     $before = $state();
 
@@ -144,6 +145,7 @@ it('refuses each button to whoever lacks the capability of its screen, and chang
     'reset the settings' => ['gecka_antispam_reset_settings', 'editor'],
     'learn from the existing' => ['gecka_antispam_learn_existing', 'editor'],
     'update the background tables' => ['gecka_antispam_update_backgrounds', 'editor'],
+    'allow the background tables' => [SettingsPage::ALLOW_BACKGROUNDS, 'editor'],
     'delete every refused submission' => ['gecka_antispam_clear_refused', 'author'],
 ]);
 

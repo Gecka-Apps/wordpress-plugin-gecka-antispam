@@ -175,6 +175,15 @@ class SiteHealth extends Base
             );
         }
 
+        if (! $languages && $this->plugin->backgrounds()->awaitsConsent()) {
+            return $this->result(
+                'gecka_antispam_background',
+                'critical',
+                __('Gecka Antispam waits for its background tables', 'gecka-antispam'),
+                __('Without them, the statistical filter tells common words from rare ones by what it learnt alone: until it has learnt many legitimate messages, a text in a language it saw in spam only is taken for spam. Nothing is downloaded before an administrator allows it, from the statistical filter tab.', 'gecka-antispam'),
+            );
+        }
+
         if (! $languages) {
             return $this->result(
                 'gecka_antispam_background',

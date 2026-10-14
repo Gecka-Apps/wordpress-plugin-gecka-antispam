@@ -321,7 +321,9 @@ class FilterView
                 '<p>%s</p>',
                 esc_html(
                     $managed
-                        ? __('No background table yet. Without one, the filter tells common words from rare ones by what it learnt alone, and takes a text in a language it learnt as spam only for spam. The tables of the languages chosen below are downloaded in the background; the button below downloads them now.', 'gecka-antispam')
+                        ? ($on && $downloads->awaitsConsent()
+                            ? __('No background table yet. Without one, the filter tells common words from rare ones by what it learnt alone, and takes a text in a language it learnt as spam only for spam.', 'gecka-antispam')
+                            : __('No background table yet. Without one, the filter tells common words from rare ones by what it learnt alone, and takes a text in a language it learnt as spam only for spam. The tables of the languages chosen below are downloaded in the background; the button below downloads them now.', 'gecka-antispam'))
                         : sprintf(
                             /* translators: %s: directory on the server */
                             __('No background table found in %s. Without one, the filter tells common words from rare ones by what it learnt alone, and takes a text in a language it learnt as spam only for spam. Copy there the tables of the languages the site receives, fr.bin, en.bin.', 'gecka-antispam'),
@@ -387,12 +389,29 @@ class FilterView
             return;
         }
 
+        // Nothing reaches GitHub before an administrator asks for it.
+        if ($downloads->awaitsConsent()) {
+            printf(
+                '<p>%s</p><p><a href="%s" class="button button-primary">%s</a></p>',
+                esc_html__('The tables are downloaded from GitHub, github.com/Gecka-Apps/spamfilter-backgrounds, once you allow it, then checked again every week. Nothing leaves the site before.', 'gecka-antispam'),
+                esc_url(SettingsPage::allowBackgroundsUrl()),
+                esc_html__('Download the background tables', 'gecka-antispam'),
+            );
+
+            return;
+        }
+
         // The save button sits in the row of the update button, outside its
         // form, which it names.
         echo '<form action="options.php" method="post" id="gecka-antispam-languages-form">';
         settings_fields(SettingsPage::PAGE);
         printf('<input type="hidden" name="%s[form]" value="backgrounds">', esc_attr(Settings::OPTION));
         $this->languagesField($downloads->requested());
+        printf(
+            '<p><label class="gecka-admin-toggle-label"><input type="checkbox" class="gecka-admin-toggle" name="%s[background_downloads]" value="1" checked> %s</label></p>',
+            esc_attr(Settings::OPTION),
+            esc_html__('Download the tables from GitHub and check them again every week. Switched off, the tables in place stay and are no longer updated.', 'gecka-antispam'),
+        );
         echo '</form>';
 
         echo '<div class="gecka-admin-buttons">';
