@@ -4,7 +4,7 @@ Tags: spam, antispam, honeypot, comments, contact form 7
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -110,6 +110,12 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 11. How long the statistics are kept.
 
 == Changelog ==
+
+= 1.2.0 =
+
+* The background tables are downloaded only once an administrator allows it, with the "Download the background tables" button of the plugins screen, the settings and Site Health; nothing reaches GitHub on activation. A box under the languages switches the downloads off again. Sites that downloaded tables before keep them, no longer updated until the button of the statistical filter tab is clicked.
+* The rule hiding the honeypot in a form shown after the head of the page goes through the styles API of WordPress.
+* Admin pages styled on sites that install the plugin through their own Composer, and notices spaced like those of Site Health.
 
 = 1.1.0 =
 
