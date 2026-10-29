@@ -67,7 +67,7 @@ The honeypot is hidden by a style sheet the plugin prints in the head of
 every page of the site and of the login screen; a form printed where no head
 is, an Ajax response for one, carries the rule itself.
 
-### `gecka_antispam_check( string $form, string $text = '', array $names = [], ?string $message = null ): array`
+### `gecka_antispam_check( string $form, string $text = '', array $names = [], ?string $message = null, ?array $fields = null ): array`
 
 Runs the checks on what the form posted, in this order: the honeypot, the
 user agent (none, or one no browser sends), the timestamp, the minimum
@@ -97,8 +97,27 @@ whole text is read as the message.
 | `score` | The rating of the filter, from 0 to 1; null when the filter did not rate. |
 | `message` | The error the plugin shows for a refusal or a spam, translated; empty otherwise. A message too short is told as such, with the number of words it takes; the other refusals say nothing of what caught them. |
 
-The fields have to reach PHP as POST fields: a form posted the usual way, or
-by `fetch()` with a `FormData` body, works; a JSON body does not.
+The fields are read from `$_POST`: a form posted the usual way, or by
+`fetch()` with a `FormData` body, needs nothing more. A form posting JSON
+hands its fields over as `$fields`, unslashed: the decoded body, or the
+parameters of a REST request.
+
+```php
+register_rest_route( 'my-plugin/v1', '/quote', [
+    'methods'             => 'POST',
+    'permission_callback' => '__return_true',
+    'callback'            => function ( WP_REST_Request $request ) {
+        $message = sanitize_textarea_field( (string) $request->get_param( 'message' ) );
+        $check   = gecka_antispam_check( 'quote', $message, fields: $request->get_params() );
+
+        if ( $check['refused'] ) {
+            return new WP_Error( 'refused', $check['message'], [ 'status' => 403 ] );
+        }
+
+        // Save the request...
+    },
+] );
+```
 
 No setting switches a custom form off. The `gecka_antispam_protect` filter
 does, given `custom:quote`: `gecka_antispam_fields()` then prints nothing,

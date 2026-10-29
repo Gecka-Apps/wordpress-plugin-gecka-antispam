@@ -57,6 +57,17 @@ it('tells a message too short, and nothing of the other checks', function () {
         ->and(gecka_antispam_check('devis', 'Bonjour, je voudrais un devis.', ['qASQAhqkpFGqnKkRROl'])['message'])->toBe('Your submission could not be verified. Please reload the page and try again.');
 });
 
+it('checks the fields a form posting JSON hands over, not $_POST', function () {
+    post_form('custom:devis');
+    $fields = $_POST;
+    $_POST = [];
+
+    expect(gecka_antispam_check('devis', fields: $fields)['refused'])->toBeFalse()
+        ->and(gecka_antispam_check('devis')['reason'])->toBe(Guard::TOKEN)
+        ->and(gecka_antispam_check('devis', fields: [Guard::TOKEN_FIELD => [$fields[Guard::TOKEN_FIELD]]])['reason'])->toBe(Guard::TOKEN)
+        ->and(gecka_antispam_check('devis', fields: [gecka_antispam()->guard()->honeypotName() => 'https://example.com'] + $fields)['reason'])->toBe(Guard::HONEYPOT);
+});
+
 it('refuses a token signed for another form', function () {
     post_form('custom:newsletter');
 

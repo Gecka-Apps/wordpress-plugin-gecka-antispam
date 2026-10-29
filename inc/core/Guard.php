@@ -248,15 +248,16 @@ class Guard
     /**
      * Runs the checks on the submission of a form.
      *
-     * @param string      $surface The form being sent.
-     * @param string[]    $names   Names typed in the form, checked for random letters.
-     * @param string|null $message The message typed, null for a form without one.
+     * @param string                    $surface The form being sent.
+     * @param string[]                  $names   Names typed in the form, checked for random letters.
+     * @param string|null               $message The message typed, null for a form without one.
+     * @param array<string, mixed>|null $fields  Fields the form posted, unslashed; null reads them from $_POST.
      *
      * @return string|null What caught the submission, null when it went through.
      */
-    public function check(string $surface, array $names = [], ?string $message = null): ?string
+    public function check(string $surface, array $names = [], ?string $message = null, ?array $fields = null): ?string
     {
-        if ($this->honeypotFilled()) {
+        if ($this->honeypotFilled($fields)) {
             return self::HONEYPOT;
         }
 
@@ -265,7 +266,7 @@ class Guard
             return self::BAD_BROWSER;
         }
 
-        $age = $this->tokenAge($surface);
+        $age = $this->tokenAge($surface, $fields);
 
         if ($age === null) {
             return self::TOKEN;
@@ -351,12 +352,14 @@ class Guard
     /**
      * Whether the honeypot field came back filled in
      *
+     * @param array<string, mixed>|null $fields Fields the form posted; null reads them from $_POST.
+     *
      * @return bool
      */
-    public function honeypotFilled(): bool
+    public function honeypotFilled(?array $fields = null): bool
     {
         // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput -- Only tested for emptiness, never stored nor printed.
-        $value = $_POST[$this->honeypotName()] ?? '';
+        $value = ($fields ?? $_POST)[$this->honeypotName()] ?? '';
 
         return is_array($value) ? $value !== [] : trim(Value::string($value)) !== '';
     }
@@ -394,13 +397,14 @@ class Guard
      * Seconds since the form was displayed, null when the timestamp is
      * missing, forged, or ahead of the clock
      *
-     * @param string $surface
+     * @param string                    $surface
+     * @param array<string, mixed>|null $fields  Fields the form posted, unslashed; null reads them from $_POST.
      *
      * @return int|null
      */
-    private function tokenAge(string $surface): ?int
+    private function tokenAge(string $surface, ?array $fields = null): ?int
     {
-        $time = $this->postedTime($surface);
+        $time = $this->postedTime($surface, $fields);
 
         return $time === null ? null : max(0, time() - $time);
     }
@@ -409,13 +413,15 @@ class Guard
      * Time the timestamp posted for a form was issued at, null when there is
      * none, or a forged one, or one from the future
      *
-     * @param string $surface
+     * @param string                    $surface
+     * @param array<string, mixed>|null $fields  Fields the form posted, unslashed; null reads them from $_POST.
      *
      * @return int|null
      */
-    private function postedTime(string $surface): ?int
+    private function postedTime(string $surface, ?array $fields = null): ?int
     {
-        $parts = explode('.', Request::post(self::TOKEN_FIELD), 2);
+        $token = $fields === null ? Request::post(self::TOKEN_FIELD) : (is_scalar($fields[self::TOKEN_FIELD] ?? null) ? (string) $fields[self::TOKEN_FIELD] : '');
+        $parts = explode('.', $token, 2);
 
         if (count($parts) !== 2 || ! ctype_digit($parts[0]) || ! hash_equals($this->sign($surface, (int) $parts[0]), $parts[1])) {
             return null;
