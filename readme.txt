@@ -4,7 +4,7 @@ Tags: spam, antispam, honeypot, comments, contact form 7
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -110,6 +110,10 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 11. How long the statistics are kept.
 
 == Changelog ==
+
+= 1.3.0 =
+
+* `gecka_antispam_check()` takes the fields of a form that posts JSON as its last argument: the decoded body, or the parameters of a REST request.
 
 = 1.2.1 =
 

@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Gecka Antispam 1.2.1\n"
+"Project-Id-Version: Gecka Antispam 1.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/Gecka-Apps/wordpress-plugin-gecka-antispam/issues\n"
 "Last-Translator: Laurent Dinclaux <laurent@gecka.nc>\n"
 "Language-Team: Gecka <contact@gecka.nc>\n"
@@ -1031,12 +1031,12 @@ msgid "Honeypot and timestamp, invisible to visitors."
 msgstr "Pot de miel et horodatage, invisibles pour les visiteurs."
 
 #. translators: %s: rating of the statistical filter, in percent
-#: inc/core/Integrations/Integration.php:277
+#: inc/core/Integrations/Integration.php:278
 #, php-format
 msgid "Statistical filter: %s %% spam"
 msgstr "Filtre statistique : %s %% de spam"
 
-#: inc/core/Integrations/Integration.php:301
+#: inc/core/Integrations/Integration.php:302
 msgid "Your submission could not be verified. Please reload the page and try again."
 msgstr "Votre envoi n’a pas pu être vérifié. Rechargez la page et réessayez."
 
@@ -1775,7 +1775,7 @@ msgid "A message with fewer words is refused, on every form that has one, and th
 msgstr "Un message qui en compte moins est refusé, sur tout formulaire qui en a un, et l’expéditeur apprend combien de mots il faut. 0 accepte toute longueur."
 
 #. translators: %d: minimum number of words of a message
-#: inc/core/Integrations/Integration.php:298
+#: inc/core/Integrations/Integration.php:299
 #, php-format
 msgid "Your message is too short: write at least %d word."
 msgid_plural "Your message is too short: write at least %d words."
