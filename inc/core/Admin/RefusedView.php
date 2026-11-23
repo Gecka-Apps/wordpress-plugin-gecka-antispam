@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Gecka\WP\Plugin\Antispam\Admin;
 
+use Gecka\WP\Plugin\Antispam\Admin\RefusedView\View;
 use Gecka\WP\Plugin\Antispam\Journal;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Request;
@@ -16,9 +17,10 @@ use Gecka\WP\Plugin\Antispam\Value;
 /**
  * The Antispam tab of the Journal: the list of the submissions refused, its
  * screen options and its bulk actions. Those waiting for review are learnt
- * as spam or as legitimate, or deleted; those learnt stay in their own
- * view, where they can be learnt the other way, unlearnt back to review, or
- * deleted.
+ * as spam or as legitimate, or deleted, plain spam having a view of its own
+ * apart from those worth learning; those learnt stay in
+ * their own view, where they can be learnt the other way, unlearnt back to
+ * review, or deleted.
  *
  * @author Laurent Dinclaux - Gecka <laurent@gecka.nc>
  */
@@ -70,13 +72,14 @@ class RefusedView
     }
 
     /**
-     * Whether the Learnt view is shown, rather than the entries to review
+     * The view the address names, the entries to review when it names none
+     * or an unknown one
      *
-     * @return bool
+     * @return View
      */
-    public static function learntView(): bool
+    public static function view(): View
     {
-        return sanitize_key(Request::query('view')) === 'learnt';
+        return View::tryFrom(sanitize_key(Request::query('view'))) ?? View::Pending;
     }
 
     /**
@@ -159,6 +162,10 @@ class RefusedView
             printf('<p>%s</p>', esc_html__('The spam rating is what the statistical filter makes of each text today, for information: it moves as the filter learns, and stays empty while the filter is still learning.', 'gecka-antispam'));
         }
 
+        if ($this->plugin->settings()->get('filter')) {
+            printf('<p>%s</p>', esc_html__('To review lists the submissions worth learning: neither too short nor made of random letters, and rated below the spam threshold once the statistical filter rates the texts. Spam lists the others, which teach the filter nothing it does not know yet.', 'gecka-antispam'));
+        }
+
         $table->prepare_items();
         $table->views();
 
@@ -166,8 +173,8 @@ class RefusedView
         printf('<input type="hidden" name="page" value="%s">', esc_attr(SettingsPage::PAGES['refused']));
         printf('<input type="hidden" name="tab" value="%s">', esc_attr(SettingsPage::TAB));
 
-        if (self::learntView()) {
-            echo '<input type="hidden" name="view" value="learnt">';
+        foreach ($table->view()->query() as $name => $value) {
+            printf('<input type="hidden" name="%s" value="%s">', esc_attr($name), esc_attr($value));
         }
 
         $table->display();
@@ -205,7 +212,7 @@ class RefusedView
     private function bulk(): void
     {
         $op = $this->table ? $this->table->current_action() : false;
-        $view = self::learntView() ? ['view' => 'learnt'] : [];
+        $view = $this->table ? $this->table->view()->query() : [];
 
         if (! $op) {
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only drops the arguments of a form submitted without an action.

@@ -48,6 +48,12 @@ class Journal
     private const MAX_LENGTH = 5000;
 
     /**
+     * Entries read at once to rate them, which bounds the texts held in
+     * memory.
+     */
+    private const RATING_CHUNK = 500;
+
+    /**
      * @var StatisticalFilter
      */
     private StatisticalFilter $statisticalFilter;
@@ -134,6 +140,103 @@ class Journal
         $rows = $wpdb->get_results($wpdb->prepare("SELECT id, surface, outcome, text, hits, created, updated, learnt, generation, country FROM %i WHERE $where ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d", self::table(), $perPage, max(0, $page - 1) * $perPage));
 
         return array_values((array) $rows);
+    }
+
+    /**
+     * Entries by id, in the order of the ids given. An id no entry holds is
+     * left out.
+     *
+     * @param int[] $ids
+     *
+     * @return list<object{id: string, surface: string, outcome: string, text: string, hits: string, created: string, updated: string, learnt: string|null, generation: string|null, country: string|null}>
+     */
+    public function find(array $ids): array
+    {
+        global $wpdb;
+
+        $ids = array_values(array_map('intval', $ids));
+
+        if (! $ids) {
+            return [];
+        }
+
+        $in = implode(',', array_fill(0, count($ids), '%d'));
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table of the plugin, read on the review screen; $in is one placeholder per id.
+        $rows = array_values((array) $wpdb->get_results($wpdb->prepare("SELECT id, surface, outcome, text, hits, created, updated, learnt, generation, country FROM %i WHERE id IN ($in)", self::table(), ...$ids)));
+        $order = array_flip($ids);
+
+        usort($rows, static fn(\stdClass $a, \stdClass $b): int => $order[(int) $a->id] <=> $order[(int) $b->id]);
+
+        return $rows;
+    }
+
+    /**
+     * Sorts the entries waiting for review, the most recent first, into
+     * those worth learning and plain spam. Plain spam is what teaches the
+     * statistical filter nothing it lacks: a message refused for random
+     * letters or too few words, a text shorter than the minimum or made of a
+     * single random word, and a text the filter already rates from the spam
+     * threshold. The others are to review, a text refused for the random name
+     * of its sender included: the name is not part of the text. Every entry
+     * waiting that is not plain spam by its reason or its length is rated on
+     * each call, RATING_CHUNK at a time.
+     *
+     * @param int|null $threshold Rating, in percent, from which the filter takes a text for spam; null rates nothing, while the filter is off or still learning.
+     * @param int      $minWords  Words a message needs, 0 for any length.
+     *
+     * @return array{review: array<int, float|null>, spam: array<int, float|null>} Ids of each set, the most recent first, with the rating between 0 and 1 when the filter gave one.
+     */
+    public function triage(?int $threshold, int $minWords): array
+    {
+        global $wpdb;
+
+        $sorted = ['review' => [], 'spam' => []];
+        $offset = 0;
+
+        do {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin, read on the review screen.
+            $rows = (array) $wpdb->get_results($wpdb->prepare('SELECT id, outcome, text FROM %i WHERE learnt IS NULL ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d', self::table(), self::RATING_CHUNK, $offset));
+
+            foreach ($rows as $row) {
+                $text = (string) $row->text;
+
+                if (self::teachesNothing((string) $row->outcome, $text, $minWords)) {
+                    $sorted['spam'][(int) $row->id] = null;
+
+                    continue;
+                }
+
+                $score = $threshold === null ? null : $this->statisticalFilter->classify($text);
+                $sorted[$score !== null && $score * 100 >= $threshold ? 'spam' : 'review'][(int) $row->id] = $score;
+            }
+
+            $offset += self::RATING_CHUNK;
+        } while (count($rows) === self::RATING_CHUNK);
+
+        return $sorted;
+    }
+
+    /**
+     * Whether an entry is spam the filter learns nothing from, whatever it
+     * rates it: its message refused for random letters or too few words, or
+     * its text holding fewer words than the minimum, or a single random word
+     *
+     * @param string $outcome  What refused the entry.
+     * @param string $text     Its text.
+     * @param int    $minWords Words a message needs, 0 for any length.
+     *
+     * @return bool
+     */
+    private static function teachesNothing(string $outcome, string $text, int $minWords): bool
+    {
+        if (in_array($outcome, [Guard::RANDOM_TEXT, Guard::SHORT], true)) {
+            return true;
+        }
+
+        $words = Guard::words($text);
+
+        return Guard::wordCount($text) < $minWords || (count($words) === 1 && Guard::isRandomName(trim($words[0], '.,;:!?')));
     }
 
     /**

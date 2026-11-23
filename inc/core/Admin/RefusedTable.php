@@ -7,6 +7,7 @@ declare(strict_types=1);
 
 namespace Gecka\WP\Plugin\Antispam\Admin;
 
+use Gecka\WP\Plugin\Antispam\Admin\RefusedView\View;
 use Gecka\WP\Plugin\Antispam\Guard;
 use Gecka\WP\Plugin\Antispam\Plugin;
 use Gecka\WP\Plugin\Antispam\Settings;
@@ -14,8 +15,9 @@ use Gecka\WP\Plugin\Antispam\StatisticalFilter;
 use Gecka\WP\Plugin\Antispam\Value;
 
 /**
- * The list of the submissions refused, the most recent first, in two views:
- * those waiting for review, and those learnt. The text is the primary
+ * The list of the submissions refused, the most recent first, in three
+ * views: those waiting for review that are worth learning, those waiting
+ * that are plain spam, and those learnt. The text is the primary
  * column, keyed title as for the posts so the screen options cannot hide
  * it: on a small screen the other columns fold under it. Its row actions
  * learn, unlearn or delete the entry through the bulk actions. The number of
@@ -39,11 +41,11 @@ class RefusedTable extends \WP_List_Table
     private Plugin $plugin;
 
     /**
-     * Whether the entries learnt are listed, rather than those to review.
+     * The view listed.
      *
-     * @var bool
+     * @var View
      */
-    private bool $learntView;
+    private View $view;
 
     /**
      * Whether the statistical filter rates the texts of the page: switched on
@@ -51,7 +53,15 @@ class RefusedTable extends \WP_List_Table
      *
      * @var bool
      */
-    private bool $rates = false;
+    private bool $rates;
+
+    /**
+     * The entries waiting for review, sorted into those worth learning and
+     * plain spam, with their rating, once read.
+     *
+     * @var array{review: array<int, float|null>, spam: array<int, float|null>}|null
+     */
+    private ?array $triage = null;
 
     /**
      * Whether a row printed shows a country.
@@ -61,12 +71,15 @@ class RefusedTable extends \WP_List_Table
     private bool $countries = false;
 
     /**
+     * Lists the view the address names.
+     *
      * @param Plugin $plugin
      */
     public function __construct(Plugin $plugin)
     {
         $this->plugin = $plugin;
-        $this->learntView = RefusedView::learntView();
+        $this->rates = $plugin->filterReady();
+        $this->view = RefusedView::view();
 
         parent::__construct(
             [
@@ -78,6 +91,16 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
+     * The view listed
+     *
+     * @return View
+     */
+    public function view(): View
+    {
+        return $this->view;
+    }
+
+    /**
      * Reads the entries of the page.
      *
      * @return void
@@ -86,16 +109,40 @@ class RefusedTable extends \WP_List_Table
     {
         $journal = $this->plugin->journal();
         $perPage = $this->get_items_per_page(RefusedView::PER_PAGE_OPTION, RefusedView::PER_PAGE);
+        $ids = match ($this->view) {
+            View::Pending => array_keys($this->triage()['review']),
+            View::Spam => array_keys($this->triage()['spam']),
+            View::Learnt => null,
+        };
 
         $this->set_pagination_args(
             [
-                'total_items' => $journal->count($this->learntView),
+                'total_items' => $ids === null ? $journal->count(true) : count($ids),
                 'per_page' => $perPage,
             ],
         );
 
-        $this->items = $journal->entries($this->get_pagenum(), $perPage, $this->learntView);
-        $this->rates = $this->plugin->filterReady();
+        $this->items = $ids === null
+            ? $journal->entries($this->get_pagenum(), $perPage, true)
+            : $journal->find(array_slice($ids, ($this->get_pagenum() - 1) * $perPage, $perPage));
+    }
+
+    /**
+     * The entries waiting for review, sorted into those worth learning and
+     * plain spam, read once for the request: the views, the pagination, the
+     * page and the rating column need them, and reading them rates every
+     * entry waiting that is not plain spam by its reason or its length
+     *
+     * @return array{review: array<int, float|null>, spam: array<int, float|null>} Ids of each set, the most recent first, with their rating when the filter gave one.
+     */
+    private function triage(): array
+    {
+        if ($this->triage === null) {
+            $settings = $this->plugin->settings();
+            $this->triage = $this->plugin->journal()->triage($this->rates ? $settings->int('filter_threshold') : null, $settings->int('min_words'));
+        }
+
+        return $this->triage;
     }
 
     /**
@@ -119,7 +166,7 @@ class RefusedTable extends \WP_List_Table
 
         $columns['information'] = __('Information', 'gecka-antispam');
 
-        if ($this->learntView) {
+        if ($this->view === View::Learnt) {
             $columns['learnt'] = __('Learnt as', 'gecka-antispam');
         }
 
@@ -148,27 +195,29 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
-     * Links to the two views, with their counts
+     * Links to the views, with their counts
      *
      * @return array<string, string>
      */
     protected function get_views(): array
     {
-        $journal = $this->plugin->journal();
+        $triage = $this->triage();
         $views = [
             /* translators: %s: number of entries */
-            'pending' => sprintf(__('To review (%s)', 'gecka-antispam'), number_format_i18n($journal->count())),
+            View::Pending->value => sprintf(__('To review (%s)', 'gecka-antispam'), number_format_i18n(count($triage['review']))),
             /* translators: %s: number of entries */
-            'learnt' => sprintf(__('Learnt (%s)', 'gecka-antispam'), number_format_i18n($journal->count(true))),
+            View::Spam->value => sprintf(__('Spam (%s)', 'gecka-antispam'), number_format_i18n(count($triage['spam']))),
+            /* translators: %s: number of entries */
+            View::Learnt->value => sprintf(__('Learnt (%s)', 'gecka-antispam'), number_format_i18n($this->plugin->journal()->count(true))),
         ];
         $links = [];
 
-        foreach ($views as $view => $label) {
-            $current = ($view === 'learnt') === $this->learntView;
-            $links[$view] = sprintf(
+        foreach ($views as $value => $label) {
+            $view = View::from($value);
+            $links[$value] = sprintf(
                 '<a href="%s"%s>%s</a>',
-                esc_url(SettingsPage::url('refused', $view === 'learnt' ? ['view' => 'learnt'] : [])),
-                $current ? ' class="current" aria-current="page"' : '',
+                esc_url(SettingsPage::url('refused', $view->query())),
+                $view === $this->view ? ' class="current" aria-current="page"' : '',
                 esc_html($label),
             );
         }
@@ -189,7 +238,7 @@ class RefusedTable extends \WP_List_Table
             $actions['learn_spam'] = __('Learn as spam', 'gecka-antispam');
             $actions['learn_ham'] = __('Learn as legitimate', 'gecka-antispam');
 
-            if ($this->learntView) {
+            if ($this->view === View::Learnt) {
                 $actions['unlearn'] = __('Unlearn', 'gecka-antispam');
             }
         }
@@ -206,7 +255,13 @@ class RefusedTable extends \WP_List_Table
      */
     public function no_items(): void
     {
-        echo esc_html($this->learntView ? __('No refused submission learnt.', 'gecka-antispam') : __('No refused submission to review.', 'gecka-antispam'));
+        echo esc_html(
+            match ($this->view) {
+                View::Pending => __('No refused submission to review.', 'gecka-antispam'),
+                View::Spam => __('No refused submission of plain spam.', 'gecka-antispam'),
+                View::Learnt => __('No refused submission learnt.', 'gecka-antispam'),
+            },
+        );
     }
 
     /**
@@ -303,7 +358,8 @@ class RefusedTable extends \WP_List_Table
      * What the statistical filter makes of the text now, for information:
      * a check of the form refused most entries before any rating, and the
      * rating moves as the filter learns. Nothing is rated while the column is
-     * hidden.
+     * hidden, and an entry waiting for review keeps the rating it was sorted
+     * by.
      *
      * @param object $item
      *
@@ -317,7 +373,8 @@ class RefusedTable extends \WP_List_Table
             return '';
         }
 
-        $score = $this->rates ? $this->plugin->statisticalFilter()->classify((string) ($item->text ?? '')) : null;
+        $id = Value::int($item->id ?? null);
+        $score = $this->rates ? ($this->triage['review'][$id] ?? $this->triage['spam'][$id] ?? $this->plugin->statisticalFilter()->classify((string) ($item->text ?? ''))) : null;
 
         /* translators: %s: rating of the statistical filter, in percent */
         return $score === null ? '&mdash;' : esc_html(sprintf(__('%s %% spam', 'gecka-antispam'), number_format_i18n($score * 100, 1)));
@@ -358,7 +415,7 @@ class RefusedTable extends \WP_List_Table
         }
 
         $labels['delete'] = __('Delete', 'gecka-antispam');
-        $args = ($this->learntView ? ['view' => 'learnt'] : []) + ['ids' => [Value::int($item->id ?? null)], '_wpnonce' => wp_create_nonce('bulk-' . Value::string($this->_args['plural'] ?? null))];
+        $args = $this->view->query() + ['ids' => [Value::int($item->id ?? null)], '_wpnonce' => wp_create_nonce('bulk-' . Value::string($this->_args['plural'] ?? null))];
         $actions = [];
 
         foreach ($labels as $op => $label) {

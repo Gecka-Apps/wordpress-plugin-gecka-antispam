@@ -60,7 +60,7 @@ it('pages the refused submissions by the number the screen options hold', functi
     $journal = gecka_antispam()->journal();
 
     foreach (range(1, 7) as $i) {
-        $journal->record('comments', Guard::HONEYPOT, "Spam number $i");
+        $journal->record('comments', Guard::HONEYPOT, "Spam number $i sent by a bot");
     }
 
     update_user_meta(get_current_user_id(), RefusedView::PER_PAGE_OPTION, 3);
@@ -76,7 +76,7 @@ it('pages the refused submissions by the number the screen options hold', functi
 
 it('lists the entries learnt in their own view, with the column saying how', function () {
     $journal = gecka_antispam()->journal();
-    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online');
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online at the best price');
     $journal->record('comments', Guard::TOO_FAST, 'Bonjour, une question sur vos horaires');
     $journal->learn([(int) $journal->entries(1, 10)[0]->id], StatisticalFilter::HAM);
 
@@ -123,7 +123,7 @@ it('folds a long text in the compact view and shows it whole in the extended vie
 
 it('offers learning either way and deleting under the text of an entry to review', function () {
     antispam_settings(['filter' => true]);
-    gecka_antispam()->journal()->record('comments', Guard::HONEYPOT, 'Cheap pills online');
+    gecka_antispam()->journal()->record('comments', Guard::HONEYPOT, 'Cheap pills online at the best price');
 
     $html = refused_rows();
 
@@ -134,7 +134,7 @@ it('offers learning either way and deleting under the text of an entry to review
 it('offers learning the other way, unlearning and deleting under an entry learnt', function (string $learnt, array $operations) {
     antispam_settings(['filter' => true]);
     $journal = gecka_antispam()->journal();
-    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online');
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online at the best price');
     $journal->learn([(int) $journal->entries(1, 10)[0]->id], $learnt);
 
     $_GET['view'] = 'learnt';
@@ -147,7 +147,7 @@ it('offers learning the other way, unlearning and deleting under an entry learnt
 
 it('offers deleting only, and no rating, while the statistical filter is off', function () {
     antispam_settings(['filter' => false]);
-    gecka_antispam()->journal()->record('comments', Guard::HONEYPOT, 'Cheap pills online');
+    gecka_antispam()->journal()->record('comments', Guard::HONEYPOT, 'Cheap pills online at the best price');
 
     expect(row_operations(refused_rows()))->toBe(['delete'])
         ->and(array_keys((new RefusedTable(gecka_antispam()))->get_columns()))->not->toContain('score');
@@ -168,7 +168,7 @@ it('rates each text once the statistical filter has learnt enough, and shows a d
 it('learns the entry a row action links to, as the bulk action does', function () {
     antispam_settings(['filter' => true]);
     $journal = gecka_antispam()->journal();
-    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online');
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online at the best price');
 
     preg_match('/href="([^"]+action=learn_spam[^"]*)"/', refused_rows(), $link);
     parse_str((string) parse_url(html_entity_decode($link[1]), PHP_URL_QUERY), $query);
@@ -185,9 +185,147 @@ it('learns the entry a row action links to, as the bulk action does', function (
         ->and(gecka_antispam()->statisticalFilter()->counts()['spam'])->toBe(1);
 });
 
+/**
+ * A statistical filter that rates the texts, having learnt one spam and one
+ * legitimate text, and the journal holding an entry of each kind: the spam
+ * rated near 68 %, the legitimate text near 33 %, the spam threshold at 60 %.
+ *
+ * @return array{spam: int, ham: int} Ids of the entries.
+ */
+function rated_entries(): array
+{
+    antispam_settings(['filter' => true, 'filter_min_spam' => 1, 'filter_min_ham' => 1, 'filter_threshold' => 60]);
+    $filter = gecka_antispam()->statisticalFilter();
+    $filter->learn('cheap pills online casino bonus viagra', StatisticalFilter::SPAM);
+    $filter->learn('merci pour votre article sur la mairie', StatisticalFilter::HAM);
+
+    $journal = gecka_antispam()->journal();
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online casino bonus viagra');
+    $journal->record('comments', Guard::HONEYPOT, 'Merci pour votre article sur la mairie');
+
+    $ids = [];
+
+    foreach ($journal->entries(1, 10) as $entry) {
+        $ids[str_starts_with($entry->text, 'Cheap') ? 'spam' : 'ham'] = (int) $entry->id;
+    }
+
+    return $ids;
+}
+
+/**
+ * The links to the views of the table, as the page prints them.
+ *
+ * @return string
+ */
+function refused_views(): string
+{
+    $table = new RefusedTable(gecka_antispam());
+    $table->prepare_items();
+    ob_start();
+    $table->views();
+
+    return (string) ob_get_clean();
+}
+
+/**
+ * The ids of the entries a view of the table lists.
+ *
+ * @param string|null $view The view argument of the address, none for the entries to review.
+ *
+ * @return int[]
+ */
+function listed_ids(?string $view = null): array
+{
+    if ($view === null) {
+        unset($_GET['view']);
+    } else {
+        $_GET['view'] = $view;
+    }
+
+    $table = new RefusedTable(gecka_antispam());
+    $table->prepare_items();
+
+    return array_map(static fn(object $item): int => (int) $item->id, $table->items);
+}
+
+it('lists to review the entries rated below the spam threshold, and as spam those rated from it', function () {
+    $ids = rated_entries();
+
+    expect(listed_ids())->toBe([$ids['ham']])
+        ->and(listed_ids('spam'))->toBe([$ids['spam']]);
+});
+
+it('sorts every entry by the threshold it is given, and by none without one', function () {
+    $ids = rated_entries();
+    $journal = gecka_antispam()->journal();
+
+    expect(array_keys($journal->triage(101, 5)['review']))->toEqualCanonicalizing([$ids['spam'], $ids['ham']])
+        ->and(array_keys($journal->triage(0, 5)['spam']))->toEqualCanonicalizing([$ids['spam'], $ids['ham']])
+        ->and($journal->triage(null, 5)['review'])->toBe([$ids['ham'] => null, $ids['spam'] => null]);
+});
+
+it('lists as spam, whatever its rating, an entry the filter learns nothing from', function (string $outcome, string $text) {
+    rated_entries();
+    $journal = gecka_antispam()->journal();
+    $journal->record('comments', $outcome, $text);
+    $id = (int) $journal->entries(1, 1)[0]->id;
+
+    expect(listed_ids('spam'))->toContain($id)
+        ->and(listed_ids())->not->toContain($id)
+        ->and($journal->triage(101, 5)['spam'])->toHaveKey($id);
+})->with([
+    'refused for too few words' => [Guard::SHORT, 'Merci pour votre article sur la mairie de la commune'],
+    'refused for a random message' => [Guard::RANDOM_TEXT, 'qASQAhqkpFGqnKkRROl'],
+    'shorter than the minimum' => [Guard::HONEYPOT, 'Merci pour tout'],
+    'a single random word' => [Guard::HONEYPOT, 'qASQAhqkpFGqnKkRROl'],
+]);
+
+it('sorts by its text, as any other, an entry refused for the random name of its sender', function () {
+    $ids = rated_entries();
+    $journal = gecka_antispam()->journal();
+    $journal->record('comments', Guard::RANDOM_NAME, 'Merci pour votre article sur la mairie de la ville');
+    $id = (int) $journal->entries(1, 1)[0]->id;
+
+    expect(listed_ids())->toEqualCanonicalizing([$id, $ids['ham']])
+        ->and(listed_ids('spam'))->toBe([$ids['spam']]);
+});
+
+it('sorts the entries by their reason and their length alone while the filter rates nothing', function () {
+    $ids = rated_entries();
+    antispam_settings(['filter_min_spam' => 100]);
+    gecka_antispam()->journal()->record('comments', Guard::SHORT, 'Merci pour votre article sur la mairie de la commune');
+
+    expect(listed_ids())->toEqualCanonicalizing([$ids['spam'], $ids['ham']])
+        ->and(listed_ids('spam'))->toHaveCount(1);
+});
+
+it('leaves the entries learnt out of both views of the entries to review', function () {
+    $ids = rated_entries();
+    gecka_antispam()->journal()->learn([$ids['ham'], $ids['spam']], StatisticalFilter::SPAM);
+
+    expect(listed_ids())->toBe([])
+        ->and(listed_ids('spam'))->toBe([])
+        ->and(listed_ids('learnt'))->toEqualCanonicalizing([$ids['spam'], $ids['ham']]);
+});
+
+it('keeps the Spam view in the address of the row actions', function () {
+    rated_entries();
+
+    $_GET['view'] = 'spam';
+
+    expect(refused_rows())->toContain('view=spam');
+});
+
+it('offers the Spam view even while the statistical filter is off', function () {
+    antispam_settings(['filter' => false]);
+
+    expect(refused_views())->toContain('view=spam')
+        ->and(refused_views())->toContain('view=learnt');
+});
+
 it('shows under the date the country a text was last sent from', function () {
     $journal = gecka_antispam()->journal();
-    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online', 'NC');
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online at the best price', 'NC');
     $journal->record('comments', Guard::HONEYPOT, 'Bonjour, une question sur vos horaires');
 
     $table = new RefusedTable(gecka_antispam());

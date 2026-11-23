@@ -324,96 +324,96 @@ msgstr "Apprendre des commentaires approuvés"
 msgid "Learn as legitimate a comment approved from the moderation queue."
 msgstr "Apprendre comme légitime un commentaire approuvé depuis la file de modération."
 
-#: inc/core/Admin/RefusedTable.php:209
+#: inc/core/Admin/RefusedTable.php:262
 msgid "No refused submission learnt."
 msgstr "Aucun envoi refusé appris."
 
-#: inc/core/Admin/RefusedTable.php:209
+#: inc/core/Admin/RefusedTable.php:260
 msgid "No refused submission to review."
 msgstr "Aucun envoi refusé à traiter."
 
-#: inc/core/Admin/RefusedTable.php:112
+#: inc/core/Admin/RefusedTable.php:159
 #: inc/core/Admin/StatsView.php:419
 msgid "Form"
 msgstr "Formulaire"
 
-#: inc/core/Admin/RefusedTable.php:113
+#: inc/core/Admin/RefusedTable.php:160
 msgid "Reason"
 msgstr "Raison"
 
-#: inc/core/Admin/RefusedTable.php:111
+#: inc/core/Admin/RefusedTable.php:158
 msgid "Text"
 msgstr "Texte"
 
-#: inc/core/Admin/RefusedTable.php:123
+#: inc/core/Admin/RefusedTable.php:170
 msgid "Learnt as"
 msgstr "Appris comme"
 
-#: inc/core/Admin/RefusedView.php:192
+#: inc/core/Admin/RefusedView.php:199
 msgid "Delete every refused submission, learnt or not? What was learnt of them stays learnt."
 msgstr "Supprimer tous les envois refusés, appris ou non ? Ce qui en a été appris reste appris."
 
-#: inc/core/Admin/RefusedView.php:193
+#: inc/core/Admin/RefusedView.php:200
 msgid "Delete everything"
 msgstr "Tout supprimer"
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedTable.php:160
+#: inc/core/Admin/RefusedTable.php:207
 #, php-format
 msgid "To review (%s)"
 msgstr "À traiter (%s)"
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedTable.php:162
+#: inc/core/Admin/RefusedTable.php:211
 #, php-format
 msgid "Learnt (%s)"
 msgstr "Appris (%s)"
 
-#: inc/core/Admin/RefusedTable.php:197
-#: inc/core/Admin/RefusedTable.php:360
+#: inc/core/Admin/RefusedTable.php:246
+#: inc/core/Admin/RefusedTable.php:417
 msgid "Delete"
 msgstr "Supprimer"
 
-#: inc/core/Admin/RefusedTable.php:189
-#: inc/core/Admin/RefusedTable.php:348
+#: inc/core/Admin/RefusedTable.php:238
+#: inc/core/Admin/RefusedTable.php:405
 msgid "Learn as spam"
 msgstr "Apprendre comme spam"
 
-#: inc/core/Admin/RefusedTable.php:190
-#: inc/core/Admin/RefusedTable.php:352
+#: inc/core/Admin/RefusedTable.php:239
+#: inc/core/Admin/RefusedTable.php:409
 #: inc/core/Integrations/Flamingo.php:122
 #: inc/core/Integrations/GravityForms.php:163
 msgid "Learn as legitimate"
 msgstr "Apprendre comme légitime"
 
-#: inc/core/Admin/RefusedTable.php:193
-#: inc/core/Admin/RefusedTable.php:356
+#: inc/core/Admin/RefusedTable.php:242
+#: inc/core/Admin/RefusedTable.php:413
 msgid "Unlearn"
 msgstr "Désapprendre"
 
-#: inc/core/Admin/RefusedTable.php:224
+#: inc/core/Admin/RefusedTable.php:279
 msgid "Select this entry"
 msgstr "Sélectionner cet envoi"
 
 #. translators: %s: number of times the same text was sent
-#: inc/core/Admin/RefusedTable.php:256
+#: inc/core/Admin/RefusedTable.php:311
 #, php-format
 msgid "sent %s time"
 msgid_plural "sent %s times"
 msgstr[0] "envoyé %s fois"
 msgstr[1] "envoyé %s fois"
 
-#: inc/core/Admin/RefusedTable.php:400
+#: inc/core/Admin/RefusedTable.php:457
 msgid "Spam"
 msgstr "Spam"
 
-#: inc/core/Admin/RefusedTable.php:400
+#: inc/core/Admin/RefusedTable.php:457
 #: inc/core/Integrations/Flamingo.php:242
 msgid "Legitimate"
 msgstr "Légitime"
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:271
+#: inc/core/Admin/RefusedView.php:278
 #, php-format
 msgid "%s entry learnt as spam."
 msgid_plural "%s entries learnt as spam."
@@ -421,7 +421,7 @@ msgstr[0] "%s envoi appris comme spam."
 msgstr[1] "%s envois appris comme spam."
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:273
+#: inc/core/Admin/RefusedView.php:280
 #, php-format
 msgid "%s entry learnt as legitimate."
 msgid_plural "%s entries learnt as legitimate."
@@ -429,7 +429,7 @@ msgstr[0] "%s envoi appris comme légitime."
 msgstr[1] "%s envois appris comme légitimes."
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:275
+#: inc/core/Admin/RefusedView.php:282
 #, php-format
 msgid "%s entry deleted."
 msgid_plural "%s entries deleted."
@@ -437,19 +437,19 @@ msgstr[0] "%s envoi supprimé."
 msgstr[1] "%s envois supprimés."
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:277
+#: inc/core/Admin/RefusedView.php:284
 #, php-format
 msgid "%s entry unlearnt, back to review."
 msgid_plural "%s entries unlearnt, back to review."
 msgstr[0] "%s envoi désappris, de retour à traiter."
 msgstr[1] "%s envois désappris, de retour à traiter."
 
-#: inc/core/Admin/RefusedView.php:278
+#: inc/core/Admin/RefusedView.php:285
 msgid "Every refused submission was deleted."
 msgstr "Tous les envois refusés ont été supprimés."
 
 #. translators: %s: number of entries
-#: inc/core/Admin/RefusedView.php:289
+#: inc/core/Admin/RefusedView.php:296
 #, php-format
 msgid "%s entry was learnt before the previous rotation of the counters and has halved since: it cannot be unlearnt exactly and stays learnt. Learn it the other way to correct it."
 msgid_plural "%s entries were learnt before the previous rotation of the counters and have halved since: they cannot be unlearnt exactly and stay learnt. Learn them the other way to correct them."
@@ -568,7 +568,7 @@ msgstr "Marqueur : le champ Antispam, parmi les champs avancés de l’éditeur
 msgid "Marker: %1$s in the arguments of %2$s or %3$s."
 msgstr "Marqueur : %1$s dans les arguments de %2$s ou de %3$s."
 
-#: inc/core/Admin/RefusedView.php:222
+#: inc/core/Admin/RefusedView.php:229
 #: inc/core/Admin/SettingsPage.php:783
 msgid "Sorry, you are not allowed to do that."
 msgstr "Désolé, vous n’avez pas l’autorisation de faire cela."
@@ -978,7 +978,7 @@ msgid "Confirm as legitimate"
 msgstr "Confirmer comme légitime"
 
 #. translators: %s: rating of the statistical filter, in percent
-#: inc/core/Admin/RefusedTable.php:323
+#: inc/core/Admin/RefusedTable.php:380
 #: inc/core/Integrations/Comments.php:130
 #: inc/core/Integrations/Flamingo.php:469
 #, php-format
@@ -1117,15 +1117,15 @@ msgstr "Les tables du filtre ne sont pas installées."
 msgid "The spam filter tables hold counts of another version of the filter: forget everything learnt and learn again."
 msgstr "Les tables du filtre contiennent les comptes d’une autre version du filtre : oubliez tout ce qui a été appris et faites-le apprendre de nouveau."
 
-#: inc/core/Admin/RefusedView.php:124
+#: inc/core/Admin/RefusedView.php:127
 msgid "Display mode"
 msgstr "Mode d’affichage"
 
-#: inc/core/Admin/RefusedView.php:126
+#: inc/core/Admin/RefusedView.php:129
 msgid "Compact view"
 msgstr "Vue compacte"
 
-#: inc/core/Admin/RefusedView.php:128
+#: inc/core/Admin/RefusedView.php:131
 msgid "Extended view"
 msgstr "Vue étendue"
 
@@ -1496,11 +1496,11 @@ msgstr "Sécurité"
 msgid "Journal"
 msgstr "Journal"
 
-#: inc/core/Admin/RefusedTable.php:117
+#: inc/core/Admin/RefusedTable.php:164
 msgid "Spam rating"
 msgstr "Note de spam"
 
-#: inc/core/Admin/RefusedView.php:159
+#: inc/core/Admin/RefusedView.php:162
 msgid "The spam rating is what the statistical filter makes of each text today, for information: it moves as the filter learns, and stays empty while the filter is still learning."
 msgstr "La note de spam est l’avis du filtre statistique sur chaque texte aujourd’hui, à titre indicatif : elle évolue avec ce qu’il apprend, et reste vide tant qu’il est en apprentissage."
 
@@ -1766,12 +1766,12 @@ msgid_plural "Your message is too short: write at least %d words."
 msgstr[0] "Votre message est trop court : écrivez au moins %d mot."
 msgstr[1] "Votre message est trop court : écrivez au moins %d mots."
 
-#: inc/core/Admin/RefusedTable.php:120
+#: inc/core/Admin/RefusedTable.php:167
 msgid "Information"
 msgstr "Informations"
 
 #. translators: %d: number of days
-#: inc/core/Admin/RefusedView.php:152
+#: inc/core/Admin/RefusedView.php:155
 #, php-format
 msgid "The submissions refused: those the checks of the form caught, and those the statistical filter rated past the rejection threshold. What the filter reads of each is kept, the subject and the message, with the country it was sent from when Gecka Geolocation locates it and nothing else of the sender, for %d days. Learn them as spam or as legitimate, or delete them. A submission learnt stays in the Learnt view, where it can be learnt the other way or unlearnt."
 msgstr "Les envois refusés : ceux que les contrôles du formulaire ont interceptés, et ceux que le filtre statistique a notés au-delà du seuil de rejet. Ce que le filtre lit de chacun est gardé, le sujet et le message, avec le pays d’où il a été envoyé quand Gecka Geolocation le localise et rien d’autre de l’expéditeur, pendant %d jours. Faites-les apprendre comme spam ou comme légitimes, ou supprimez-les. Un envoi appris reste dans la vue Appris, où il peut être appris dans l’autre sens ou désappris."
@@ -1781,3 +1781,17 @@ msgstr "Les envois refusés : ceux que les contrôles du formulaire ont intercep
 #, php-format
 msgid "The forms of this site are checked for spam on this server, with no external service, no cookie and no IP address kept. The check keeps daily counts of the submissions by form and by outcome, with nothing of who sent them. To tell spam from legitimate messages, it keeps counts on hashes of the words of the subject and the message of the submissions marked as spam or not spam: no text is kept in them, and nothing ties these counts to a person. The rating the filter gives and the reason for a refusal are stored with the comment or the entry they concern, and deleted with it. A refused submission keeps its subject and its message, and the country it was sent from when the site locates its visitors, without the name or the email address of the sender, for a moderator to review; that message may hold personal details the sender wrote in it. It is deleted %d days after it was last sent."
 msgstr "Les formulaires de ce site sont contrôlés contre le spam sur ce serveur, sans service externe, sans cookie et sans conserver d’adresse IP. Le contrôle garde des décomptes quotidiens des envois par formulaire et par résultat, sans rien de leurs expéditeurs. Pour distinguer le spam des messages légitimes, il garde des décomptes sur des empreintes des mots du sujet et du message des envois marqués comme spam ou non : aucun texte n’y est gardé, et rien ne relie ces décomptes à une personne. La note donnée par le filtre et la raison d’un refus sont enregistrées avec le commentaire ou l’entrée concernés, et supprimées avec eux. Un envoi refusé garde son sujet et son message, ainsi que le pays d’où il a été envoyé quand le site localise ses visiteurs, sans le nom ni l’adresse e-mail de l’expéditeur, pour qu’un modérateur le relise ; ce message peut contenir des informations personnelles que l’expéditeur y a écrites. Il est supprimé %d jours après son dernier envoi."
+
+#. translators: %s: number of entries
+#: inc/core/Admin/RefusedTable.php:209
+#, php-format
+msgid "Spam (%s)"
+msgstr "Spam (%s)"
+
+#: inc/core/Admin/RefusedTable.php:261
+msgid "No refused submission of plain spam."
+msgstr "Aucun envoi refusé classé en spam."
+
+#: inc/core/Admin/RefusedView.php:166
+msgid "To review lists the submissions worth learning: neither too short nor made of random letters, and rated below the spam threshold once the statistical filter rates the texts. Spam lists the others, which teach the filter nothing it does not know yet."
+msgstr "À traiter liste les envois utiles à apprendre : ni trop courts ni faits de lettres aléatoires, et notés sous le seuil de spam dès que le filtre statistique note les textes. Spam liste les autres, qui n’apprennent au filtre rien qu’il ne sache déjà."

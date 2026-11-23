@@ -122,6 +122,7 @@ carry a text: the subject and the message, with the form, the reason, the
 dates and, when Gecka Geolocation locates the sender, the country of the last sending; nothing else of the sender. From there an entry is learnt as spam, learnt
 as legitimate when a person was refused, or deleted, one by one or in bulk;
 a learning can be undone. Entries are kept 30 days, 5,000 at most.
+To review lists the entries worth learning: neither too short nor made of random letters, and, once the statistical filter rates texts, rated below the spam threshold. The others are in the Spam view: the filter learns nothing from them it does not know yet.
 Whoever moderates comments sees the Journal; the `gecka_antispam_capability`
 filter keeps it to administrators.
 
