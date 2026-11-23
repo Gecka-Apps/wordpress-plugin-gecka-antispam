@@ -4,6 +4,7 @@
     "requires": ["gecka-geolocation"],
     "page": "admin.php?page=security-stats&tab=gecka-antispam",
     "viewport": { "width": 1280, "height": 800 },
+    "hide": [".update-nag"],
     "shots": [
         {
             "caption": "The statistics: submissions checked, accepted and caught over the period, with the share of each check."
@@ -14,7 +15,7 @@
         },
         {
             "url": "admin.php?page=security-journal&tab=gecka-antispam",
-            "caption": "The refused submissions, to review, learn from or delete."
+            "caption": "The refused submissions worth teaching the filter, with the country they came from, plain spam apart."
         },
         {
             "url": "index.php",

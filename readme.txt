@@ -99,7 +99,7 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 
 1. The statistics: submissions checked, accepted and caught over the period, with the share of each check.
 2. Where the spam comes from: countries, networks and systems, with the flags and logos of Gecka Geolocation.
-3. The refused submissions, to review, learn from or delete.
+3. The refused submissions worth teaching the filter, with the country they came from, plain spam apart.
 4. The dashboard widget: the last seven days at a glance.
 5. The Antispam column of the comments, with the spam rating of each one.
 6. The statistical filter: what it learnt, when it rotates, and the comments and messages of the site it can still learn from.

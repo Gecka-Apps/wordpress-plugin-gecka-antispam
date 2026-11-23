@@ -140,14 +140,32 @@ use Gecka\WP\Plugin\Antispam\StatisticalFilter;
 
     $surfaces = ['comments', 'comments', 'comments', 'contact_form_7', 'contact_form_7', 'woocommerce_reviews'];
     $reasons = [Guard::HONEYPOT, Guard::HONEYPOT, Guard::FILTER_REJECT, Guard::RANDOM_TEXT, Guard::TOO_FAST, Guard::SHORT, Guard::BAD_BROWSER];
+    $countries = ['RU', 'CN', 'US', 'VN', 'IN', 'BR', 'NG', 'UA', 'ID', 'DE', 'PK'];
     $journal = $plugin->journal();
     $ids = [];
 
     foreach (array_slice($spam, 0, 24) as $i => $text) {
-        $journal->record($surfaces[$i % count($surfaces)], $reasons[$i % count($reasons)], $text);
+        $journal->record($surfaces[$i % count($surfaces)], $reasons[$i % count($reasons)], $text, $countries[$i % count($countries)]);
         $when = gmdate('Y-m-d H:i:s', time() - $draw(1, 29) * DAY_IN_SECONDS - $draw(0, 86399));
         $wpdb->update(Journal::table(), ['created' => $when, 'updated' => $when, 'hits' => $i % 5 === 0 ? $draw(2, 9) : 1], ['hash' => md5($text)]);
         $ids[] = (int) $wpdb->get_var($wpdb->prepare('SELECT id FROM ' . Journal::table() . ' WHERE hash = %s', md5($text)));
+    }
+
+    // Refused texts of the last days the filter knows little of: canvassing
+    // unlike the spam it learnt, and a person caught by the delay. They fill
+    // the To review view, the one the screen opens on.
+    $unfamiliar = [
+        [Guard::HONEYPOT, 'contact_form_7', 'IN', 'Hi there, I came across your website and noticed a few design issues on mobile. We build modern sites for small businesses, would you be open to a quick call this week?'],
+        [Guard::TOO_FAST, 'comments', 'NC', 'Hello, I tried to send this twice already. Is the workshop on Saturday still open for registration? We would be two adults and a child.'],
+        [Guard::HONEYPOT, 'comments', 'PH', 'Good afternoon, we are a family business making handmade wooden furniture. Would your readers be interested in a guest article about sustainable living?'],
+        [Guard::BAD_BROWSER, 'contact_form_7', 'FR', 'Bonjour, je suis rédacteur web indépendant et je propose des articles pour votre blog, à des tarifs raisonnables. Puis-je vous envoyer quelques exemples ?'],
+        [Guard::TOKEN, 'woocommerce_reviews', 'GB', 'I run a small podcast about travel in the Pacific and would love to feature your story in an episode. Let me know if you would be available next month.'],
+    ];
+
+    foreach ($unfamiliar as $i => [$reason, $surface, $country, $text]) {
+        $journal->record($surface, $reason, $text, $country);
+        $when = gmdate('Y-m-d H:i:s', time() - $i * 9 * HOUR_IN_SECONDS - 3 * HOUR_IN_SECONDS);
+        $wpdb->update(Journal::table(), ['created' => $when, 'updated' => $when], ['hash' => md5($text)]);
     }
 
     // The filter: past its thresholds, with a rotation behind it, from the
