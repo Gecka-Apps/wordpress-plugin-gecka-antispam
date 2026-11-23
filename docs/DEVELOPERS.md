@@ -355,7 +355,7 @@ intl or mbstring extension the filter needs.
 |---|---|
 | `{prefix}gecka_antispam_stats` | Daily counters, by form and outcome |
 | `{prefix}gecka_antispam_origins` | Daily counters, by country, network and operating system of the senders and by outcome: the code of the country, the number of the network with the name of its organisation, never the address |
-| `{prefix}gecka_antispam_journal` | Refused submissions |
+| `{prefix}gecka_antispam_journal` | Refused submissions: the subject and the message, the form, the reason, the dates, the code of the country of the last sending, and what a moderator learnt it as |
 | `{prefix}gecka_antispam_counts`, `{prefix}gecka_antispam_meta` | Counters of the statistical filter |
 | `wp-content/uploads/gecka-antispam/` | Background tables and snapshot of the counters |
 | `gecka_antispam_settings`, `gecka_antispam_version`, `gecka_antispam_rotated`, `gecka_antispam_backgrounds` | Options |

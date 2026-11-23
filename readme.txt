@@ -4,7 +4,7 @@ Tags: spam, antispam, honeypot, comments, contact form 7
 Requires at least: 6.8
 Tested up to: 7.1
 Requires PHP: 8.2
-Stable tag: 1.3.0
+Stable tag: 1.4.0
 License: GPL-3.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
@@ -37,7 +37,7 @@ Nothing of the submissions leaves your server, no cookie is set, and no name, em
 = See what it does =
 
 * Security > Statistics: the submissions checked, accepted and caught over 7, 30, 90 or 365 days, by form and by check; with the Gecka Geolocation plugin, by country and by network, with their flags and logos, the address itself never being read nor kept
-* Security > Journal: every refused submission, to review, learn from or delete, kept 30 days
+* Security > Journal: every refused submission, with the country it was last sent from, kept 30 days; those worth teaching the filter listed apart from plain spam, to learn from or delete
 * A dashboard widget for the last seven days, an Antispam column in the comments and in Flamingo with the rating of each message, and Site Health tests of the tables, the daily task and the filter
 
 = Protected forms =
@@ -53,7 +53,7 @@ The checkout block and the payment buttons of WooCommerce take other routes and 
 
 = Privacy =
 
-The plugin keeps daily counts of the submissions it checks, counts on hashes of the words of the subject and message of the texts marked as spam or not spam, and the subject and message of the submissions refused, until 30 days after the text was last sent. A refused message may hold personal details the sender wrote in it, and its subject is what the form cites as its subject: a field of the sender cited there, a phone number for instance, is kept with it. Words a sender typed in a message, a phone number in a signature for one, enter the counts as hashes and cannot be erased for one person.
+The plugin keeps daily counts of the submissions it checks, counts on hashes of the words of the subject and message of the texts marked as spam or not spam, and the subject and message of the submissions refused, with the country they were last sent from when Gecka Geolocation locates the sender, until 30 days after the text was last sent. A refused message may hold personal details the sender wrote in it, and its subject is what the form cites as its subject: a field of the sender cited there, a phone number for instance, is kept with it. Words a sender typed in a message, a phone number in a signature for one, enter the counts as hashes and cannot be erased for one person.
 
 The statistical filter is [gecka/spamfilter](https://github.com/Gecka-Apps/spamfilter), under the AGPL-3.0-or-later.
 
@@ -110,6 +110,12 @@ Its tables, refused submissions, options, scheduled events, meta and its directo
 11. How long the statistics are kept.
 
 == Changelog ==
+
+= 1.4.0 =
+
+* The Journal lists apart the entries worth teaching the statistical filter: To review keeps those it rates below the spam threshold, neither too short nor made of random letters; Spam holds the others.
+* The Journal shows the country a refused submission was last sent from, when Gecka Geolocation locates the sender.
+* The date column of the Journal is named Information.
 
 = 1.3.0 =
 

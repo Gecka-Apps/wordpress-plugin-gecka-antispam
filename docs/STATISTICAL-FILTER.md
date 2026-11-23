@@ -123,7 +123,7 @@ scheduled task or another plugin gives, Akismet for one, is not learnt:
   action "Learn as legitimate"
 - **Gravity Forms**: marking an entry as spam or not spam, and the bulk
   action "Learn as legitimate" on active entries
-- **Security > Journal**: "Learn as spam" and "Learn as legitimate"
+- **Security > Journal**: "Learn as spam" and "Learn as legitimate"; its To review view keeps the entries the filter rates below the spam threshold, which teach it the most
 
 The forms of ACF teach the filter nothing: nothing marks their submissions
 as spam or not spam.

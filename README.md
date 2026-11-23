@@ -166,7 +166,8 @@ for support, with nothing of the senders.
 No cookie is set and no IP address is kept. The filter keeps counts on
 hashes of the words it read, never the text, and nothing ties a count to a
 sender. The Journal keeps the subject and the message of the submissions
-refused, without the name or the email address of the sender, for 30 days.
+refused, and the country of the last sending when Gecka Geolocation locates
+it, without the name or the email address of the sender, for 30 days.
 The rating and the reason are stored with the comment or the Gravity Forms
 entry, and go with it. A paragraph for the privacy policy of the site is
 offered under Settings > Privacy.
