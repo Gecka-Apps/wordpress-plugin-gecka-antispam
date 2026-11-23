@@ -74,6 +74,18 @@ class Origins
     }
 
     /**
+     * The country of the visitor, as Gecka Geolocation tells it
+     *
+     * @return string|null ISO 3166-1 code; null without Gecka Geolocation, or for an address it does not locate.
+     */
+    public function country(): ?string
+    {
+        $country = function_exists('gecka_geolocation') ? gecka_geolocation()?->country() : null;
+
+        return $country !== null && $country !== '' ? $country : null;
+    }
+
+    /**
      * Counts one hit.
      *
      * @param string $facet   One of the facet constants.

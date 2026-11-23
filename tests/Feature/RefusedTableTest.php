@@ -184,3 +184,19 @@ it('learns the entry a row action links to, as the bulk action does', function (
         ->and($journal->count(true))->toBe(1)
         ->and(gecka_antispam()->statisticalFilter()->counts()['spam'])->toBe(1);
 });
+
+it('shows under the date the country a text was last sent from', function () {
+    $journal = gecka_antispam()->journal();
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online', 'NC');
+    $journal->record('comments', Guard::HONEYPOT, 'Bonjour, une question sur vos horaires');
+
+    $table = new RefusedTable(gecka_antispam());
+    $table->prepare_items();
+    ob_start();
+    $table->display_rows();
+    $html = (string) ob_get_clean();
+
+    expect(substr_count($html, 'class="gecka-antispam-country"'))->toBe(1)
+        ->and($html)->toContain('data-country="NC"')
+        ->and($table->showsCountries())->toBeTrue();
+});

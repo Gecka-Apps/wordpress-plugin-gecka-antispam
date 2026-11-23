@@ -238,6 +238,10 @@
     width: 8em;
 }
 
+.gecka-antispam-country img {
+    vertical-align: -1px;
+}
+
 .gecka-antispam-refused-text {
     overflow-wrap: anywhere;
 }

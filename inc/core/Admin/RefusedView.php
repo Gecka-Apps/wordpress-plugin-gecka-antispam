@@ -149,7 +149,7 @@ class RefusedView
             esc_html(
                 sprintf(
                     /* translators: %d: number of days */
-                    __('The submissions refused: those the checks of the form caught, and those the statistical filter rated past the rejection threshold. What the filter reads of each is kept, the subject and the message, with nothing of the sender, for %d days. Learn them as spam or as legitimate, or delete them. A submission learnt stays in the Learnt view, where it can be learnt the other way or unlearnt.', 'gecka-antispam'),
+                    __('The submissions refused: those the checks of the form caught, and those the statistical filter rated past the rejection threshold. What the filter reads of each is kept, the subject and the message, with the country it was sent from when Gecka Geolocation locates it and nothing else of the sender, for %d days. Learn them as spam or as legitimate, or delete them. A submission learnt stays in the Learnt view, where it can be learnt the other way or unlearnt.', 'gecka-antispam'),
                     Journal::DAYS,
                 ),
             ),
@@ -172,6 +172,13 @@ class RefusedView
 
         $table->display();
         echo '</form>';
+
+        if ($table->showsCountries() && function_exists('gecka_geolocation_credit') && is_array($credit = gecka_geolocation_credit())) {
+            printf(
+                '<p class="description gecka-antispam-credit">%s</p>',
+                $credit['url'] ? sprintf('<a href="%s">%s</a>', esc_url($credit['url']), esc_html($credit['text'])) : esc_html($credit['text']),
+            );
+        }
 
         if (! $this->plugin->journal()->count() && ! $this->plugin->journal()->count(true)) {
             return;

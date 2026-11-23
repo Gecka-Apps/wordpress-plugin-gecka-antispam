@@ -144,3 +144,18 @@ it('drops the old counters and every one on a reset', function () {
 
     expect($this->origins->total(Origins::SYSTEM, 7, Origins::caught()))->toBe(0);
 });
+
+it('records in the journal the country of a submission refused', function () {
+    gecka_antispam()->journal()->clear();
+    $GLOBALS['gecka_antispam_geolocation'] = ['country' => 'NC', 'asn' => 17480, 'organization' => 'CANL'];
+
+    gecka_antispam_check('devis', 'Bonjour, je voudrais un devis.');
+
+    expect(gecka_antispam()->journal()->entries(1, 10)[0]->country)->toBe('NC');
+});
+
+it('tells no country without a geolocation of the visitor', function () {
+    $GLOBALS['gecka_antispam_geolocation'] = ['country' => ''];
+
+    expect($this->origins->country())->toBeNull();
+});

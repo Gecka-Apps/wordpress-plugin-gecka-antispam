@@ -118,8 +118,8 @@ and rotates: [docs/STATISTICAL-FILTER.md](docs/STATISTICAL-FILTER.md).
 ## 🗂️ Refused submissions
 
 The Antispam tab of Security > Journal lists the submissions refused that
-carry a text: the subject and the message, with the form, the reason and the
-dates, nothing of the sender. From there an entry is learnt as spam, learnt
+carry a text: the subject and the message, with the form, the reason, the
+dates and, when Gecka Geolocation locates the sender, the country of the last sending; nothing else of the sender. From there an entry is learnt as spam, learnt
 as legitimate when a person was refused, or deleted, one by one or in bulk;
 a learning can be undone. Entries are kept 30 days, 5,000 at most.
 Whoever moderates comments sees the Journal; the `gecka_antispam_capability`

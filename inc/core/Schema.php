@@ -24,7 +24,7 @@ class Schema
      * Version of the tables. The setup runs again on a site whose recorded
      * version differs, whatever the version of the plugin.
      */
-    public const VERSION = 2;
+    public const VERSION = 3;
 
     /**
      * Table of the daily counters
@@ -118,6 +118,7 @@ class Schema
             updated datetime NOT NULL,
             learnt varchar(8) DEFAULT NULL,
             generation int(11) DEFAULT NULL,
+            country char(2) DEFAULT NULL,
             PRIMARY KEY  (id),
             UNIQUE KEY hash (hash),
             KEY updated (updated),

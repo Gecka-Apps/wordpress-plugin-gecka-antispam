@@ -100,7 +100,7 @@ abstract class Integration extends Base
         }
 
         if (Guard::refuses($outcome) && $text !== null) {
-            $this->plugin->journal()->record($surface, (string) $outcome, $text);
+            $this->plugin->journal()->record($surface, (string) $outcome, $text, $this->plugin->origins()->country());
         }
 
         if (! $countLater || Guard::refuses($outcome)) {

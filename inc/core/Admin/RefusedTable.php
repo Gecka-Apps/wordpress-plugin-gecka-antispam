@@ -54,6 +54,13 @@ class RefusedTable extends \WP_List_Table
     private bool $rates = false;
 
     /**
+     * Whether a row printed shows a country.
+     *
+     * @var bool
+     */
+    private bool $countries = false;
+
+    /**
      * @param Plugin $plugin
      */
     public function __construct(Plugin $plugin)
@@ -219,7 +226,19 @@ class RefusedTable extends \WP_List_Table
     }
 
     /**
-     * When the text was last sent, and how many times
+     * Whether a row of the page shows a country, which calls for the credit
+     * of the geolocation data.
+     *
+     * @return bool
+     */
+    public function showsCountries(): bool
+    {
+        return $this->countries;
+    }
+
+    /**
+     * When the text was last sent, how many times, and from which country
+     * the last time
      *
      * @param object $item
      *
@@ -229,12 +248,35 @@ class RefusedTable extends \WP_List_Table
     {
         $date = (string) ($item->updated ?? '');
         $hits = (int) ($item->hits ?? 1);
+        $country = Value::string($item->country ?? null);
         $shown = wp_date(Value::string(get_option('date_format')) . ' ' . Value::string(get_option('time_format')), (int) strtotime($date . ' UTC')) ?: $date;
 
         return esc_html($shown) . ($hits > 1
             /* translators: %s: number of times the same text was sent */
             ? '<br><span class="description">' . esc_html(sprintf(_n('sent %s time', 'sent %s times', $hits, 'gecka-antispam'), number_format_i18n($hits))) . '</span>'
-            : '');
+            : '') . ($country !== '' ? '<br>' . $this->country($country) : '');
+    }
+
+    /**
+     * A country, its flag before its name when Gecka Geolocation provides
+     * them, its code otherwise
+     *
+     * @param string $code ISO 3166-1 code.
+     *
+     * @return string Markup, escaped.
+     */
+    private function country(string $code): string
+    {
+        $this->countries = true;
+        $flag = function_exists('gecka_geolocation_flag_url') ? gecka_geolocation_flag_url($code) : null;
+        $name = function_exists('gecka_geolocation_country_name') ? (string) gecka_geolocation_country_name($code) : '';
+
+        return sprintf(
+            '<span class="gecka-antispam-country" data-country="%s">%s%s</span>',
+            esc_attr($code),
+            $flag ? sprintf('<img src="%s" alt="" width="16" height="12" loading="lazy"> ', esc_url($flag)) : '',
+            esc_html($name !== '' ? $name : $code),
+        );
     }
 
     /**

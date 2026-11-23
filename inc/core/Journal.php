@@ -13,8 +13,10 @@ namespace Gecka\WP\Plugin\Antispam;
  * threshold.
  *
  * An entry holds what the statistical filter reads of the submission, the
- * subject and the message, with the form, the reason and the dates; nothing
- * of the sender. The same text sent again counts on the entry it already has.
+ * subject and the message, with the form, the reason, the dates and the
+ * country Gecka Geolocation locates the sender in; nothing else of the
+ * sender. The same text sent again counts on the entry it already has, which
+ * then holds the form, the reason and the country of the last sending.
  * A moderator learns an entry as spam or as legitimate, and the entry stays,
  * marked with what it was learnt as and the generation of the counters it
  * was learnt in: learnt the other way, it moves to the other category;
@@ -74,13 +76,14 @@ class Journal
      * Records a submission refused, or counts it again when its text is
      * already there.
      *
-     * @param string $surface The form it was sent from.
-     * @param string $outcome What refused it.
-     * @param string $text    What the filter reads of it.
+     * @param string      $surface The form it was sent from.
+     * @param string      $outcome What refused it.
+     * @param string      $text    What the filter reads of it.
+     * @param string|null $country ISO 3166-1 code of the country it was sent from, null when unknown.
      *
      * @return void
      */
-    public function record(string $surface, string $outcome, string $text): void
+    public function record(string $surface, string $outcome, string $text, ?string $country = null): void
     {
         global $wpdb;
 
@@ -95,7 +98,7 @@ class Journal
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Table of the plugin.
         $wpdb->query(
             $wpdb->prepare(
-                'INSERT INTO %i (hash, surface, outcome, text, hits, created, updated) VALUES (%s, %s, %s, %s, 1, %s, %s) ON DUPLICATE KEY UPDATE hits = hits + 1, surface = VALUES(surface), outcome = VALUES(outcome), updated = VALUES(updated)',
+                "INSERT INTO %i (hash, surface, outcome, text, hits, created, updated, country) VALUES (%s, %s, %s, %s, 1, %s, %s, NULLIF(%s, '')) ON DUPLICATE KEY UPDATE hits = hits + 1, surface = VALUES(surface), outcome = VALUES(outcome), updated = VALUES(updated), country = VALUES(country)",
                 self::table(),
                 md5($text),
                 $surface,
@@ -103,6 +106,7 @@ class Journal
                 $text,
                 $now,
                 $now,
+                (string) $country,
             ),
         );
 
@@ -118,7 +122,7 @@ class Journal
      * @param int  $perPage
      * @param bool $learnt  The entries learnt instead of those waiting.
      *
-     * @return array<int, object{id: string, surface: string, outcome: string, text: string, hits: string, created: string, updated: string, learnt: string|null, generation: string|null}>
+     * @return array<int, object{id: string, surface: string, outcome: string, text: string, hits: string, created: string, updated: string, learnt: string|null, generation: string|null, country: string|null}>
      */
     public function entries(int $page, int $perPage, bool $learnt = false): array
     {
@@ -127,7 +131,7 @@ class Journal
         $where = self::learntCondition($learnt);
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table of the plugin, read on the review screen; $where is one of two fixed conditions.
-        $rows = $wpdb->get_results($wpdb->prepare("SELECT id, surface, outcome, text, hits, created, updated, learnt, generation FROM %i WHERE $where ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d", self::table(), $perPage, max(0, $page - 1) * $perPage));
+        $rows = $wpdb->get_results($wpdb->prepare("SELECT id, surface, outcome, text, hits, created, updated, learnt, generation, country FROM %i WHERE $where ORDER BY updated DESC, id DESC LIMIT %d OFFSET %d", self::table(), $perPage, max(0, $page - 1) * $perPage));
 
         return array_values((array) $rows);
     }

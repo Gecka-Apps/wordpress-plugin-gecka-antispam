@@ -115,3 +115,15 @@ it('sends the entries learnt back to review when the filter forgets everything',
         ->and($journal->unlearn([$id]))->toBe([0, 0])
         ->and(gecka_antispam()->statisticalFilter()->counts()['spam'])->toBe(0);
 });
+
+it('keeps the country of the last sending of a text', function (?string $last, ?string $kept) {
+    $journal = gecka_antispam()->journal();
+
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online', 'NC');
+    $journal->record('comments', Guard::HONEYPOT, 'Cheap pills online', $last);
+
+    expect($journal->entries(1, 10)[0]->country)->toBe($kept);
+})->with([
+    'from another country' => ['DE', 'DE'],
+    'from nowhere known' => [null, null],
+]);
