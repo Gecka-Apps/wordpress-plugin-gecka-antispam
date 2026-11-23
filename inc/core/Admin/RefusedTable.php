@@ -110,7 +110,7 @@ class RefusedTable extends \WP_List_Table
             $columns['score'] = __('Spam rating', 'gecka-antispam');
         }
 
-        $columns['date'] = __('Date', 'gecka-antispam');
+        $columns['information'] = __('Information', 'gecka-antispam');
 
         if ($this->learntView) {
             $columns['learnt'] = __('Learnt as', 'gecka-antispam');
@@ -225,7 +225,7 @@ class RefusedTable extends \WP_List_Table
      *
      * @return string
      */
-    protected function column_date(object $item): string
+    protected function column_information(object $item): string
     {
         $date = (string) ($item->updated ?? '');
         $hits = (int) ($item->hits ?? 1);

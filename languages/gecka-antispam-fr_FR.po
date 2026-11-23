@@ -338,10 +338,6 @@ msgstr "Aucun envoi refusé appris."
 msgid "No refused submission to review."
 msgstr "Aucun envoi refusé à traiter."
 
-#: inc/core/Admin/RefusedTable.php:113
-msgid "Date"
-msgstr "Date"
-
 #: inc/core/Admin/RefusedTable.php:105
 #: inc/core/Admin/StatsView.php:419
 msgid "Form"
@@ -1781,3 +1777,7 @@ msgid "Your message is too short: write at least %d word."
 msgid_plural "Your message is too short: write at least %d words."
 msgstr[0] "Votre message est trop court : écrivez au moins %d mot."
 msgstr[1] "Votre message est trop court : écrivez au moins %d mots."
+
+#: inc/core/Admin/RefusedTable.php:113
+msgid "Information"
+msgstr "Informations"
